@@ -29,6 +29,11 @@ def extract_balance_sheet():
 
             files_generated.append(file_name)
             print(f"Balance sheet data for {symbol} saved to {file_name}")
+
+        except ValueError as e:
+            print(f"Value error for {symbol}: {e}")
+            print(f"Error occurred while extracting balance sheet data for {symbol}: {e}")
+            break  # Exit the loop if a ValueError occurs for a symbol
         except Exception as e:
             print(f"Error occurred while extracting balance sheet data for {symbol}: {e}")
 

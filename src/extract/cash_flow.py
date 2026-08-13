@@ -28,6 +28,13 @@ def extract_cash_flow():
 
             files_generated.append(file_name)
             print(f"Cash flow data for {symbol} saved to {file_name}")
+
+        except ValueError as e:
+            print(f"Value error for {symbol}: {e}")
+            print(f"Error occurred while extracting cash flow data for {symbol}: {e}")
+            break  # Exit the loop if a ValueError occurs for a symbol    
+
+            
         except Exception as e:
             print(f"Error occurred while extracting cash flow data for {symbol}: {e}")
 
