@@ -1,0 +1,41 @@
+==================== 2026-08-14T22:28:33.773945Z | 01a00264-294f-7983-b728-7fc63f5cd715 ====================
+22:28:33.779772 [info ]: Installing dbt project and profile setup
+22:28:33.880876 [info ]: Info Created .vscode/extensions.json with dbt extension recommendation
+22:28:33.952590 [info ]: Success Project created successfully!
+22:28:33.960868 [info ]: Info Project name: jaffle_shop
+22:28:33.961618 [info ]: Info Project directory: jaffle_shop
+22:28:41.671451 [info ]: Info Setting up your profile...
+22:28:41.675586 [info ]: Loading ~/.dbt/profiles.yml
+22:28:41.688262 [info ]: Info Creating new profile...
+22:31:31.366830 [info ]: Success Profile written to C:\Users\hally\.dbt\profiles.yml
+22:31:31.368138 [info ]: Validating profile inputs, adapters, and connection
+
+22:31:31.368761 [info ]: dbt-fusion 2.0.0-preview.204
+22:31:31.373571 [info ]: Started loading project
+22:31:31.404577 [info ]: Loading ~/.dbt/profiles.yml
+22:31:31.421463 [info ]: Finished loading project [  0.05s]
+22:31:31.426141 [info ]: Started debugging
+22:31:31.427141 [info ]: Debugging profile: dev
+22:31:31.427519 [info ]: Debugging dbt version: 2.0.0-preview.204
+22:31:31.427759 [info ]: Debugging platform: windows x86_64 (windows)
+22:31:31.428521 [info ]: Debugging adapter type: bigquery (remote)
+22:31:31.491910 [info ]: Debugging dependencies:
+  git: OK
+22:31:31.496709 [info ]: Debugging connection:
+  "database": "projetodbt-479518",
+  "schema": "alphavantage",
+  "method": "service-account",
+  "location": "US",
+  "dataproc_batch": null
+22:31:31.507724 [info ]: Finished debugging [  0.08s]
+22:31:31.509554 [error]: [AuthenticationFailed (dbt1011)]: dbt was unable to connect to the specified database.
+The following error was returned:
+
+Configuration Error: Keyfile '"C:\Users\hally\Downloads\projetodbt-479518-eff5b0128b9e.json"' does not exist
+
+Check your database credentials and try again. For more information, visit:
+https://docs.getdbt.com/docs/core/connect-data-platform/connection-profiles
+22:31:32.187695 [info ]: New version available 2.0.0-preview.209 (run `dbt system update`)
+22:31:32.378928 [info ]: 
+==================== Execution Summary =====================
+Finished 'init' with 1 error for target 'dev' [2m 59s]

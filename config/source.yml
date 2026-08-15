@@ -1,0 +1,9 @@
+sources:
+  alphavantage:
+    base_url: "https://www.alphavantage.co/query"
+    endpoints:
+      overview: "OVERVIEW"
+      income_statement: "INCOME_STATEMENT"
+      balance_sheet: "BALANCE_SHEET"
+      cash_flow: "CASH_FLOW"
+      earnings: "EARNINGS"
