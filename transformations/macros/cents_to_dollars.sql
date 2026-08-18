@@ -23,3 +23,7 @@
 {% macro fabric__cents_to_dollars(column_name) %}
     cast({{ column_name }} / 100 as numeric(16,2))
 {% endmacro %}
+
+{% macro generate_overview_yaml() %}
+    {{ codegen.generate_model_yaml(model_names=['stg_overview']) }}
+{% endmacro %}

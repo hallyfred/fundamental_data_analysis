@@ -19,6 +19,11 @@ seeds:
 models:
   transformations:
 
+    # This block forces dbt to push descriptions to BigQuery
+    +persist_docs:
+      relation: true
+      columns: true
+
     staging:
       +materialized: view
     marts:
