@@ -2,6 +2,8 @@ from datetime import date
 import time
 import json
 import os
+
+from importlib_metadata import files
 from src.extract.api_client import AlphaVantageAPIClient
 from src.utils.logger import setup_logger, log_extraction, upload_and_clean_log
 from src.utils.helpers import count_real_rows
@@ -34,6 +36,17 @@ def extract_cash_flow():
             if not files:
                 length = 0
                 raise ValueError(f"No data returned for symbol {symbol}")
+
+            # Add the column/field to the JSON data
+            extraction_date = today.isoformat()
+
+            # If files is a list of dicts
+            if isinstance(files, list):
+                for item in files:
+                    item["extraction_date"] = extraction_date
+                # If files is a single dict
+            elif isinstance(files, dict):
+                files["extraction_date"] = extraction_date            
 
             with open(file_name, 'w') as f:
                 json.dump(files, f)
@@ -116,7 +129,7 @@ def extract_cash_flow():
         handler.close()
         logger.removeHandler(handler)
 
-    log_destination = f"financial/cash_flow/metadata/year={today.year}/month={today.month:02d}/day={today.day:02d}/cash_flow_extraction.log"
+    log_destination = f"financial/metadata/cash_flow/year={today.year}/month={today.month:02d}/day={today.day:02d}/cash_flow_extraction.log"
     upload_and_clean_log(gcp_loader, 'extraction.log', log_destination)
 
     return files_generated
