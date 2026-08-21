@@ -1,0 +1,92 @@
+==================== 2026-08-14T22:28:33.773945Z | 01a00264-294f-7983-b728-7fc63f5cd715 ====================
+22:28:33.779772 [info ]: Installing dbt project and profile setup
+22:28:33.880876 [info ]: Info Created .vscode/extensions.json with dbt extension recommendation
+22:28:33.952590 [info ]: Success Project created successfully!
+22:28:33.960868 [info ]: Info Project name: jaffle_shop
+22:28:33.961618 [info ]: Info Project directory: jaffle_shop
+22:28:41.671451 [info ]: Info Setting up your profile...
+22:28:41.675586 [info ]: Loading ~/.dbt/profiles.yml
+22:28:41.688262 [info ]: Info Creating new profile...
+22:31:31.366830 [info ]: Success Profile written to C:\Users\hally\.dbt\profiles.yml
+22:31:31.368138 [info ]: Validating profile inputs, adapters, and connection
+
+22:31:31.368761 [info ]: dbt-fusion 2.0.0-preview.204
+22:31:31.373571 [info ]: Started loading project
+22:31:31.404577 [info ]: Loading ~/.dbt/profiles.yml
+22:31:31.421463 [info ]: Finished loading project [  0.05s]
+22:31:31.426141 [info ]: Started debugging
+22:31:31.427141 [info ]: Debugging profile: dev
+22:31:31.427519 [info ]: Debugging dbt version: 2.0.0-preview.204
+22:31:31.427759 [info ]: Debugging platform: windows x86_64 (windows)
+22:31:31.428521 [info ]: Debugging adapter type: bigquery (remote)
+22:31:31.491910 [info ]: Debugging dependencies:
+  git: OK
+22:31:31.496709 [info ]: Debugging connection:
+  "database": "projetodbt-479518",
+  "schema": "alphavantage",
+  "method": "service-account",
+  "location": "US",
+  "dataproc_batch": null
+22:31:31.507724 [info ]: Finished debugging [  0.08s]
+22:31:31.509554 [error]: [AuthenticationFailed (dbt1011)]: dbt was unable to connect to the specified database.
+The following error was returned:
+
+Configuration Error: Keyfile '"C:\Users\hally\Downloads\projetodbt-479518-eff5b0128b9e.json"' does not exist
+
+Check your database credentials and try again. For more information, visit:
+https://docs.getdbt.com/docs/core/connect-data-platform/connection-profiles
+22:31:32.187695 [info ]: New version available 2.0.0-preview.209 (run `dbt system update`)
+22:31:32.378928 [info ]: 
+==================== Execution Summary =====================
+Finished 'init' with 1 error for target 'dev' [2m 59s]
+{"data":{"log_version":3,"version":"=2.0.0-preview.205"},"info":{"category":"","code":"A001","extra":{},"invocation_id":"01a0151c-5d7d-71d1-b1f0-d7af1241a282","level":"info","msg":"Running with dbt-fusion=2.0.0-preview.205","name":"MainReportVersion","pid":20288,"thread":"tokio-rt-worker","ts":"2026-08-18T13:42:55.693763Z"}}
+{"data":{"args":{"debug":"false","invocation_command":"C:\\Users\\hally\\.local\\bin\\dbt.exe license info --json --log-format json","log_format":"json","quiet":"false","write_json":"true"}},"info":{"category":"","code":"A002","extra":{},"invocation_id":"01a0151c-5d7d-71d1-b1f0-d7af1241a282","level":"debug","msg":"running dbt-fusion with arguments {\"command\":\"license\",\"vars\":\"{}\",\"limit\":\"10\",\"debug\":false,\"log_format\":\"json\",\"quiet\":false,\"write_json\":true,\"write_catalog\":false,\"manage_state\":false}","name":"MainReportArgs","pid":20288,"thread":"tokio-rt-worker","ts":"2026-08-18T13:42:55.694542Z"}}
+{"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a0151c-5d7d-71d1-b1f0-d7af1241a282","level":"debug","msg":"No platform credentials found, skipping remote license","name":"Generic","pid":20288,"thread":"tokio-rt-worker","ts":"2026-08-18T13:42:55.743743Z"}}
+{"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a0151c-5d7d-71d1-b1f0-d7af1241a282","level":"debug","msg":"Trial license from file C:\\Users\\hally\\.dbt\\license.trial is expired","name":"Generic","pid":20288,"thread":"tokio-rt-worker","ts":"2026-08-18T13:42:55.754107Z"}}
+{"data":{"columns":[],"is_inline":true,"node_name":"license_info","output_format":"json","preview":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","unique_id":"license.info"},"info":{"category":"","code":"Q041","extra":{},"invocation_id":"01a0151c-5d7d-71d1-b1f0-d7af1241a282","level":"info","msg":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","name":"ShowNode","pid":20288,"thread":"tokio-rt-worker","ts":"2026-08-18T13:42:55.756333Z"}}
+{"data":{"completed_at":"2026-08-18T13:42:56.455875Z","elapsed":0.7665098309516907,"success":true},"info":{"category":"","code":"Q039","extra":{},"invocation_id":"01a0151c-5d7d-71d1-b1f0-d7af1241a282","level":"info","msg":"\n==================== Execution Summary =====================\nFinished 'license' successfully [766ms]","name":"CommandCompleted","pid":20288,"thread":"tokio-rt-worker","ts":"2026-08-18T13:42:56.462540Z"}}
+{"data":{"log_version":3,"version":"=2.0.0-preview.205"},"info":{"category":"","code":"A001","extra":{},"invocation_id":"01a016a2-d41a-7893-af3c-b8dc15765eb5","level":"info","msg":"Running with dbt-fusion=2.0.0-preview.205","name":"MainReportVersion","pid":26232,"thread":"tokio-rt-worker","ts":"2026-08-18T20:49:25.124699Z"}}
+{"data":{"args":{"debug":"false","invocation_command":"C:\\Users\\hally\\.local\\bin\\dbt.exe license info --json --log-format json","log_format":"json","quiet":"false","write_json":"true"}},"info":{"category":"","code":"A002","extra":{},"invocation_id":"01a016a2-d41a-7893-af3c-b8dc15765eb5","level":"debug","msg":"running dbt-fusion with arguments {\"command\":\"license\",\"vars\":\"{}\",\"limit\":\"10\",\"debug\":false,\"log_format\":\"json\",\"quiet\":false,\"write_json\":true,\"write_catalog\":false,\"manage_state\":false}","name":"MainReportArgs","pid":26232,"thread":"tokio-rt-worker","ts":"2026-08-18T20:49:25.125360Z"}}
+{"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a016a2-d41a-7893-af3c-b8dc15765eb5","level":"debug","msg":"No platform credentials found, skipping remote license","name":"Generic","pid":26232,"thread":"tokio-rt-worker","ts":"2026-08-18T20:49:25.323485Z"}}
+{"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a016a2-d41a-7893-af3c-b8dc15765eb5","level":"debug","msg":"Trial license from file C:\\Users\\hally\\.dbt\\license.trial is expired","name":"Generic","pid":26232,"thread":"tokio-rt-worker","ts":"2026-08-18T20:49:25.347530Z"}}
+{"data":{"columns":[],"is_inline":true,"node_name":"license_info","output_format":"json","preview":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","unique_id":"license.info"},"info":{"category":"","code":"Q041","extra":{},"invocation_id":"01a016a2-d41a-7893-af3c-b8dc15765eb5","level":"info","msg":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","name":"ShowNode","pid":26232,"thread":"tokio-rt-worker","ts":"2026-08-18T20:49:25.349577Z"}}
+{"data":{"completed_at":"2026-08-18T20:49:26.080548Z","elapsed":0.9827691912651062,"success":true},"info":{"category":"","code":"Q039","extra":{},"invocation_id":"01a016a2-d41a-7893-af3c-b8dc15765eb5","level":"info","msg":"\n==================== Execution Summary =====================\nFinished 'license' successfully [982ms]","name":"CommandCompleted","pid":26232,"thread":"tokio-rt-worker","ts":"2026-08-18T20:49:26.087837Z"}}
+[0m10:52:58.300361 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024F25772A50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024F27F8FD90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024F27F8F890>]}
+
+
+============================== 10:52:58.305566 | e62a3273-8055-47d6-b179-395270569a09 ==============================
+[0m10:52:58.305566 [info ] [MainThread]: Running with dbt=1.12.2
+[0m10:52:58.306165 [debug] [MainThread]: running dbt with arguments {'maximum_seed_size_mib': '1', 'no_print': 'None', 'version_check': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'target_path': 'None', 'static_parser': 'True', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'None', 'cache_selected_only': 'False', 'fail_fast': 'False', 'debug': 'False', 'log_format': 'default', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'indirect_selection': 'eager', 'hints_enabled': 'True', 'use_colors': 'True', 'use_experimental_parser': 'False', 'invocation_command': 'dbt debug', 'log_path': 'logs'}
+[0m10:52:58.326325 [info ] [MainThread]: dbt version: 1.12.2
+[0m10:52:58.326945 [info ] [MainThread]: python version: 3.13.1
+[0m10:52:58.327523 [info ] [MainThread]: python path: C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\.venv\Scripts\python.exe
+[0m10:52:58.327889 [info ] [MainThread]: os info: Windows-11-10.0.26200-SP0
+[0m10:53:01.554714 [info ] [MainThread]: Error importing adapter: No module named 'dbt.adapters.sqlserver'
+[0m10:53:01.557066 [info ] [MainThread]: Using profiles dir at C:\Users\hally\.dbt
+[0m10:53:01.557546 [info ] [MainThread]: Using profiles.yml file at C:\Users\hally\.dbt\profiles.yml
+[0m10:53:01.558000 [info ] [MainThread]: Using dbt_project.yml file at C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml
+[0m10:53:01.558477 [info ] [MainThread]: Configuration:
+[0m10:53:01.558890 [info ] [MainThread]:   profiles.yml file [[31mERROR invalid[0m]
+[0m10:53:01.559402 [info ] [MainThread]:   dbt_project.yml file [[31mERROR not found[0m]
+[0m10:53:01.559818 [info ] [MainThread]: Required dependencies:
+[0m10:53:01.560203 [debug] [MainThread]: Executing "git --help"
+[0m10:53:01.601290 [debug] [MainThread]: STDOUT: "b"usage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]\n           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]\n           [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--bare]\n           [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]\n           [--config-env=<name>=<envvar>] <command> [<args>]\n\nThese are common Git commands used in various situations:\n\nstart a working area (see also: git help tutorial)\n   clone     Clone a repository into a new directory\n   init      Create an empty Git repository or reinitialize an existing one\n\nwork on the current change (see also: git help everyday)\n   add       Add file contents to the index\n   mv        Move or rename a file, a directory, or a symlink\n   restore   Restore working tree files\n   rm        Remove files from the working tree and from the index\n\nexamine the history and state (see also: git help revisions)\n   bisect    Use binary search to find the commit that introduced a bug\n   diff      Show changes between commits, commit and working tree, etc\n   grep      Print lines matching a pattern\n   log       Show commit logs\n   show      Show various types of objects\n   status    Show the working tree status\n\ngrow, mark and tweak your common history\n   branch    List, create, or delete branches\n   commit    Record changes to the repository\n   merge     Join two or more development histories together\n   rebase    Reapply commits on top of another base tip\n   reset     Reset current HEAD to the specified state\n   switch    Switch branches\n   tag       Create, list, delete or verify a tag object signed with GPG\n\ncollaborate (see also: git help workflows)\n   fetch     Download objects and refs from another repository\n   pull      Fetch from and integrate with another repository or a local branch\n   push      Update remote refs along with associated objects\n\n'git help -a' and 'git help -g' list available subcommands and some\nconcept guides. See 'git help <command>' or 'git help <concept>'\nto read about a specific subcommand or concept.\nSee 'git help git' for an overview of the system.\n""
+[0m10:53:01.601715 [debug] [MainThread]: STDERR: "b''"
+[0m10:53:01.602114 [info ] [MainThread]:  - git [[32mOK found[0m]
+
+[0m10:53:01.602576 [info ] [MainThread]: Connection test skipped since no profile was found
+[0m10:53:01.603068 [info ] [MainThread]: [31m2 checks failed:[0m
+[0m10:53:01.603420 [info ] [MainThread]: Could not load dbt_project.yml
+Profile loading failed for the following reason:
+Runtime Error
+  Credentials in profile "protheus", target "dev" invalid: Runtime Error
+    Could not find adapter type sqlserver!
+
+
+[0m10:53:01.603758 [info ] [MainThread]: Project loading failed for the following reason:
+ project path <C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml> not found
+
+[0m10:53:01.604614 [debug] [MainThread]: Command `dbt debug` failed at 10:53:01.604497 after 3.45 seconds
+[0m10:53:01.604957 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024F39712B10>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024F397032F0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024F3968FBD0>]}
+[0m10:53:01.605427 [debug] [MainThread]: Flushing usage events
+[0m10:53:02.642161 [debug] [MainThread]: An error was encountered while trying to flush usage events

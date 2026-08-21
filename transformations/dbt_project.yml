@@ -1,0 +1,30 @@
+name: 'transformations'
+version: '1.0.0'
+config-version: 2
+
+profile: 'transformations'
+
+seed-paths: ["seeds"]
+model-paths: ["models"]
+macro-paths: ["macros"]
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+seeds:
+  # Builds seeds into '<your_schema_name>_raw'
+  transformations:
+    +schema: raw
+
+models:
+  transformations:
+
+    # This block forces dbt to push descriptions to BigQuery
+    +persist_docs:
+      relation: true
+      columns: true
+
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

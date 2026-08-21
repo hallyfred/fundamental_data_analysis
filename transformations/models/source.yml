@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: camada_bronze
+    database: projetodbt-479518 
+    schema: alphavantage        
+    tables:
+      - name: ext_overview
+        description: "Tabela externa apontando para os JSONs da Alpha Vantage no GCP"
+        external:
+          # O TRUQUE ESTÁ NESTE BLOCO OPTIONS:
+          options:
+            format: CSV
+            field_delimiter: "\x01"  # Um caractere invisível que nunca vai existir no JSON
+            quote: ""                # Desliga o entendimento de aspas para não quebrar o JSON
+            uris: 
+              - 'gs://hallyson-bronze/financial/overview/*'
+            hive_partition_uri_prefix: 'gs://hallyson-bronze/financial/overview'
+        
+        columns:
+          - name: raw_data
+            data_type: STRING

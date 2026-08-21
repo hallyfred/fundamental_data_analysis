@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: stg_overview
+    description: "Silver layer model containing fundamental data, financial metrics, and corporate profiles for listed companies. Sourced from Alpha Vantage (OVERVIEW endpoint)."
+    columns:
+      - name: symbol
+        data_type: string
+        description: "Stock ticker symbol identifying the company on the exchange (e.g., AAPL, IBM)."
+
+      - name: assettype
+        data_type: string
+        description: "Classification of the financial asset (e.g., Common Stock, ETF)."
+
+      - name: name
+        data_type: string
+        description: "Official legal name or corporate identity of the company."
+
+      - name: description
+        data_type: string
+        description: "Detailed overview of the company's business model, operations, and history."
+
+      - name: exchange
+        data_type: string
+        description: "Primary stock exchange where the asset is listed and traded (e.g., NYSE, NASDAQ)."
+
+      - name: currency
+        data_type: string
+        description: "Base currency used for trading and financial reporting (e.g., USD)."
+
+      - name: country
+        data_type: string
+        description: "Country of incorporation or primary headquarters location."
+
+      - name: sector
+        data_type: string
+        description: "Broad economic sector the company operates within (e.g., TECHNOLOGY)."
+
+      - name: industry
+        data_type: string
+        description: "Specific industry classification or niche market within the broader sector."
+
+      - name: marketcapitalization
+        data_type: string
+        description: "Total market value of a company's outstanding shares of stock."
+
+      - name: ebitda
+        data_type: string
+        description: "Earnings Before Interest, Taxes, Depreciation, and Amortization; a measure of core operational profitability."
+
+      - name: peratio
+        data_type: string
+        description: "Price-to-Earnings ratio, comparing the company's current share price to its per-share earnings."
+
+      - name: dividendyield
+        data_type: string
+        description: "Financial ratio indicating how much a company pays out in dividends each year relative to its stock price."
+
+      - name: eps
+        data_type: string
+        description: "Earnings Per Share; the portion of a company's profit allocated to each outstanding share of common stock."
+
+      - name: _52weekhigh
+        data_type: string
+        description: "Highest price at which the stock has traded during the previous 52 weeks."
+
+      - name: _52weeklow
+        data_type: string
+        description: "Lowest price at which the stock has traded during the previous 52 weeks."
+
+      - name: _50daymovingaverage
+        data_type: string
+        description: "Average closing price of the stock over the most recent 50 trading days."
+
+      - name: _200daymovingaverage
+        data_type: string
+        description: "Average closing price of the stock over the most recent 200 trading days."
+
+      - name: sharesoutstanding
+        data_type: string
+        description: "Total number of a company's shares currently held by all its shareholders."
+
+      - name: partition_year
+        data_type: int64
+        description: "Physical Hive partition column representing the year of data ingestion."
+
+      - name: partition_month
+        data_type: int64
+        description: "Physical Hive partition column representing the month of data ingestion."
+
+      - name: partition_day
+        data_type: int64
+        description: "Physical Hive partition column representing the day of data ingestion."
