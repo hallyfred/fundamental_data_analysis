@@ -46,7 +46,7 @@ def extract_earning():
             validated_data = EarningSchema.model_validate(files)
             print(f"Validation successful for {symbol}.")
 
-            files = validated_data.model_dump(by_alias=True, exclude_unset=True)
+            files = validated_data.model_dump(mode='json', by_alias=True, exclude_unset=True)
 
             # If files is a list of dicts
             if isinstance(files, list):

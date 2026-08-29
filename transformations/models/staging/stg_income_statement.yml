@@ -1,0 +1,99 @@
+version: 2
+
+models:
+  - name: stg_income_statement
+    description: "Flattened income statement reports from the Alpha Vantage INCOME_STATEMENT endpoint."
+    columns:
+      - name: symbol
+        data_type: string
+        description: "Stock ticker symbol identifying the company."
+      - name: report_type
+        data_type: string
+        description: "Report frequency, either annual or quarterly."
+      - name: fiscaldateending
+        data_type: date
+        description: "Fiscal period ending date."
+      - name: reportedcurrency
+        data_type: string
+        description: "Currency used in the reported financial statements."
+      - name: grossprofit
+        data_type: int64
+        description: "Gross profit."
+      - name: totalrevenue
+        data_type: int64
+        description: "Total revenue."
+      - name: costofrevenue
+        data_type: int64
+        description: "Cost of revenue."
+      - name: costofgoodsandservicessold
+        data_type: int64
+        description: "Cost of goods and services sold."
+      - name: operatingincome
+        data_type: int64
+        description: "Operating income."
+      - name: sellinggeneralandadministrative
+        data_type: int64
+        description: "Selling, general, and administrative expenses."
+      - name: researchanddevelopment
+        data_type: int64
+        description: "Research and development expenses."
+      - name: operatingexpenses
+        data_type: int64
+        description: "Total operating expenses."
+      - name: investmentincomenet
+        data_type: int64
+        description: "Net investment income."
+      - name: netinterestincome
+        data_type: int64
+        description: "Net interest income."
+      - name: interestincome
+        data_type: int64
+        description: "Interest income."
+      - name: interestexpense
+        data_type: int64
+        description: "Interest expense."
+      - name: noninterestincome
+        data_type: int64
+        description: "Non-interest income."
+      - name: othernonoperatingincome
+        data_type: int64
+        description: "Other non-operating income."
+      - name: depreciation
+        data_type: int64
+        description: "Depreciation expense."
+      - name: depreciationandamortization
+        data_type: int64
+        description: "Depreciation and amortization expense."
+      - name: incomebeforetax
+        data_type: int64
+        description: "Income before tax."
+      - name: incometaxexpense
+        data_type: int64
+        description: "Income tax expense."
+      - name: interestanddebtexpense
+        data_type: int64
+        description: "Interest and debt expense."
+      - name: netincomefromcontinuingoperations
+        data_type: int64
+        description: "Net income from continuing operations."
+      - name: comprehensiveincomenetoftax
+        data_type: int64
+        description: "Comprehensive income net of tax."
+      - name: ebit
+        data_type: int64
+        description: "Earnings before interest and taxes."
+      - name: ebitda
+        data_type: int64
+        description: "Earnings before interest, taxes, depreciation, and amortization."
+      - name: netincome
+        data_type: int64
+        description: "Net income."
+      - name: partition_year
+        data_type: int64
+        description: "Year of data ingestion from the Hive partition."
+      - name: partition_month
+        data_type: int64
+        description: "Month of data ingestion from the Hive partition."
+      - name: partition_day
+        data_type: int64
+        description: "Day of data ingestion from the Hive partition."

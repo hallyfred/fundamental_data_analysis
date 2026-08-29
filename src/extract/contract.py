@@ -1,15 +1,22 @@
 from pydantic import BaseModel, Field, ConfigDict
+from datetime import date
 from typing import Optional, Union, Literal, List
 
-# Nossos Tipos Customizados para converter as "strings numéricas" da API
+# A Alpha Vantage envia valores financeiros como strings e usa estes valores
+# sentinela quando uma informação não está disponível.
 AlphaInt = Union[int, Literal["None", "-", "", "N/A"]]
 AlphaFloat = Union[float, Literal["None", "-", "", "N/A"]]
+
+
+# Todos os contratos usam `extra='forbid'` para que uma nova coluna da API
+# gere erro de validação, em vez de ser descartada silenciosamente.
+STRICT_MODEL_CONFIG = ConfigDict(extra='forbid', populate_by_name=True)
 
 # ==========================================
 # 1. CONTRATO DO OVERVIEW
 # ==========================================
 class OverviewSchema(BaseModel):
-    model_config = ConfigDict(extra='ignore', populate_by_name=True)
+    model_config = STRICT_MODEL_CONFIG
 
     # 1. Informações Cadastrais
     Symbol: str
@@ -79,11 +86,11 @@ class OverviewSchema(BaseModel):
 # 2. BALANCE SHEET
 # ==========================================
 
-# A) Estrutura base de uma linha (Relatório)
-class BalanceSheetSchema(BaseModel):
-    model_config = ConfigDict(extra='ignore', populate_by_name=True)
+# A) Uma linha representa um relatório anual ou trimestral.
+class BalanceSheetReport(BaseModel):
+    model_config = STRICT_MODEL_CONFIG
     
-    fiscalDateEnding: str
+    fiscalDateEnding: date
     reportedCurrency: str
     
     # Valores Contábeis (Convertidos para Int)
@@ -124,23 +131,23 @@ class BalanceSheetSchema(BaseModel):
     commonStock: Optional[AlphaInt] = None
     commonStockSharesOutstanding: Optional[AlphaInt] = None
 
-# B) Estrutura principal que agrupa as listas
+# B) O envelope representa a resposta completa de um ticker.
 class BalanceSheetSchema(BaseModel):
-    model_config = ConfigDict(extra='ignore', populate_by_name=True)
+    model_config = STRICT_MODEL_CONFIG
     
     symbol: str
-    annualReports: List[BalanceSheetSchema]
-    quarterlyReports: List[BalanceSheetSchema]
+    annualReports: List[BalanceSheetReport]
+    quarterlyReports: List[BalanceSheetReport]
 
 # ==========================================
 # 3. CASH FLOW
 # ==========================================
 
-# A) Estrutura base de uma linha (Relatório)
-class CashFlowSchema(BaseModel):
-    model_config = ConfigDict(extra='ignore', populate_by_name=True)
+# A) Uma linha representa um relatório anual ou trimestral.
+class CashFlowReport(BaseModel):
+    model_config = STRICT_MODEL_CONFIG
     
-    fiscalDateEnding: str
+    fiscalDateEnding: date
     reportedCurrency: str
     
     # Valores de Fluxo de Caixa (Convertidos para Int via AlphaInt)
@@ -173,24 +180,24 @@ class CashFlowSchema(BaseModel):
     changeInExchangeRate: Optional[AlphaInt] = None # Ocasionalmente pode ser float, mas a Alpha Vantage costuma arredondar ou enviar vazio. Se quebrar, mudamos para AlphaFloat.
     netIncome: Optional[AlphaInt] = None
 
-# B) Estrutura principal que agrupa as listas
+# B) O envelope representa a resposta completa de um ticker.
 class CashFlowSchema(BaseModel):
-    model_config = ConfigDict(extra='ignore', populate_by_name=True)
+    model_config = STRICT_MODEL_CONFIG
     
     symbol: str
-    annualReports: List[CashFlowSchema]
-    quarterlyReports: List[CashFlowSchema]
+    annualReports: List[CashFlowReport]
+    quarterlyReports: List[CashFlowReport]
 
 
 # ==========================================
 # 4. INCOME STATEMENT
 # ==========================================
 
-# A) Estrutura base de uma linha (Relatório)
-class IncomeStatementSchema(BaseModel):
-    model_config = ConfigDict(extra='ignore', populate_by_name=True)
+# A) Uma linha representa um relatório anual ou trimestral.
+class IncomeStatementReport(BaseModel):
+    model_config = STRICT_MODEL_CONFIG
     
-    fiscalDateEnding: str
+    fiscalDateEnding: date
     reportedCurrency: str
     
     # Valores da DRE (Convertidos para Int via AlphaInt)
@@ -219,13 +226,13 @@ class IncomeStatementSchema(BaseModel):
     ebitda: Optional[AlphaInt] = None
     netIncome: Optional[AlphaInt] = None
 
-# B) Estrutura principal que agrupa as listas
+# B) O envelope representa a resposta completa de um ticker.
 class IncomeStatementSchema(BaseModel):
-    model_config = ConfigDict(extra='ignore', populate_by_name=True)
+    model_config = STRICT_MODEL_CONFIG
     
     symbol: str
-    annualReports: List[IncomeStatementSchema]
-    quarterlyReports: List[IncomeStatementSchema]
+    annualReports: List[IncomeStatementReport]
+    quarterlyReports: List[IncomeStatementReport]
 
 # ==========================================
 # 5. EARNINGS (Lucro por Ação)
@@ -233,17 +240,17 @@ class IncomeStatementSchema(BaseModel):
 
 # A) Estrutura do relatório Anual
 class AnnualEarningsReport(BaseModel):
-    model_config = ConfigDict(extra='ignore', populate_by_name=True)
+    model_config = STRICT_MODEL_CONFIG
     
-    fiscalDateEnding: str
+    fiscalDateEnding: date
     reportedEPS: Optional[AlphaFloat] = None
 
 # B) Estrutura do relatório Trimestral (Traz dados de expectativa do mercado)
 class QuarterlyEarningsReport(BaseModel):
-    model_config = ConfigDict(extra='ignore', populate_by_name=True)
+    model_config = STRICT_MODEL_CONFIG
     
-    fiscalDateEnding: str
-    reportedDate: Optional[str] = None
+    fiscalDateEnding: date
+    reportedDate: Optional[date] = None
     reportedEPS: Optional[AlphaFloat] = None
     estimatedEPS: Optional[AlphaFloat] = None
     surprise: Optional[AlphaFloat] = None
@@ -252,7 +259,7 @@ class QuarterlyEarningsReport(BaseModel):
 
 # C) Estrutura principal que agrupa as listas
 class EarningSchema(BaseModel):
-    model_config = ConfigDict(extra='ignore', populate_by_name=True)
+    model_config = STRICT_MODEL_CONFIG
     
     symbol: str
     annualEarnings: List[AnnualEarningsReport]

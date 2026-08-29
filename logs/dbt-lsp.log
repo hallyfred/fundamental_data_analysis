@@ -1,0 +1,399 @@
+==================== 2026-08-25T18:50:48.597794Z | 00000000-0000-0000-0000-000000000000 ====================
+==================== 2026-08-25T18:50:48.598189Z | b95c9e64-123d-43a9-990f-cefb22384e97 ====================
+18:50:48.598229 [info ]: Starting dbt LSP server
+18:50:48.598248 [info ]: Connecting to LSP client on port 8000
+18:50:48.601518 [info ]: Successfully connected to LSP client
+18:50:48.601564 [info ]: Creating LSP service...
+18:50:48.604406 [info ]: Creating LSP server...
+18:50:48.604440 [info ]: Starting LSP server...
+18:50:48.675378 [info ]: Loading ~/.dbt/profiles.yml
+==================== 2026-08-25T18:50:48.747150Z | 54bda5dd-a33d-45ef-9c8a-0dd00fa7c2dc ====================
+18:50:48.747308 [info ]: Started loading project
+18:50:48.748814 [info ]: Loading ~/.dbt/profiles.yml
+18:50:48.765546 [debug]:    Started loading packages
+18:50:48.768484 [debug]:     Loaded [  0.00s] packages
+18:50:48.770518 [info ]: Finished loading project [  0.02s]
+18:50:48.771163 [info ]: Started parsing
+18:50:49.288724 [warn ]: [UnusedResourceConfigPath (dbt1097)]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 4 unused configuration paths:
+- models.transformations
+- models.transformations.marts
+- models.transformations.staging
+- seeds.transformations
+18:50:49.292749 [info ]: Finished parsing [  0.52s]
+18:50:49.292932 [info ]: Cached model count updated: 0 models (estimate)
+18:50:49.292957 [info ]: Cached model count updated: 0 models (accurate)
+18:50:49.292986 [info ]: Started scheduling
+18:50:49.293036 [info ]: Finished scheduling [  0.00s]
+18:50:49.293057 [debug]: Compilation - 0 nodes selected: {}
+18:50:49.293086 [warn ]: [NoNodesForSelectionCriteria (dbt1092)]: The selection criterion '' does not match any enabled nodes
+18:50:49.293109 [warn ]: [NoNodesSelected (dbt1601)]: Nothing to do. Try checking your model configs and model specification args
+18:50:49.293124 [info ]: Started scheduling
+18:50:49.293144 [info ]: Finished scheduling [  0.00s]
+18:50:49.295950 [info ]: Started building task graph
+18:50:49.296001 [info ]: Finished building task graph [  0.00s]
+18:50:49.842040 [info ]: Started scheduling
+18:50:49.842105 [info ]: Finished scheduling [  0.00s]
+18:50:49.842354 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' with 3 warnings for target 'dev' [1.1s]
+18:50:49.842486 [info ]: Cached model count updated: 0 models (accurate)
+==================== 2026-08-25T18:50:51.408168Z | a40c0460-befa-4612-b44e-e76046cf89cf ====================
+18:50:51.408287 [info ]: Started loading project
+18:50:51.409083 [info ]: Loading ~/.dbt/profiles.yml
+18:50:51.442497 [info ]: Cached model count updated: 0 models (estimate)
+18:50:51.442532 [info ]: Cached model count updated: 0 models (accurate)
+18:50:51.442550 [info ]: Started scheduling
+18:50:51.442578 [info ]: Finished scheduling [  0.00s]
+18:50:51.442592 [debug]: Compilation - 0 nodes selected: {}
+18:50:51.442611 [warn ]: [NoNodesSelected (dbt1601)]: Nothing to do. Try checking your model configs and model specification args
+18:50:51.444270 [info ]: Started building task graph
+18:50:51.444303 [info ]: Finished building task graph [  0.00s]
+18:50:51.851260 [info ]: Started scheduling
+18:50:51.851338 [info ]: Finished scheduling [  0.00s]
+18:50:51.851561 [info ]: Cached model count updated: 0 models (accurate)
+18:50:51.851571 [info ]: Finished loading project [  0.44s]
+18:50:51.851599 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' with 1 warning for target 'dev' [443ms]
+==================== 2026-08-25T19:02:21.107099Z | 2d51d799-5cde-46a7-8a07-3c0ad4157986 ====================
+19:02:21.107316 [info ]: Started loading project
+19:02:21.108452 [info ]: Loading ~/.dbt/profiles.yml
+==================== 2026-08-25T19:02:21.121285Z | 67aca10f-d6e7-4213-8af8-a01d80283b41 ====================
+19:02:21.121449 [info ]: Started loading project
+19:02:21.122378 [info ]: Loading ~/.dbt/profiles.yml
+19:02:21.122622 [info ]: Finished loading project [  0.02s]
+19:02:21.135451 [debug]:    Started loading packages
+19:02:21.138935 [debug]:     Loaded [  0.00s] packages
+19:02:21.140856 [info ]: Finished loading project [  0.02s]
+19:02:21.141324 [info ]: Started parsing
+19:02:21.475481 [warn ]: [UnusedResourceConfigPath (dbt1097)]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 4 unused configuration paths:
+- models.transformations
+- models.transformations.marts
+- models.transformations.staging
+- seeds.transformations
+19:02:21.477836 [info ]: Finished parsing [  0.34s]
+19:02:21.478105 [info ]: Cached model count updated: 0 models (estimate)
+19:02:21.478129 [info ]: Cached model count updated: 0 models (accurate)
+19:02:21.478150 [info ]: Started scheduling
+19:02:21.478199 [info ]: Finished scheduling [  0.00s]
+19:02:21.478219 [debug]: Compilation - 0 nodes selected: {}
+19:02:21.478246 [warn ]: [NoNodesForSelectionCriteria (dbt1092)]: The selection criterion '' does not match any enabled nodes
+19:02:21.478270 [warn ]: [NoNodesSelected (dbt1601)]: Nothing to do. Try checking your model configs and model specification args
+19:02:21.478285 [info ]: Started scheduling
+19:02:21.478308 [info ]: Finished scheduling [  0.00s]
+19:02:21.481344 [info ]: Started building task graph
+19:02:21.481407 [info ]: Finished building task graph [  0.00s]
+19:02:21.959225 [info ]: Started scheduling
+19:02:21.959334 [info ]: Finished scheduling [  0.00s]
+19:02:21.959746 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' with 3 warnings for target 'dev' [838ms]
+19:02:21.959958 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' successfully for target 'dev' [852ms]
+19:02:21.964848 [info ]: Cached model count updated: 0 models (accurate)
+==================== 2026-08-25T19:02:23.536042Z | c3a9eb66-5222-4bcc-b225-059ac2399413 ====================
+19:02:23.536232 [info ]: Started loading project
+19:02:23.537381 [info ]: Loading ~/.dbt/profiles.yml
+19:02:23.598557 [info ]: Cached model count updated: 0 models (estimate)
+19:02:23.598597 [info ]: Cached model count updated: 0 models (accurate)
+19:02:23.598625 [info ]: Started scheduling
+19:02:23.598668 [info ]: Finished scheduling [  0.00s]
+19:02:23.598694 [debug]: Compilation - 0 nodes selected: {}
+19:02:23.598720 [warn ]: [NoNodesSelected (dbt1601)]: Nothing to do. Try checking your model configs and model specification args
+19:02:23.602143 [info ]: Started building task graph
+19:02:23.602193 [info ]: Finished building task graph [  0.00s]
+19:02:24.072387 [info ]: Started scheduling
+19:02:24.072487 [info ]: Finished scheduling [  0.00s]
+19:02:24.072865 [info ]: Cached model count updated: 0 models (accurate)
+19:02:24.072879 [info ]: Finished loading project [  0.54s]
+19:02:24.072907 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' with 1 warning for target 'dev' [536ms]
+19:02:47.634192 [info ]: Loading ~/.dbt/profiles.yml
+==================== 2026-08-25T20:58:55.043413Z | 9732487b-5b29-4286-a8b1-58e3c18881b6 ====================
+20:58:55.043705 [info ]: Started loading project
+20:58:55.045022 [info ]: Loading ~/.dbt/profiles.yml
+==================== 2026-08-25T20:58:55.065001Z | b0bd5bc5-486b-4da6-9776-818e26497b03 ====================
+20:58:55.065107 [info ]: Started loading project
+20:58:55.066395 [info ]: Loading ~/.dbt/profiles.yml
+20:58:55.066546 [info ]: Finished loading project [  0.02s]
+20:58:55.080706 [debug]:    Started loading packages
+20:58:55.088385 [debug]:     Loaded [  0.01s] packages
+20:58:55.089834 [info ]: Finished loading project [  0.02s]
+20:58:55.090326 [info ]: Started parsing
+20:58:55.190295 [debug]: Finished parsing transformations/models/source.yml [  0.00s]
+20:58:55.191704 [debug]: Finished parsing transformations/models/staging/stg_balance_sheet.yml [  0.00s]
+20:58:55.193312 [debug]: Finished parsing transformations/models/staging/stg_cash_flow.yml [  0.00s]
+20:58:55.194543 [debug]: Finished parsing transformations/models/staging/stg_earning.yml [  0.00s]
+20:58:55.195697 [debug]: Finished parsing transformations/models/staging/stg_income_statement.yml [  0.00s]
+20:58:55.197854 [debug]: Finished parsing transformations/models/staging/stg_overview.yml [  0.00s]
+20:58:55.227544 [debug]: Finished parsing transformations/models/staging/stg_balance_sheet.sql [  0.01s]
+20:58:55.230773 [debug]: Finished parsing transformations/models/staging/stg_cash_flow.sql [  0.00s]
+20:58:55.234084 [debug]: Finished parsing transformations/models/staging/stg_earning.sql [  0.00s]
+20:58:55.237676 [debug]: Finished parsing transformations/models/staging/stg_income_statement.sql [  0.00s]
+20:58:55.241487 [debug]: Finished parsing transformations/models/staging/stg_overview.sql [  0.01s]
+20:58:55.518325 [warn ]: [UnusedResourceConfigPath (dbt1097)]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 1 unused configuration paths:
+- models.transformations.marts
+20:58:55.520957 [info ]: Finished parsing [  0.43s]
+20:58:55.522436 [info ]: Cached model count updated: 5 models (estimate)
+20:58:55.522476 [info ]: Cached model count updated: 5 models (accurate)
+20:58:55.522543 [info ]: Started scheduling
+20:58:55.522636 [info ]: Finished scheduling [  0.00s]
+20:58:55.522665 [debug]: Compilation - 0 nodes selected: {}
+20:58:55.522701 [warn ]: [NoNodesForSelectionCriteria (dbt1092)]: The selection criterion '' does not match any enabled nodes
+20:58:55.522726 [warn ]: [NoNodesSelected (dbt1601)]: Nothing to do. Try checking your model configs and model specification args
+20:58:55.522743 [info ]: Started scheduling
+20:58:55.522927 [info ]: Finished scheduling [  0.00s]
+20:58:55.523212 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_balance_sheet" }) and interval: None
+20:58:55.523235 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_overview" }) and interval: None
+20:58:55.523242 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_earning" }) and interval: None
+20:58:55.523249 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_cash_flow" }) and interval: None
+20:58:55.523256 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_income_statement" }) and interval: None
+20:58:55.527611 [info ]: Started building task graph
+20:58:55.527706 [info ]: Finished building task graph [  0.00s]
+20:58:56.078891 [info ]: Started scheduling
+20:58:56.078984 [info ]: Finished scheduling [  0.00s]
+20:58:56.079733 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' with 3 warnings for target 'dev' [1.0s]
+20:58:56.079890 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' successfully for target 'dev' [1.0s]
+20:58:56.079998 [info ]: Cached model count updated: 5 models (accurate)
+==================== 2026-08-25T20:58:57.649895Z | af44bbcd-8c03-4e24-bb91-fc45bbb4e27c ====================
+20:58:57.649998 [info ]: Started loading project
+20:58:57.650845 [info ]: Loading ~/.dbt/profiles.yml
+20:58:57.710602 [info ]: Cached model count updated: 5 models (estimate)
+20:58:57.710683 [info ]: Cached model count updated: 5 models (accurate)
+20:58:57.710745 [info ]: Started scheduling
+20:58:57.710918 [info ]: Finished scheduling [  0.00s]
+20:58:57.710947 [debug]: Compilation - 11 nodes selected: {"model.transformations.stg_balance_sheet", "model.transformations.stg_cash_flow", "model.transformations.stg_earning", "model.transformations.stg_income_statement", "model.transformations.stg_overview", "seed.transformations.raw_customers", "seed.transformations.raw_items", "seed.transformations.raw_orders", "seed.transformations.raw_products", "seed.transformations.raw_stores", "seed.transformations.raw_supplies"}
+20:58:57.716056 [info ]: Started building task graph
+20:58:57.716242 [info ]: Finished building task graph [  0.00s]
+20:58:57.716538 [info ]: Finished loading project [  0.07s]
+20:58:58.083785 [info ]: Loading ~/.dbt/profiles.yml
+20:58:58.221069 [info ]: Started rendering (11 nodes)
+20:58:58.221134 [info ]: Started seed alphavantage_raw.raw_supplies
+20:58:58.221159 [debug]: Started rendering seed alphavantage_raw.raw_supplies
+20:58:58.221207 [info ]: Started seed alphavantage_raw.raw_stores
+20:58:58.221224 [debug]: Started rendering seed alphavantage_raw.raw_stores
+20:58:58.221255 [info ]: Started seed alphavantage_raw.raw_products
+20:58:58.221275 [debug]: Started rendering seed alphavantage_raw.raw_products
+20:58:58.221383 [info ]: Started seed alphavantage_raw.raw_orders
+20:58:58.221403 [debug]: Started rendering seed alphavantage_raw.raw_orders
+20:58:58.221446 [info ]: Started seed alphavantage_raw.raw_items
+20:58:58.221464 [debug]: Started rendering seed alphavantage_raw.raw_items
+20:58:58.221531 [info ]: Started seed alphavantage_raw.raw_customers
+20:58:58.221563 [debug]: Started rendering seed alphavantage_raw.raw_customers
+20:58:58.221647 [info ]: Started model alphavantage.stg_overview
+20:58:58.221675 [debug]: Started rendering model alphavantage.stg_overview
+20:58:58.224018 [info ]: Started model alphavantage.stg_income_statement
+20:58:58.224084 [debug]: Started rendering model alphavantage.stg_income_statement
+20:58:58.224938 [info ]: Started model alphavantage.stg_earning
+20:58:58.224979 [debug]: Started rendering model alphavantage.stg_earning
+20:58:58.226729 [info ]: Started model alphavantage.stg_cash_flow
+20:58:58.227358 [debug]: Started rendering model alphavantage.stg_cash_flow
+20:58:58.228681 [info ]: Started model alphavantage.stg_balance_sheet
+20:58:58.228725 [debug]: Started rendering model alphavantage.stg_balance_sheet
+20:58:58.229300 [debug]: Finished rendering [  0.01s] seed alphavantage_raw.raw_supplies [success]
+20:58:58.230036 [info ]:  Succeeded [  0.01s] seed  alphavantage_raw.raw_supplies (table)
+20:58:58.230486 [debug]: Finished rendering [  0.01s] seed alphavantage_raw.raw_stores [success]
+20:58:58.230533 [info ]:  Succeeded [  0.01s] seed  alphavantage_raw.raw_stores (table)
+20:58:58.230607 [debug]: Finished rendering [  0.01s] seed alphavantage_raw.raw_products [success]
+20:58:58.230677 [info ]:  Succeeded [  0.01s] seed  alphavantage_raw.raw_products (table)
+20:58:58.230740 [debug]: Finished rendering [  0.01s] seed alphavantage_raw.raw_orders [success]
+20:58:58.230763 [info ]:  Succeeded [  0.01s] seed  alphavantage_raw.raw_orders (table)
+20:58:58.230799 [debug]: Finished rendering [  0.01s] seed alphavantage_raw.raw_items [success]
+20:58:58.230818 [info ]:  Succeeded [  0.01s] seed  alphavantage_raw.raw_items (table)
+20:58:58.230903 [debug]: Finished rendering [  0.01s] seed alphavantage_raw.raw_customers [success]
+20:58:58.231032 [info ]:  Succeeded [  0.01s] seed  alphavantage_raw.raw_customers (table)
+20:58:58.234949 [debug]: Compiled SQL for node model.transformations.stg_cash_flow at target\.lsp\compiled\transformations\transformations\models\staging\stg_cash_flow.sql
+20:58:58.235257 [debug]: Finished rendering [  0.01s] model alphavantage.stg_cash_flow [success]
+20:58:58.235276 [debug]: Compiled SQL for node model.transformations.stg_overview at target\.lsp\compiled\transformations\transformations\models\staging\stg_overview.sql
+20:58:58.235313 [info ]: Started analyzing (5 nodes)
+20:58:58.235328 [debug]: Started analyzing model alphavantage.stg_cash_flow
+20:58:58.236116 [debug]: Compiled SQL for node model.transformations.stg_income_statement at target\.lsp\compiled\transformations\transformations\models\staging\stg_income_statement.sql
+20:58:58.236442 [debug]: Finished rendering [  0.01s] model alphavantage.stg_overview [success]
+20:58:58.236488 [debug]: Started analyzing model alphavantage.stg_overview
+20:58:58.236637 [debug]: Compiled SQL for node model.transformations.stg_earning at target\.lsp\compiled\transformations\transformations\models\staging\stg_earning.sql
+20:58:58.236755 [debug]: Compiled SQL for node model.transformations.stg_balance_sheet at target\.lsp\compiled\transformations\transformations\models\staging\stg_balance_sheet.sql
+20:58:58.236892 [debug]: Finished rendering [  0.01s] model alphavantage.stg_income_statement [success]
+20:58:58.236929 [debug]: Started analyzing model alphavantage.stg_income_statement
+20:58:58.237005 [debug]: Finished rendering [  0.01s] model alphavantage.stg_earning [success]
+20:58:58.237031 [debug]: Started analyzing model alphavantage.stg_earning
+20:58:58.237056 [debug]: Finished rendering [  0.01s] model alphavantage.stg_balance_sheet [success]
+20:58:58.237071 [info ]: Finished rendering [  0.02s] (11 nodes, 0 skipped, 0 errors)
+20:58:58.237088 [debug]: Started analyzing model alphavantage.stg_balance_sheet
+20:58:58.260492 [debug]: Finished analyzing [  0.02s] model alphavantage.stg_overview [success]
+20:58:58.260543 [info ]:  Succeeded [  0.04s] model alphavantage.stg_overview (view)
+20:58:58.271595 [debug]: Finished analyzing [  0.03s] model alphavantage.stg_income_statement [success]
+20:58:58.271635 [info ]:  Succeeded [  0.05s] model alphavantage.stg_income_statement (view)
+20:58:58.271675 [debug]: Finished analyzing [  0.04s] model alphavantage.stg_cash_flow [success]
+20:58:58.271698 [info ]:  Succeeded [  0.04s] model alphavantage.stg_cash_flow (view)
+20:58:58.271785 [debug]: Finished analyzing [  0.03s] model alphavantage.stg_balance_sheet [success]
+20:58:58.271809 [info ]:  Succeeded [  0.04s] model alphavantage.stg_balance_sheet (view)
+20:58:58.272260 [debug]: Finished analyzing [  0.04s] model alphavantage.stg_earning [success]
+20:58:58.272289 [info ]: Finished analyzing [  0.04s] (5 nodes, 0 skipped, 0 errors)
+20:58:58.272305 [info ]:  Succeeded [  0.05s] model alphavantage.stg_earning (view)
+20:58:58.286284 [info ]: Started scheduling
+20:58:58.286384 [info ]: Finished scheduling [  0.00s]
+20:58:58.286508 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' successfully for target 'dev' [636ms]
+Processed: 5 models | 6 seeds
+Summary: 11 total | 11 success
+20:58:58.286723 [info ]: Cached model count updated: 5 models (accurate)
+==================== 2026-08-25T20:59:29.311758Z | 1903618b-bceb-4135-a0e9-d0f8b771b025 ====================
+20:59:29.312088 [info ]: Started loading project
+20:59:29.313313 [info ]: Loading ~/.dbt/profiles.yml
+==================== 2026-08-25T20:59:29.328709Z | 71b67fcd-6252-410b-954f-d59d7e35385b ====================
+20:59:29.328862 [info ]: Started loading project
+20:59:29.330073 [info ]: Loading ~/.dbt/profiles.yml
+20:59:29.330200 [info ]: Finished loading project [  0.02s]
+20:59:29.341482 [debug]:    Started loading packages
+20:59:29.350099 [debug]:     Loaded [  0.01s] packages
+20:59:29.351580 [info ]: Finished loading project [  0.02s]
+20:59:29.352047 [info ]: Started parsing
+20:59:29.431106 [debug]: Finished parsing transformations/models/source.yml [  0.00s]
+20:59:29.432723 [debug]: Finished parsing transformations/models/staging/stg_balance_sheet.yml [  0.00s]
+20:59:29.434136 [debug]: Finished parsing transformations/models/staging/stg_cash_flow.yml [  0.00s]
+20:59:29.434801 [debug]: Finished parsing transformations/models/staging/stg_earning.yml [  0.00s]
+20:59:29.435831 [debug]: Finished parsing transformations/models/staging/stg_income_statement.yml [  0.00s]
+20:59:29.437573 [debug]: Finished parsing transformations/models/staging/stg_overview.yml [  0.00s]
+20:59:29.458422 [debug]: Finished parsing transformations/models/staging/stg_balance_sheet.sql [  0.00s]
+20:59:29.461523 [debug]: Finished parsing transformations/models/staging/stg_cash_flow.sql [  0.00s]
+20:59:29.464834 [debug]: Finished parsing transformations/models/staging/stg_earning.sql [  0.00s]
+20:59:29.468471 [debug]: Finished parsing transformations/models/staging/stg_income_statement.sql [  0.00s]
+20:59:29.470805 [debug]: Finished parsing transformations/models/staging/stg_overview.sql [  0.00s]
+20:59:29.739949 [warn ]: [UnusedResourceConfigPath (dbt1097)]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 1 unused configuration paths:
+- models.transformations.marts
+20:59:29.742683 [info ]: Finished parsing [  0.39s]
+20:59:29.744490 [info ]: Cached model count updated: 5 models (estimate)
+20:59:29.744533 [info ]: Cached model count updated: 5 models (accurate)
+20:59:29.744599 [info ]: Started scheduling
+20:59:29.744677 [info ]: Finished scheduling [  0.00s]
+20:59:29.744702 [debug]: Compilation - 0 nodes selected: {}
+20:59:29.744732 [warn ]: [NoNodesForSelectionCriteria (dbt1092)]: The selection criterion '' does not match any enabled nodes
+20:59:29.744756 [warn ]: [NoNodesSelected (dbt1601)]: Nothing to do. Try checking your model configs and model specification args
+20:59:29.744774 [info ]: Started scheduling
+20:59:29.744944 [info ]: Finished scheduling [  0.00s]
+20:59:29.746347 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_cash_flow" }) and interval: None
+20:59:29.746389 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_earning" }) and interval: None
+20:59:29.746400 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_income_statement" }) and interval: None
+20:59:29.746408 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_overview" }) and interval: None
+20:59:29.746416 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_balance_sheet" }) and interval: None
+20:59:29.751699 [info ]: Started building task graph
+20:59:29.751752 [info ]: Finished building task graph [  0.00s]
+20:59:30.240871 [info ]: Started scheduling
+20:59:30.240979 [info ]: Finished scheduling [  0.00s]
+20:59:30.241269 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' with 3 warnings for target 'dev' [912ms]
+20:59:30.241433 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' successfully for target 'dev' [929ms]
+20:59:30.247411 [info ]: Cached model count updated: 5 models (accurate)
+==================== 2026-08-25T20:59:31.833719Z | c8600460-c7c8-4e89-808a-b47135b3f4db ====================
+20:59:31.833827 [info ]: Started loading project
+20:59:31.834713 [info ]: Loading ~/.dbt/profiles.yml
+20:59:31.898595 [info ]: Cached model count updated: 5 models (estimate)
+20:59:31.898647 [info ]: Cached model count updated: 5 models (accurate)
+20:59:31.898736 [info ]: Started scheduling
+20:59:31.898970 [info ]: Finished scheduling [  0.00s]
+20:59:31.899006 [debug]: Compilation - 11 nodes selected: {"model.transformations.stg_balance_sheet", "model.transformations.stg_cash_flow", "model.transformations.stg_earning", "model.transformations.stg_income_statement", "model.transformations.stg_overview", "seed.transformations.raw_customers", "seed.transformations.raw_items", "seed.transformations.raw_orders", "seed.transformations.raw_products", "seed.transformations.raw_stores", "seed.transformations.raw_supplies"}
+20:59:31.904527 [info ]: Started building task graph
+20:59:31.904740 [info ]: Finished building task graph [  0.00s]
+20:59:31.905088 [info ]: Finished loading project [  0.07s]
+20:59:32.407146 [info ]: Started rendering (11 nodes)
+20:59:32.407208 [info ]: Started seed alphavantage_raw.raw_supplies
+20:59:32.407229 [debug]: Started rendering seed alphavantage_raw.raw_supplies
+20:59:32.407284 [info ]: Started seed alphavantage_raw.raw_stores
+20:59:32.407307 [debug]: Started rendering seed alphavantage_raw.raw_stores
+20:59:32.407338 [info ]: Started seed alphavantage_raw.raw_products
+20:59:32.407354 [debug]: Started rendering seed alphavantage_raw.raw_products
+20:59:32.407374 [info ]: Started seed alphavantage_raw.raw_orders
+20:59:32.407391 [debug]: Started rendering seed alphavantage_raw.raw_orders
+20:59:32.407411 [info ]: Started seed alphavantage_raw.raw_items
+20:59:32.407430 [debug]: Started rendering seed alphavantage_raw.raw_items
+20:59:32.407452 [info ]: Started seed alphavantage_raw.raw_customers
+20:59:32.407469 [debug]: Started rendering seed alphavantage_raw.raw_customers
+20:59:32.407495 [info ]: Started model alphavantage.stg_overview
+20:59:32.407514 [debug]: Started rendering model alphavantage.stg_overview
+20:59:32.407538 [info ]: Started model alphavantage.stg_income_statement
+20:59:32.407568 [debug]: Started rendering model alphavantage.stg_income_statement
+20:59:32.407593 [info ]: Started model alphavantage.stg_earning
+20:59:32.407616 [debug]: Started rendering model alphavantage.stg_earning
+20:59:32.407638 [info ]: Started model alphavantage.stg_cash_flow
+20:59:32.407660 [debug]: Started rendering model alphavantage.stg_cash_flow
+20:59:32.407681 [info ]: Started model alphavantage.stg_balance_sheet
+20:59:32.407700 [debug]: Started rendering model alphavantage.stg_balance_sheet
+20:59:32.408807 [debug]: Finished rendering [  0.00s] seed alphavantage_raw.raw_supplies [success]
+20:59:32.408855 [info ]:  Succeeded [-------] seed  alphavantage_raw.raw_supplies (table)
+20:59:32.409586 [debug]: Finished rendering [  0.00s] seed alphavantage_raw.raw_customers [success]
+20:59:32.409642 [info ]:  Succeeded [  0.00s] seed  alphavantage_raw.raw_customers (table)
+20:59:32.409695 [debug]: Finished rendering [  0.00s] seed alphavantage_raw.raw_stores [success]
+20:59:32.409712 [info ]:  Succeeded [  0.00s] seed  alphavantage_raw.raw_stores (table)
+20:59:32.409740 [debug]: Finished rendering [  0.00s] seed alphavantage_raw.raw_products [success]
+20:59:32.409756 [info ]:  Succeeded [  0.00s] seed  alphavantage_raw.raw_products (table)
+20:59:32.409782 [debug]: Finished rendering [  0.00s] seed alphavantage_raw.raw_orders [success]
+20:59:32.409795 [info ]:  Succeeded [  0.00s] seed  alphavantage_raw.raw_orders (table)
+20:59:32.411138 [debug]: Finished rendering [  0.00s] seed alphavantage_raw.raw_items [success]
+20:59:32.411961 [debug]: Compiled SQL for node model.transformations.stg_earning at target\.lsp\compiled\transformations\transformations\models\staging\stg_earning.sql
+20:59:32.411976 [debug]: Compiled SQL for node model.transformations.stg_income_statement at target\.lsp\compiled\transformations\transformations\models\staging\stg_income_statement.sql
+20:59:32.411732 [info ]:  Succeeded [  0.00s] seed  alphavantage_raw.raw_items (table)
+20:59:32.412897 [debug]: Finished rendering [  0.01s] model alphavantage.stg_earning [success]
+20:59:32.412967 [info ]: Started analyzing (5 nodes)
+20:59:32.412989 [debug]: Started analyzing model alphavantage.stg_earning
+20:59:32.413946 [debug]: Finished rendering [  0.01s] model alphavantage.stg_income_statement [success]
+20:59:32.414070 [debug]: Started analyzing model alphavantage.stg_income_statement
+20:59:32.414450 [debug]: Finished analyzing [  0.00s] model alphavantage.stg_earning [success]
+20:59:32.414477 [info ]:  Succeeded [  0.01s] model alphavantage.stg_earning (view)
+20:59:32.415954 [debug]: Finished analyzing [  0.00s] model alphavantage.stg_income_statement [success]
+20:59:32.416067 [info ]:  Succeeded [  0.01s] model alphavantage.stg_income_statement (view)
+20:59:32.417866 [debug]: Compiled SQL for node model.transformations.stg_balance_sheet at target\.lsp\compiled\transformations\transformations\models\staging\stg_balance_sheet.sql
+20:59:32.418974 [debug]: Finished rendering [  0.01s] model alphavantage.stg_balance_sheet [success]
+20:59:32.419049 [debug]: Started analyzing model alphavantage.stg_balance_sheet
+20:59:32.420059 [debug]: Compiled SQL for node model.transformations.stg_cash_flow at target\.lsp\compiled\transformations\transformations\models\staging\stg_cash_flow.sql
+20:59:32.420662 [debug]: Finished rendering [  0.01s] model alphavantage.stg_cash_flow [success]
+20:59:32.420717 [debug]: Started analyzing model alphavantage.stg_cash_flow
+20:59:32.421254 [debug]: Finished analyzing [  0.00s] model alphavantage.stg_balance_sheet [success]
+20:59:32.421287 [info ]:  Succeeded [  0.01s] model alphavantage.stg_balance_sheet (view)
+20:59:32.421473 [debug]: Compiled SQL for node model.transformations.stg_overview at target\.lsp\compiled\transformations\transformations\models\staging\stg_overview.sql
+20:59:32.421752 [debug]: Finished rendering [  0.01s] model alphavantage.stg_overview [success]
+20:59:32.421783 [info ]: Finished rendering [  0.01s] (11 nodes, 0 skipped, 0 errors)
+20:59:32.421812 [debug]: Started analyzing model alphavantage.stg_overview
+20:59:32.422380 [debug]: Finished analyzing [  0.00s] model alphavantage.stg_cash_flow [success]
+20:59:32.422416 [info ]:  Succeeded [  0.01s] model alphavantage.stg_cash_flow (view)
+20:59:32.425753 [debug]: Finished analyzing [  0.00s] model alphavantage.stg_overview [success]
+20:59:32.425794 [info ]: Finished analyzing [  0.01s] (5 nodes, 0 skipped, 0 errors)
+20:59:32.425816 [info ]:  Succeeded [  0.02s] model alphavantage.stg_overview (view)
+20:59:32.441068 [info ]: Started scheduling
+20:59:32.441347 [info ]: Finished scheduling [  0.00s]
+20:59:32.441522 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' successfully for target 'dev' [607ms]
+Processed: 5 models | 6 seeds
+Summary: 11 total | 11 success
+20:59:32.441959 [info ]: Cached model count updated: 5 models (accurate)
+20:59:32.854417 [info ]: Loading ~/.dbt/profiles.yml
+==================== 2026-08-25T21:19:27.295657Z | 2951ff96-1765-4c21-a77c-15532acdded4 ====================
+21:19:27.295825 [info ]: Started loading project
+21:19:27.296020 [info ]: Finished loading project [  0.00s]
+21:19:27.296119 [error]: [IoError (dbt1001)]: Cannot open file C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml: Failed to open file: C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml: O sistema não pode encontrar o arquivo especificado. (os error 2): O sistema não pode encontrar o arquivo especificado. (os error 2)
+21:19:27.296215 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' with 1 error [558us]
+21:19:27.296327 [info ]: Cached model count updated: 5 models (accurate)
+==================== 2026-08-25T21:19:29.225960Z | 4af68a8f-c4b1-4c4c-b7d0-725a5e3dec24 ====================
+21:19:29.226043 [info ]: Started loading project
+21:19:29.226137 [info ]: Finished loading project [  0.00s]
+21:19:29.226318 [error]: [IoError (dbt1001)]: Cannot open file C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml: Failed to open file: C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml: O sistema não pode encontrar o arquivo especificado. (os error 2): O sistema não pode encontrar o arquivo especificado. (os error 2)
+21:19:29.226397 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' with 1 error [436us]
+21:19:29.226469 [info ]: Cached model count updated: 5 models (accurate)

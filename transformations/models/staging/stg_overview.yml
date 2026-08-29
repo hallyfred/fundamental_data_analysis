@@ -6,88 +6,175 @@ models:
     columns:
       - name: symbol
         data_type: string
-        description: "Stock ticker symbol identifying the company on the exchange (e.g., AAPL, IBM)."
-
+        description: "Stock ticker symbol identifying the company on the exchange."
       - name: assettype
         data_type: string
-        description: "Classification of the financial asset (e.g., Common Stock, ETF)."
-
+        description: "Classification of the financial asset."
       - name: name
         data_type: string
-        description: "Official legal name or corporate identity of the company."
-
+        description: "Official name of the company or asset."
       - name: description
         data_type: string
-        description: "Detailed overview of the company's business model, operations, and history."
-
+        description: "Overview of the company's business model, operations, and history."
+      - name: cik
+        data_type: string
+        description: "Central Index Key assigned by the U.S. Securities and Exchange Commission."
       - name: exchange
         data_type: string
-        description: "Primary stock exchange where the asset is listed and traded (e.g., NYSE, NASDAQ)."
-
+        description: "Primary stock exchange where the asset is listed and traded."
       - name: currency
         data_type: string
-        description: "Base currency used for trading and financial reporting (e.g., USD)."
-
+        description: "Currency used for trading and financial reporting."
       - name: country
         data_type: string
-        description: "Country of incorporation or primary headquarters location."
-
+        description: "Country of incorporation or primary headquarters."
       - name: sector
         data_type: string
-        description: "Broad economic sector the company operates within (e.g., TECHNOLOGY)."
-
+        description: "Broad economic sector in which the company operates."
       - name: industry
         data_type: string
-        description: "Specific industry classification or niche market within the broader sector."
-
+        description: "Specific industry classification of the company."
+      - name: address
+        data_type: string
+        description: "Registered or principal business address."
+      - name: officialsite
+        data_type: string
+        description: "Official website of the company."
+      - name: fiscalyearend
+        data_type: string
+        description: "Month in which the company's fiscal year ends."
+      - name: latestquarter
+        data_type: string
+        description: "Date of the latest reported fiscal quarter."
+      - name: dividenddate
+        data_type: string
+        description: "Date on which the next dividend is scheduled to be paid."
+      - name: exdividenddate
+        data_type: string
+        description: "Ex-dividend date for the latest or upcoming dividend."
       - name: marketcapitalization
-        data_type: string
-        description: "Total market value of a company's outstanding shares of stock."
-
+        data_type: int64
+        description: "Total market value of the company's outstanding shares."
       - name: ebitda
-        data_type: string
-        description: "Earnings Before Interest, Taxes, Depreciation, and Amortization; a measure of core operational profitability."
-
-      - name: peratio
-        data_type: string
-        description: "Price-to-Earnings ratio, comparing the company's current share price to its per-share earnings."
-
-      - name: dividendyield
-        data_type: string
-        description: "Financial ratio indicating how much a company pays out in dividends each year relative to its stock price."
-
-      - name: eps
-        data_type: string
-        description: "Earnings Per Share; the portion of a company's profit allocated to each outstanding share of common stock."
-
-      - name: _52weekhigh
-        data_type: string
-        description: "Highest price at which the stock has traded during the previous 52 weeks."
-
-      - name: _52weeklow
-        data_type: string
-        description: "Lowest price at which the stock has traded during the previous 52 weeks."
-
-      - name: _50daymovingaverage
-        data_type: string
-        description: "Average closing price of the stock over the most recent 50 trading days."
-
-      - name: _200daymovingaverage
-        data_type: string
-        description: "Average closing price of the stock over the most recent 200 trading days."
-
+        data_type: int64
+        description: "Earnings before interest, taxes, depreciation, and amortization."
+      - name: revenuettm
+        data_type: int64
+        description: "Revenue generated during the trailing twelve months."
+      - name: grossprofitttm
+        data_type: int64
+        description: "Gross profit generated during the trailing twelve months."
       - name: sharesoutstanding
-        data_type: string
-        description: "Total number of a company's shares currently held by all its shareholders."
-
+        data_type: int64
+        description: "Total number of shares currently held by shareholders."
+      - name: sharesfloat
+        data_type: int64
+        description: "Number of shares available for public trading."
+      - name: peratio
+        data_type: float64
+        description: "Price-to-earnings ratio based on the company's earnings per share."
+      - name: pegratio
+        data_type: float64
+        description: "Price-to-earnings growth ratio."
+      - name: bookvalue
+        data_type: float64
+        description: "Book value per share."
+      - name: dividendpershare
+        data_type: float64
+        description: "Dividend paid per share."
+      - name: dividendyield
+        data_type: float64
+        description: "Annual dividend payment relative to the stock price."
+      - name: eps
+        data_type: float64
+        description: "Earnings attributable to each outstanding share."
+      - name: revenuepersharettm
+        data_type: float64
+        description: "Revenue per share during the trailing twelve months."
+      - name: profitmargin
+        data_type: float64
+        description: "Net profit as a percentage of revenue."
+      - name: operatingmarginttm
+        data_type: float64
+        description: "Operating income as a percentage of revenue during the trailing twelve months."
+      - name: returnonassetsttm
+        data_type: float64
+        description: "Return generated on assets during the trailing twelve months."
+      - name: returnonequityttm
+        data_type: float64
+        description: "Return generated on shareholders' equity during the trailing twelve months."
+      - name: dilutedepsttm
+        data_type: float64
+        description: "Diluted earnings per share during the trailing twelve months."
+      - name: quarterlyearningsgrowthyoy
+        data_type: float64
+        description: "Year-over-year growth in quarterly earnings."
+      - name: quarterlyrevenuegrowthyoy
+        data_type: float64
+        description: "Year-over-year growth in quarterly revenue."
+      - name: analysttargetprice
+        data_type: float64
+        description: "Consensus price target from equity analysts."
+      - name: analystratingstrongbuy
+        data_type: float64
+        description: "Number or proportion of analyst ratings classified as strong buy."
+      - name: analystratingbuy
+        data_type: float64
+        description: "Number or proportion of analyst ratings classified as buy."
+      - name: analystratinghold
+        data_type: float64
+        description: "Number or proportion of analyst ratings classified as hold."
+      - name: analystratingsell
+        data_type: float64
+        description: "Number or proportion of analyst ratings classified as sell."
+      - name: analystratingstrongsell
+        data_type: float64
+        description: "Number or proportion of analyst ratings classified as strong sell."
+      - name: trailingpe
+        data_type: float64
+        description: "Price-to-earnings ratio based on trailing earnings."
+      - name: forwardpe
+        data_type: float64
+        description: "Price-to-earnings ratio based on forward earnings estimates."
+      - name: pricetosalesratiottm
+        data_type: float64
+        description: "Price-to-sales ratio based on trailing twelve-month revenue."
+      - name: pricetobookratio
+        data_type: float64
+        description: "Market price relative to book value."
+      - name: evtorevenue
+        data_type: float64
+        description: "Enterprise value relative to revenue."
+      - name: evtoebitda
+        data_type: float64
+        description: "Enterprise value relative to EBITDA."
+      - name: beta
+        data_type: float64
+        description: "Measure of the asset's volatility relative to the broader market."
+      - name: percentinsiders
+        data_type: float64
+        description: "Percentage of shares held by company insiders."
+      - name: percentinstitutions
+        data_type: float64
+        description: "Percentage of shares held by institutional investors."
+      - name: _52weekhigh
+        data_type: float64
+        description: "Highest price at which the stock traded during the previous 52 weeks."
+      - name: _52weeklow
+        data_type: float64
+        description: "Lowest price at which the stock traded during the previous 52 weeks."
+      - name: _50daymovingaverage
+        data_type: float64
+        description: "Average closing price over the most recent 50 trading days."
+      - name: _200daymovingaverage
+        data_type: float64
+        description: "Average closing price over the most recent 200 trading days."
       - name: partition_year
         data_type: int64
-        description: "Physical Hive partition column representing the year of data ingestion."
-
+        description: "Year in which the data was ingested."
       - name: partition_month
         data_type: int64
-        description: "Physical Hive partition column representing the month of data ingestion."
-
+        description: "Month in which the data was ingested."
       - name: partition_day
         data_type: int64
-        description: "Physical Hive partition column representing the day of data ingestion."
+        description: "Day on which the data was ingested."

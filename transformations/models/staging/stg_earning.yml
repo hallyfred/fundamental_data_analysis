@@ -1,0 +1,42 @@
+version: 2
+
+models:
+  - name: stg_earning
+    description: "Flattened annual and quarterly earnings reports from the Alpha Vantage EARNINGS endpoint."
+    columns:
+      - name: symbol
+        data_type: string
+        description: "Stock ticker symbol identifying the company."
+      - name: report_type
+        data_type: string
+        description: "Report frequency, either annual or quarterly."
+      - name: fiscaldateending
+        data_type: date
+        description: "Fiscal period ending date."
+      - name: reporteddate
+        data_type: date
+        description: "Date on which the earnings were reported."
+      - name: reportedeps
+        data_type: float64
+        description: "Earnings per share reported for the period."
+      - name: estimatedeps
+        data_type: float64
+        description: "Analyst estimate of earnings per share."
+      - name: surprise
+        data_type: float64
+        description: "Difference between reported and estimated earnings per share."
+      - name: surprisepercentage
+        data_type: float64
+        description: "Earnings surprise as a percentage of the estimate."
+      - name: reporttime
+        data_type: string
+        description: "Time of day when the earnings report was released."
+      - name: partition_year
+        data_type: int64
+        description: "Year of data ingestion from the Hive partition."
+      - name: partition_month
+        data_type: int64
+        description: "Month of data ingestion from the Hive partition."
+      - name: partition_day
+        data_type: int64
+        description: "Day of data ingestion from the Hive partition."

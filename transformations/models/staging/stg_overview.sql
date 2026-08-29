@@ -1,25 +1,27 @@
 {{ config(materialized='view') }}
 
--- Upgraded list containing both the exact JSON key and the target BigQuery Data Type
+-- JSON keys and BigQuery types aligned with OverviewSchema in contract.py
 {% set overview_fields = [
     ("Symbol", "STRING"), ("AssetType", "STRING"), ("Name", "STRING"), ("Description", "STRING"),
     ("CIK", "STRING"), ("Exchange", "STRING"), ("Currency", "STRING"), ("Country", "STRING"),
     ("Sector", "STRING"), ("Industry", "STRING"), ("Address", "STRING"), ("OfficialSite", "STRING"),
-    ("FiscalYearEnd", "STRING"), ("LatestQuarter", "DATE"), ("MarketCapitalization", "INT64"),
-    ("EBITDA", "INT64"), ("PERatio", "FLOAT64"), ("PEGRatio", "FLOAT64"), ("BookValue", "FLOAT64"),
-    ("DividendPerShare", "FLOAT64"), ("DividendYield", "FLOAT64"), ("EPS", "FLOAT64"),
-    ("RevenuePerShareTTM", "FLOAT64"), ("ProfitMargin", "FLOAT64"), ("OperatingMarginTTM", "FLOAT64"),
-    ("ReturnOnAssetsTTM", "FLOAT64"), ("ReturnOnEquityTTM", "FLOAT64"), ("RevenueTTM", "INT64"),
-    ("GrossProfitTTM", "INT64"), ("DilutedEPSTTM", "FLOAT64"), ("QuarterlyEarningsGrowthYOY", "FLOAT64"),
-    ("QuarterlyRevenueGrowthYOY", "FLOAT64"), ("AnalystTargetPrice", "FLOAT64"),
-    ("AnalystRatingStrongBuy", "INT64"), ("AnalystRatingBuy", "INT64"), ("AnalystRatingHold", "INT64"),
-    ("AnalystRatingSell", "INT64"), ("AnalystRatingStrongSell", "INT64"), ("TrailingPE", "FLOAT64"),
-    ("ForwardPE", "FLOAT64"), ("PriceToSalesRatioTTM", "FLOAT64"), ("PriceToBookRatio", "FLOAT64"),
-    ("EVToRevenue", "FLOAT64"), ("EVToEBITDA", "FLOAT64"), ("Beta", "FLOAT64"),
+    ("FiscalYearEnd", "STRING"), ("LatestQuarter", "STRING"), ("DividendDate", "STRING"),
+    ("ExDividendDate", "STRING"), ("MarketCapitalization", "INT64"), ("EBITDA", "INT64"),
+    ("RevenueTTM", "INT64"), ("GrossProfitTTM", "INT64"), ("SharesOutstanding", "INT64"),
+    ("SharesFloat", "INT64"), ("PERatio", "FLOAT64"), ("PEGRatio", "FLOAT64"),
+    ("BookValue", "FLOAT64"), ("DividendPerShare", "FLOAT64"), ("DividendYield", "FLOAT64"),
+    ("EPS", "FLOAT64"), ("RevenuePerShareTTM", "FLOAT64"), ("ProfitMargin", "FLOAT64"),
+    ("OperatingMarginTTM", "FLOAT64"), ("ReturnOnAssetsTTM", "FLOAT64"),
+    ("ReturnOnEquityTTM", "FLOAT64"), ("DilutedEPSTTM", "FLOAT64"),
+    ("QuarterlyEarningsGrowthYOY", "FLOAT64"), ("QuarterlyRevenueGrowthYOY", "FLOAT64"),
+    ("AnalystTargetPrice", "FLOAT64"), ("AnalystRatingStrongBuy", "FLOAT64"),
+    ("AnalystRatingBuy", "FLOAT64"), ("AnalystRatingHold", "FLOAT64"),
+    ("AnalystRatingSell", "FLOAT64"), ("AnalystRatingStrongSell", "FLOAT64"),
+    ("TrailingPE", "FLOAT64"), ("ForwardPE", "FLOAT64"), ("PriceToSalesRatioTTM", "FLOAT64"),
+    ("PriceToBookRatio", "FLOAT64"), ("EVToRevenue", "FLOAT64"), ("EVToEBITDA", "FLOAT64"),
+    ("Beta", "FLOAT64"), ("PercentInsiders", "FLOAT64"), ("PercentInstitutions", "FLOAT64"),
     ("52WeekHigh", "FLOAT64"), ("52WeekLow", "FLOAT64"), ("50DayMovingAverage", "FLOAT64"),
-    ("200DayMovingAverage", "FLOAT64"), ("SharesOutstanding", "INT64"), ("SharesFloat", "INT64"),
-    ("PercentInsiders", "FLOAT64"), ("PercentInstitutions", "FLOAT64"), ("DividendDate", "DATE"),
-    ("ExDividendDate", "DATE")
+    ("200DayMovingAverage", "FLOAT64")
 ] %}
 
 WITH raw_source AS (

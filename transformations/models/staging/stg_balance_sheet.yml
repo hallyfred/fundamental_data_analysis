@@ -1,0 +1,135 @@
+version: 2
+
+models:
+  - name: stg_balance_sheet
+    description: "Flattened balance sheet reports from the Alpha Vantage BALANCE_SHEET endpoint."
+    columns:
+      - name: symbol
+        data_type: string
+        description: "Stock ticker symbol identifying the company."
+      - name: report_type
+        data_type: string
+        description: "Report frequency, either annual or quarterly."
+      - name: fiscaldateending
+        data_type: date
+        description: "Fiscal period ending date."
+      - name: reportedcurrency
+        data_type: string
+        description: "Currency used in the reported financial statements."
+      - name: totalassets
+        data_type: int64
+        description: "Total assets."
+      - name: totalcurrentassets
+        data_type: int64
+        description: "Total current assets."
+      - name: cashandcashequivalentsatcarryingvalue
+        data_type: int64
+        description: "Cash and cash equivalents at carrying value."
+      - name: cashandshortterminvestments
+        data_type: int64
+        description: "Cash and short-term investments."
+      - name: inventory
+        data_type: int64
+        description: "Inventory."
+      - name: currentnetreceivables
+        data_type: int64
+        description: "Current net receivables."
+      - name: totalnoncurrentassets
+        data_type: int64
+        description: "Total non-current assets."
+      - name: propertyplantequipment
+        data_type: int64
+        description: "Property, plant, and equipment."
+      - name: accumulateddepreciationamortizationppe
+        data_type: int64
+        description: "Accumulated depreciation and amortization of property, plant, and equipment."
+      - name: intangibleassets
+        data_type: int64
+        description: "Total intangible assets."
+      - name: intangibleassetsexcludinggoodwill
+        data_type: int64
+        description: "Intangible assets excluding goodwill."
+      - name: goodwill
+        data_type: int64
+        description: "Goodwill."
+      - name: investments
+        data_type: int64
+        description: "Investments."
+      - name: longterminvestments
+        data_type: int64
+        description: "Long-term investments."
+      - name: shortterminvestments
+        data_type: int64
+        description: "Short-term investments."
+      - name: othercurrentassets
+        data_type: int64
+        description: "Other current assets."
+      - name: othernoncurrentassets
+        data_type: int64
+        description: "Other non-current assets."
+      - name: totalliabilities
+        data_type: int64
+        description: "Total liabilities."
+      - name: totalcurrentliabilities
+        data_type: int64
+        description: "Total current liabilities."
+      - name: currentaccountspayable
+        data_type: int64
+        description: "Current accounts payable."
+      - name: deferredrevenue
+        data_type: int64
+        description: "Deferred revenue."
+      - name: currentdebt
+        data_type: int64
+        description: "Current debt."
+      - name: shorttermdebt
+        data_type: int64
+        description: "Short-term debt."
+      - name: totalnoncurrentliabilities
+        data_type: int64
+        description: "Total non-current liabilities."
+      - name: capitalleaseobligations
+        data_type: int64
+        description: "Capital lease obligations."
+      - name: longtermdebt
+        data_type: int64
+        description: "Long-term debt."
+      - name: currentlongtermdebt
+        data_type: int64
+        description: "Current portion of long-term debt."
+      - name: longtermdebtnoncurrent
+        data_type: int64
+        description: "Non-current long-term debt."
+      - name: shortlongtermdebttotal
+        data_type: int64
+        description: "Total short- and long-term debt."
+      - name: othercurrentliabilities
+        data_type: int64
+        description: "Other current liabilities."
+      - name: othernoncurrentliabilities
+        data_type: int64
+        description: "Other non-current liabilities."
+      - name: totalshareholderequity
+        data_type: int64
+        description: "Total shareholder equity."
+      - name: treasurystock
+        data_type: int64
+        description: "Treasury stock."
+      - name: retainedearnings
+        data_type: int64
+        description: "Retained earnings."
+      - name: commonstock
+        data_type: int64
+        description: "Common stock value."
+      - name: commonstocksharesoutstanding
+        data_type: int64
+        description: "Common stock shares outstanding."
+      - name: partition_year
+        data_type: int64
+        description: "Year of data ingestion from the Hive partition."
+      - name: partition_month
+        data_type: int64
+        description: "Month of data ingestion from the Hive partition."
+      - name: partition_day
+        data_type: int64
+        description: "Day of data ingestion from the Hive partition."
