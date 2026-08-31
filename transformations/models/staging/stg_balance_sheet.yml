@@ -37,7 +37,7 @@ models:
       - name: totalnoncurrentassets
         data_type: int64
         description: "Total non-current assets."
-      - name: propertyplantequipment
+      - name: propertyplantandequipment
         data_type: int64
         description: "Property, plant, and equipment."
       - name: accumulateddepreciationamortizationppe

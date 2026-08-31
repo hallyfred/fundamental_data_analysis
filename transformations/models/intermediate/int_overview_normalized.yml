@@ -1,0 +1,129 @@
+version: 2
+
+models:
+  - name: int_overview_normalized
+    description: "Normalized overview dataset for business consumption. Deduplicated by symbol and fiscal_year_end, with partition metadata from the extraction date."
+    columns:
+      - name: symbol
+        description: "Ticker symbol for the company."
+        tests:
+          - not_null
+      - name: asset_type
+        description: "Asset type classification."
+      - name: company_name
+        description: "Official company name."
+      - name: description
+        description: "Business description from the source."
+      - name: cik
+        description: "SEC CIK identifier."
+      - name: exchange
+        description: "Stock exchange where the ticker is listed."
+      - name: currency
+        description: "Reporting currency."
+      - name: country
+        description: "Company country."
+      - name: sector
+        description: "Sector classification."
+      - name: industry
+        description: "Industry classification."
+      - name: address
+        description: "Company address."
+      - name: official_site
+        description: "Official company site."
+      - name: fiscal_year_end
+        description: "Fiscal year end month."
+      - name: latest_quarter
+        description: "Latest reported quarter."
+      - name: dividend_date
+        description: "Dividend payment date."
+      - name: ex_dividend_date
+        description: "Ex-dividend date."
+      - name: market_capitalization
+        description: "Market cap in raw source units."
+      - name: ebitda
+        description: "EBITDA."
+      - name: revenue_ttm
+        description: "Trailing twelve months revenue."
+      - name: gross_profit_ttm
+        description: "Trailing twelve months gross profit."
+      - name: shares_outstanding
+        description: "Total shares outstanding."
+      - name: shares_float
+        description: "Float shares available for trading."
+      - name: pe_ratio
+        description: "Price to earnings ratio."
+      - name: peg_ratio
+        description: "Price to earnings growth ratio."
+      - name: book_value
+        description: "Book value."
+      - name: dividend_per_share
+        description: "Dividend per share."
+      - name: dividend_yield
+        description: "Dividend yield."
+      - name: eps
+        description: "Earnings per share."
+      - name: revenue_per_share_ttm
+        description: "Revenue per share in TTM."
+      - name: profit_margin
+        description: "Profit margin."
+      - name: operating_margin_ttm
+        description: "Operating margin in TTM."
+      - name: return_on_assets_ttm
+        description: "Return on assets in TTM."
+      - name: return_on_equity_ttm
+        description: "Return on equity in TTM."
+      - name: diluted_eps_ttm
+        description: "Diluted EPS in TTM."
+      - name: quarterly_earnings_growth_yoy
+        description: "Quarterly earnings growth YoY."
+      - name: quarterly_revenue_growth_yoy
+        description: "Quarterly revenue growth YoY."
+      - name: analyst_target_price
+        description: "Analyst target price."
+      - name: analyst_rating_strong_buy
+        description: "Strong buy rating count."
+      - name: analyst_rating_buy
+        description: "Buy rating count."
+      - name: analyst_rating_hold
+        description: "Hold rating count."
+      - name: analyst_rating_sell
+        description: "Sell rating count."
+      - name: analyst_rating_strong_sell
+        description: "Strong sell rating count."
+      - name: trailing_pe
+        description: "Trailing price to earnings ratio."
+      - name: forward_pe
+        description: "Forward price to earnings ratio."
+      - name: price_to_sales_ratio_ttm
+        description: "Price to sales ratio in TTM."
+      - name: price_to_book_ratio
+        description: "Price to book ratio."
+      - name: ev_to_revenue
+        description: "Enterprise value to revenue."
+      - name: ev_to_ebitda
+        description: "Enterprise value to EBITDA."
+      - name: beta
+        description: "Beta coefficient."
+      - name: percent_insiders
+        description: "Percentage of shares held by insiders."
+      - name: percent_institutions
+        description: "Percentage of shares held by institutions."
+      - name: week_52_high
+        description: "52-week high."
+      - name: week_52_low
+        description: "52-week low."
+      - name: day_50_moving_average
+        description: "50-day moving average."
+      - name: day_200_moving_average
+        description: "200-day moving average."
+      - name: partition_year
+        description: "Year of ingest."
+      - name: partition_month
+        description: "Month of ingest."
+      - name: partition_day
+        description: "Day of ingest."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - symbol
+            - fiscal_year_end

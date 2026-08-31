@@ -1,0 +1,66 @@
+version: 2
+
+models:
+  - name: int_financial_metrics
+    description: >
+      Intermediate model that consolidates annual financial statements into a single
+      analytical dataset, joining income statement, balance sheet, cash flow, and
+      earnings data for KPI calculation.
+    columns:
+      - name: symbol
+        description: Ticker symbol of the company.
+      - name: fiscal_date_ending
+        description: Final date of the annual reporting period.
+      - name: totalrevenue
+        description: Total revenue reported for the period.
+      - name: netincome
+        description: Net income after tax.
+      - name: ebitda
+        description: Earnings before interest, taxes, depreciation, and amortization.
+      - name: totalcurrentassets
+        description: Total current assets from the balance sheet.
+      - name: totalcurrentliabilities
+        description: Total current liabilities from the balance sheet.
+      - name: totalshareholderequity
+        description: Total equity attributable to shareholders.
+      - name: total_debt
+        description: Combined current and long-term debt.
+      - name: cash_and_equivalents
+        description: Cash and short-term equivalents available to the company.
+      - name: operatingcashflow
+        description: Cash generated from operating activities.
+      - name: capitalexpenditures
+        description: Capital expenditures during the period.
+      - name: reported_eps
+        description: Reported earnings per share for the annual period.
+      - name: estimated_eps
+        description: Estimated earnings per share for the annual period.
+      - name: surprise_percentage
+        description: Percentage surprise between reported and estimated EPS.
+      - name: roe
+        description: Return on equity metric.
+      - name: net_margin
+        description: Net income divided by total revenue.
+      - name: ebitda_margin
+        description: EBITDA divided by total revenue.
+      - name: net_debt_to_ebitda
+        description: Debt-to-EBITDA risk metric.
+      - name: current_ratio
+        description: Current assets divided by current liabilities.
+      - name: free_cash_flow
+        description: Operating cash flow minus capital expenditures.
+      - name: quality_of_earnings
+        description: Operating cash flow relative to net income.
+      - name: revenue_yoy_growth
+        description: Year-over-year revenue growth between consecutive annual periods.
+      - name: earnings_surprise_pct
+        description: EPS surprise percentage relative to analyst estimate.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - symbol
+            - fiscal_date_ending
+      - not_null:
+          column_name: symbol
+      - not_null:
+          column_name: fiscal_date_ending
