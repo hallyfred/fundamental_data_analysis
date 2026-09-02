@@ -8,9 +8,20 @@ AlphaInt = Union[int, Literal["None", "-", "", "N/A"]]
 AlphaFloat = Union[float, Literal["None", "-", "", "N/A"]]
 
 
-# Todos os contratos usam `extra='forbid'` para que uma nova coluna da API
-# gere erro de validação, em vez de ser descartada silenciosamente.
-STRICT_MODEL_CONFIG = ConfigDict(extra='forbid', populate_by_name=True)
+def has_extra_fields(model: BaseModel) -> bool:
+    """
+    Verifica se a resposta da API continha campos não mapeados no contrato.
+    Retorna True se houver campos extras — o extractor deve rotear o arquivo
+    para a pasta de quarentena no GCS em vez do caminho Bronze normal.
+    """
+    return bool(model.model_extra)
+
+
+# Todos os contratos usam `extra='allow'` para que novos campos da API não
+# derrubem o pipeline. Campos desconhecidos são capturados em `model.model_extra`
+# e a função `has_extra_fields` é usada pelos extractors para rotear o arquivo
+# para quarentena quando campos inesperados são detectados.
+STRICT_MODEL_CONFIG = ConfigDict(extra='allow', populate_by_name=True)
 
 # ==========================================
 # 1. CONTRATO DO OVERVIEW
@@ -89,10 +100,10 @@ class OverviewSchema(BaseModel):
 # A) Uma linha representa um relatório anual ou trimestral.
 class BalanceSheetReport(BaseModel):
     model_config = STRICT_MODEL_CONFIG
-    
+
     fiscalDateEnding: date
     reportedCurrency: str
-    
+
     # Valores Contábeis (Convertidos para Int)
     totalAssets: Optional[AlphaInt] = None
     totalCurrentAssets: Optional[AlphaInt] = None
@@ -134,7 +145,7 @@ class BalanceSheetReport(BaseModel):
 # B) O envelope representa a resposta completa de um ticker.
 class BalanceSheetSchema(BaseModel):
     model_config = STRICT_MODEL_CONFIG
-    
+
     symbol: str
     annualReports: List[BalanceSheetReport]
     quarterlyReports: List[BalanceSheetReport]
@@ -146,10 +157,10 @@ class BalanceSheetSchema(BaseModel):
 # A) Uma linha representa um relatório anual ou trimestral.
 class CashFlowReport(BaseModel):
     model_config = STRICT_MODEL_CONFIG
-    
+
     fiscalDateEnding: date
     reportedCurrency: str
-    
+
     # Valores de Fluxo de Caixa (Convertidos para Int via AlphaInt)
     operatingCashflow: Optional[AlphaInt] = None
     paymentsForOperatingActivities: Optional[AlphaInt] = None
@@ -177,13 +188,13 @@ class CashFlowReport(BaseModel):
     proceedsFromSaleOfTreasuryStock: Optional[AlphaInt] = None
     stockBasedCompensation: Optional[AlphaInt] = None
     changeInCashAndCashEquivalents: Optional[AlphaInt] = None
-    changeInExchangeRate: Optional[AlphaInt] = None # Ocasionalmente pode ser float, mas a Alpha Vantage costuma arredondar ou enviar vazio. Se quebrar, mudamos para AlphaFloat.
+    changeInExchangeRate: Optional[AlphaInt] = None  # Ocasionalmente pode ser float, mas a Alpha Vantage costuma arredondar ou enviar vazio. Se quebrar, mudamos para AlphaFloat.
     netIncome: Optional[AlphaInt] = None
 
 # B) O envelope representa a resposta completa de um ticker.
 class CashFlowSchema(BaseModel):
     model_config = STRICT_MODEL_CONFIG
-    
+
     symbol: str
     annualReports: List[CashFlowReport]
     quarterlyReports: List[CashFlowReport]
@@ -196,15 +207,15 @@ class CashFlowSchema(BaseModel):
 # A) Uma linha representa um relatório anual ou trimestral.
 class IncomeStatementReport(BaseModel):
     model_config = STRICT_MODEL_CONFIG
-    
+
     fiscalDateEnding: date
     reportedCurrency: str
-    
+
     # Valores da DRE (Convertidos para Int via AlphaInt)
     grossProfit: Optional[AlphaInt] = None
     totalRevenue: Optional[AlphaInt] = None
     costOfRevenue: Optional[AlphaInt] = None
-    costofGoodsAndServicesSold: Optional[AlphaInt] = None # A Alpha Vantage manda esse "of" minúsculo mesmo, mantemos assim
+    costofGoodsAndServicesSold: Optional[AlphaInt] = None  # A Alpha Vantage manda esse "of" minúsculo mesmo, mantemos assim
     operatingIncome: Optional[AlphaInt] = None
     sellingGeneralAndAdministrative: Optional[AlphaInt] = None
     researchAndDevelopment: Optional[AlphaInt] = None
@@ -229,7 +240,7 @@ class IncomeStatementReport(BaseModel):
 # B) O envelope representa a resposta completa de um ticker.
 class IncomeStatementSchema(BaseModel):
     model_config = STRICT_MODEL_CONFIG
-    
+
     symbol: str
     annualReports: List[IncomeStatementReport]
     quarterlyReports: List[IncomeStatementReport]
@@ -241,14 +252,14 @@ class IncomeStatementSchema(BaseModel):
 # A) Estrutura do relatório Anual
 class AnnualEarningsReport(BaseModel):
     model_config = STRICT_MODEL_CONFIG
-    
+
     fiscalDateEnding: date
     reportedEPS: Optional[AlphaFloat] = None
 
 # B) Estrutura do relatório Trimestral (Traz dados de expectativa do mercado)
 class QuarterlyEarningsReport(BaseModel):
     model_config = STRICT_MODEL_CONFIG
-    
+
     fiscalDateEnding: date
     reportedDate: Optional[date] = None
     reportedEPS: Optional[AlphaFloat] = None
@@ -260,7 +271,7 @@ class QuarterlyEarningsReport(BaseModel):
 # C) Estrutura principal que agrupa as listas
 class EarningSchema(BaseModel):
     model_config = STRICT_MODEL_CONFIG
-    
+
     symbol: str
     annualEarnings: List[AnnualEarningsReport]
     quarterlyEarnings: List[QuarterlyEarningsReport]

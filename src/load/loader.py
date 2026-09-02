@@ -1,5 +1,7 @@
-import os
 from google.cloud import storage
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class GCPSLoader:
@@ -9,14 +11,11 @@ class GCPSLoader:
         self.client = storage.Client(project=project_id)
         self.bucket = self.client.bucket(bucket_name)
 
-
     def upload_file(self, local_file_path, destination_blob_name):
-        try:
-
-            blob = self.bucket.blob(destination_blob_name)
-            blob.upload_from_filename(local_file_path)
-            print(f"File {local_file_path} uploaded to {destination_blob_name}.")
-            return True
-        except Exception as e:
-            print(f"Error occurred while uploading {local_file_path} to GCP: {e}")
-            return False
+        """
+        Faz upload de um arquivo local para o GCS.
+        Propaga a exceção em caso de falha — é responsabilidade do caller tratar o erro.
+        """
+        blob = self.bucket.blob(destination_blob_name)
+        blob.upload_from_filename(local_file_path)
+        logger.info(f"Upload concluído: {local_file_path} → gs://{self.bucket_name}/{destination_blob_name}")

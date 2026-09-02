@@ -97,7 +97,7 @@ This approach ensures that all 35 companies are fully refreshed every 7 days wit
 
 To maintain trust in the financial data without introducing the overhead of complex external governance tools, this pipeline relies on a lean, "code-first" governance approach:
 
-* **Data Catalog & Documentation:** We leverage `dbt docs` as our centralized data catalog. It automatically parses our YAML files to generate a static, searchable website containing column-level descriptions, metric definitions, and data lineage graphs (DAGs) for the entire warehouse.
+* **Data Catalog & Documentation:** We leverage `dbt docs` as our centralized data catalog. It automatically parses our YAML files to generate a static, searchable website containing column-level descriptions, metric definitions, and data lineage graphs for the entire warehouse.
 * **Pipeline Monitoring:** Apache Airflow acts as the control plane. We utilize Airflow's built-in SLA and callback mechanisms to send alerts (e.g., Slack/Email) upon task failures or if the Alpha Vantage API structure changes unexpectedly.
 * **Data Quality Testing:** Over 40+ tests are executed dynamically via `dbt test` during the pipeline run. We enforce `not_null`, `unique`, and `accepted_values` tests on critical financial columns, ensuring that no corrupted API data propagates to the business layer.
 
