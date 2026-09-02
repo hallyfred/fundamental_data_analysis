@@ -14,9 +14,100 @@ sources:
             field_delimiter: "\x01"  # Um caractere invisível que nunca vai existir no JSON
             quote: ""                # Desliga o entendimento de aspas para não quebrar o JSON
             uris: 
-              - 'gs://hallyson-bronze/financial/overview/*'
+              - 'gs://hallyson-bronze/financial/overview/year=*'
             hive_partition_uri_prefix: 'gs://hallyson-bronze/financial/overview'
+          partitions:
+            - name: year
+              data_type: INT64
+            - name: month
+              data_type: INT64
+            - name: day
+              data_type: INT64
         
+        columns:
+          - name: raw_data
+            data_type: STRING
+
+      - name: ext_balance_sheet
+        description: "External table pointing to Alpha Vantage balance sheet JSON files."
+        external:
+          options:
+            format: CSV
+            field_delimiter: "\x01"
+            quote: ""
+            uris:
+              - 'gs://hallyson-bronze/financial/balance_sheet/year=*'
+            hive_partition_uri_prefix: 'gs://hallyson-bronze/financial/balance_sheet'
+          partitions:
+            - name: year
+              data_type: INT64
+            - name: month
+              data_type: INT64
+            - name: day
+              data_type: INT64
+        columns:
+          - name: raw_data
+            data_type: STRING
+
+      - name: ext_cash_flow
+        description: "External table pointing to Alpha Vantage cash flow JSON files."
+        external:
+          options:
+            format: CSV
+            field_delimiter: "\x01"
+            quote: ""
+            uris:
+              - 'gs://hallyson-bronze/financial/cash_flow/year=*'
+            hive_partition_uri_prefix: 'gs://hallyson-bronze/financial/cash_flow'
+          partitions:
+            - name: year
+              data_type: INT64
+            - name: month
+              data_type: INT64
+            - name: day
+              data_type: INT64
+        columns:
+          - name: raw_data
+            data_type: STRING
+
+      - name: ext_income_statement
+        description: "External table pointing to Alpha Vantage income statement JSON files."
+        external:
+          options:
+            format: CSV
+            field_delimiter: "\x01"
+            quote: ""
+            uris:
+              - 'gs://hallyson-bronze/financial/income_statement/year=*'
+            hive_partition_uri_prefix: 'gs://hallyson-bronze/financial/income_statement'
+          partitions:
+            - name: year
+              data_type: INT64
+            - name: month
+              data_type: INT64
+            - name: day
+              data_type: INT64
+        columns:
+          - name: raw_data
+            data_type: STRING
+
+      - name: ext_earning
+        description: "External table pointing to Alpha Vantage earnings JSON files."
+        external:
+          options:
+            format: CSV
+            field_delimiter: "\x01"
+            quote: ""
+            uris:
+              - 'gs://hallyson-bronze/financial/earning/year=*'
+            hive_partition_uri_prefix: 'gs://hallyson-bronze/financial/earning'
+          partitions:
+            - name: year
+              data_type: INT64
+            - name: month
+              data_type: INT64
+            - name: day
+              data_type: INT64
         columns:
           - name: raw_data
             data_type: STRING

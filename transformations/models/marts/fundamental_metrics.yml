@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: fundamental_metrics
+    description: >
+      Gold-layer financial KPI table containing the core business metrics defined in the
+      project README and derived from the standardized staging models.
+    columns:
+      - name: symbol
+        description: Ticker symbol for the company.
+        tests:
+          - not_null
+      - name: fiscal_date_ending
+        description: Reporting date for the financial statement period.
+        tests:
+          - not_null
+      - name: roe
+        description: Return on equity, calculated as net income divided by total shareholder equity.
+        tests:
+          - not_null
+      - name: net_margin
+        description: Net margin, calculated as net income divided by total revenue.
+        tests:
+          - not_null
+      - name: ebitda_margin
+        description: EBITDA margin, calculated as EBITDA divided by total revenue.
+        tests:
+          - not_null
+      - name: net_debt_to_ebitda
+        description: Net debt divided by EBITDA.
+      - name: current_ratio
+        description: Current assets divided by current liabilities.
+        tests:
+          - not_null
+      - name: free_cash_flow
+        description: Operating cash flow minus capital expenditures.
+        tests:
+          - not_null
+      - name: quality_of_earnings
+        description: Operating cash flow divided by net income.
+      - name: revenue_yoy_growth
+        description: Year-over-year revenue growth based on the previous annual period.
+        tests:
+          - not_null
+      - name: earnings_surprise_pct
+        description: Difference between reported EPS and estimated EPS as a percentage of estimated EPS.
+      - name: pe_ratio
+        description: Price-to-earnings ratio from the latest overview snapshot.
+        tests:
+          - not_null
+      - name: ev_to_ebitda
+        description: Enterprise value divided by EBITDA from the latest overview snapshot.

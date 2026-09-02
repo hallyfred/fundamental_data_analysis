@@ -11,20 +11,18 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
+on-run-start:
+  - "{{ dbt_external_tables.stage_external_sources() }}"
+
 seeds:
-  # Builds seeds into '<your_schema_name>_raw'
   transformations:
     +schema: raw
 
 models:
   transformations:
-
-    # This block forces dbt to push descriptions to BigQuery
     +persist_docs:
       relation: true
       columns: true
 
     staging:
       +materialized: view
-    marts:
-      +materialized: table

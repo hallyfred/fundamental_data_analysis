@@ -2,18 +2,19 @@ from datetime import date
 import time
 import json
 import os
-
 from importlib_metadata import files
 from src.extract.api_client import AlphaVantageAPIClient
 from src.utils.logger import setup_logger, log_extraction, upload_and_clean_log
 from src.utils.helpers import count_real_rows
 from src.load.loader import GCPSLoader
-from config.config import BASE_URL, ALPHA_VANTAGE_API_KEY, SYMBOLS, PROJECT_ID, BUCKET_BRONZE
+from src.extract.contract import BalanceSheetSchema
+from pydantic import ValidationError
+from config.config import BASE_URL, ALPHA_VANTAGE_API_KEY, SYMBOLS, PROJECT_ID, BUCKET_BRONZE, ENDPOINTS_API
 
 def extract_balance_sheet():
     logger = setup_logger()
     print( "Extracting balance_sheet data for symbols...")
-    function = "balance_sheet"
+    function = ENDPOINTS_API["balance_sheet"]
 
     today = date.today()
     files_generated = []
@@ -38,7 +39,13 @@ def extract_balance_sheet():
                 raise ValueError(f"No data returned for symbol {symbol}")
 
             # Add the column/field to the JSON data
+            print(f"Validating balance_sheet data for {symbol}...")
             extraction_date = today.isoformat()
+
+            validated_data = BalanceSheetSchema.model_validate(files)
+            print(f"Validation successful for {symbol}.")
+
+            files = validated_data.model_dump(mode='json', by_alias=True, exclude_unset=True)
 
             # If files is a list of dicts
             if isinstance(files, list):
@@ -87,9 +94,9 @@ def extract_balance_sheet():
                 error_message=None
             )
 
-        except ValueError as e:
+        except ValidationError as e:
             time_seconds = time.perf_counter() - start_time
-            print(f"Value error for {symbol}: {e}")
+            print(f"Validation error for {symbol}: {e}")
 
             log_extraction(
                 logger=logger,
@@ -104,7 +111,26 @@ def extract_balance_sheet():
                 error_message=e
             )
 
-            break # Exit the loop if a ValueError occurs for a symbol
+            continue #Continue for the next symbol if a ValidationError occurs
+
+        except ValueError as e:
+            time_seconds = time.perf_counter() - start_time
+            print(f"Value error for {symbol}: {e}")
+
+            log_extraction(
+                logger=logger,
+                status="ERROR",
+                stage_location_bucket=BUCKET_BRONZE,
+                last_updated=today.isoformat(),
+                endpoint=function,
+                symbol=symbol,
+                rows=length,
+                size=round(file_size_mb, 6),
+                time_seconds=round(time_seconds, 3),
+                error_message=str(e)
+            )
+
+            continue # Continue to the next symbol if a ValueError occurs
 
         except Exception as e:
             time_seconds = time.perf_counter() - start_time

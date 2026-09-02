@@ -1,0 +1,111 @@
+version: 2
+
+models:
+  - name: stg_cash_flow
+    description: "Flattened cash flow reports from the Alpha Vantage CASH_FLOW endpoint."
+    columns:
+      - name: symbol
+        data_type: string
+        description: "Stock ticker symbol identifying the company."
+      - name: report_type
+        data_type: string
+        description: "Report frequency, either annual or quarterly."
+      - name: fiscaldateending
+        data_type: date
+        description: "Fiscal period ending date."
+      - name: reportedcurrency
+        data_type: string
+        description: "Currency used in the reported financial statements."
+      - name: operatingcashflow
+        data_type: int64
+        description: "Cash flow from operating activities."
+      - name: paymentsforoperatingactivities
+        data_type: int64
+        description: "Payments related to operating activities."
+      - name: proceedsfromoperatingactivities
+        data_type: int64
+        description: "Proceeds from operating activities."
+      - name: changeinoperatingliabilities
+        data_type: int64
+        description: "Change in operating liabilities."
+      - name: changeinoperatingassets
+        data_type: int64
+        description: "Change in operating assets."
+      - name: depreciationdepletionandamortization
+        data_type: int64
+        description: "Depreciation, depletion, and amortization."
+      - name: capitalexpenditures
+        data_type: int64
+        description: "Capital expenditures."
+      - name: changeinreceivables
+        data_type: int64
+        description: "Change in receivables."
+      - name: changeininventory
+        data_type: int64
+        description: "Change in inventory."
+      - name: profitloss
+        data_type: int64
+        description: "Profit or loss reported for the period."
+      - name: cashflowfrominvestment
+        data_type: int64
+        description: "Cash flow from investing activities."
+      - name: cashflowfromfinancing
+        data_type: int64
+        description: "Cash flow from financing activities."
+      - name: proceedsfromrepaymentsofshorttermdebt
+        data_type: int64
+        description: "Proceeds from or repayments of short-term debt."
+      - name: paymentsforrepurchaseofcommonstock
+        data_type: int64
+        description: "Payments for repurchase of common stock."
+      - name: paymentsforrepurchaseofequity
+        data_type: int64
+        description: "Payments for repurchase of equity."
+      - name: paymentsforrepurchaseofpreferredstock
+        data_type: int64
+        description: "Payments for repurchase of preferred stock."
+      - name: dividendpayout
+        data_type: int64
+        description: "Total dividend payout."
+      - name: dividendpayoutcommonstock
+        data_type: int64
+        description: "Dividend payout on common stock."
+      - name: dividendpayoutpreferredstock
+        data_type: int64
+        description: "Dividend payout on preferred stock."
+      - name: proceedsfromissuanceofcommonstock
+        data_type: int64
+        description: "Proceeds from issuance of common stock."
+      - name: proceedsfromissuanceoflongtermdebtandcapitalsecuritiesnet
+        data_type: int64
+        description: "Net proceeds from issuance of long-term debt and capital securities."
+      - name: proceedsfromissuanceofpreferredstock
+        data_type: int64
+        description: "Proceeds from issuance of preferred stock."
+      - name: proceedsfromrepurchaseofequity
+        data_type: int64
+        description: "Proceeds associated with repurchase of equity."
+      - name: proceedsfromsaleoftreasurystock
+        data_type: int64
+        description: "Proceeds from sale of treasury stock."
+      - name: stockbasedcompensation
+        data_type: int64
+        description: "Stock-based compensation expense."
+      - name: changeincashandcashequivalents
+        data_type: int64
+        description: "Change in cash and cash equivalents."
+      - name: changeinexchangerate
+        data_type: int64
+        description: "Effect of exchange rate changes on cash."
+      - name: netincome
+        data_type: int64
+        description: "Net income."
+      - name: partition_year
+        data_type: int64
+        description: "Year of data ingestion from the Hive partition."
+      - name: partition_month
+        data_type: int64
+        description: "Month of data ingestion from the Hive partition."
+      - name: partition_day
+        data_type: int64
+        description: "Day of data ingestion from the Hive partition."

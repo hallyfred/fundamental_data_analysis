@@ -90,3 +90,1741 @@ Runtime Error
 [0m10:53:01.604957 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024F39712B10>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024F397032F0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024F3968FBD0>]}
 [0m10:53:01.605427 [debug] [MainThread]: Flushing usage events
 [0m10:53:02.642161 [debug] [MainThread]: An error was encountered while trying to flush usage events
+{"data":{"log_version":3,"version":"=2.0.0-preview.205"},"info":{"category":"","code":"A001","extra":{},"invocation_id":"01a03521-c83e-7520-b591-3c92655604e8","level":"info","msg":"Running with dbt-fusion=2.0.0-preview.205","name":"MainReportVersion","pid":33628,"thread":"tokio-rt-worker","ts":"2026-08-24T18:56:41.679684Z"}}
+{"data":{"args":{"debug":"false","invocation_command":"C:\\Users\\hally\\.local\\bin\\dbt.exe license info --json --log-format json","log_format":"json","quiet":"false","write_json":"true"}},"info":{"category":"","code":"A002","extra":{},"invocation_id":"01a03521-c83e-7520-b591-3c92655604e8","level":"debug","msg":"running dbt-fusion with arguments {\"command\":\"license\",\"vars\":\"{}\",\"limit\":\"10\",\"debug\":false,\"log_format\":\"json\",\"quiet\":false,\"write_json\":true,\"write_catalog\":false,\"manage_state\":false}","name":"MainReportArgs","pid":33628,"thread":"tokio-rt-worker","ts":"2026-08-24T18:56:41.680360Z"}}
+{"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a03521-c83e-7520-b591-3c92655604e8","level":"debug","msg":"No platform credentials found, skipping remote license","name":"Generic","pid":33628,"thread":"tokio-rt-worker","ts":"2026-08-24T18:56:41.831498Z"}}
+{"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a03521-c83e-7520-b591-3c92655604e8","level":"debug","msg":"Trial license from file C:\\Users\\hally\\.dbt\\license.trial is expired","name":"Generic","pid":33628,"thread":"tokio-rt-worker","ts":"2026-08-24T18:56:41.859289Z"}}
+{"data":{"columns":[],"is_inline":true,"node_name":"license_info","output_format":"json","preview":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","unique_id":"license.info"},"info":{"category":"","code":"Q041","extra":{},"invocation_id":"01a03521-c83e-7520-b591-3c92655604e8","level":"info","msg":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","name":"ShowNode","pid":33628,"thread":"tokio-rt-worker","ts":"2026-08-24T18:56:41.861195Z"}}
+{"data":{"completed_at":"2026-08-24T18:56:42.679803Z","elapsed":1.0119001865386963,"success":true},"info":{"category":"","code":"Q039","extra":{},"invocation_id":"01a03521-c83e-7520-b591-3c92655604e8","level":"info","msg":"\n==================== Execution Summary =====================\nFinished 'license' successfully [1.0s]","name":"CommandCompleted","pid":33628,"thread":"tokio-rt-worker","ts":"2026-08-24T18:56:42.682634Z"}}
+{"data":{"log_version":3,"version":"=2.0.0-preview.212"},"info":{"category":"","code":"A001","extra":{},"invocation_id":"01a03a04-20e1-7270-9947-78421bcb11cd","level":"info","msg":"Running with dbt-fusion=2.0.0-preview.212","name":"MainReportVersion","pid":8196,"thread":"tokio-rt-worker","ts":"2026-08-25T17:42:24.324041Z"}}
+{"data":{"args":{"debug":"false","invocation_command":"C:\\Users\\hally\\.local\\bin\\dbt.exe license info --json --log-format json","log_format":"json","quiet":"false","write_json":"true"}},"info":{"category":"","code":"A002","extra":{},"invocation_id":"01a03a04-20e1-7270-9947-78421bcb11cd","level":"debug","msg":"running dbt-fusion with arguments {\"command\":\"license\",\"vars\":\"{}\",\"limit\":\"10\",\"debug\":false,\"log_format\":\"json\",\"quiet\":false,\"write_json\":true,\"write_catalog\":false,\"manage_state\":false}","name":"MainReportArgs","pid":8196,"thread":"tokio-rt-worker","ts":"2026-08-25T17:42:24.324469Z"}}
+{"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a03a04-20e1-7270-9947-78421bcb11cd","level":"debug","msg":"No platform credentials found, skipping remote license","name":"Generic","pid":8196,"thread":"tokio-rt-worker","ts":"2026-08-25T17:42:24.375550Z"}}
+{"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a03a04-20e1-7270-9947-78421bcb11cd","level":"debug","msg":"Trial license from file C:\\Users\\hally\\.dbt\\license.trial is expired","name":"Generic","pid":8196,"thread":"tokio-rt-worker","ts":"2026-08-25T17:42:24.397453Z"}}
+{"data":{"columns":[],"is_inline":true,"node_name":"license_info","output_format":"json","preview":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","unique_id":"license.info"},"info":{"category":"","code":"Q041","extra":{},"invocation_id":"01a03a04-20e1-7270-9947-78421bcb11cd","level":"info","msg":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","name":"ShowNode","pid":8196,"thread":"tokio-rt-worker","ts":"2026-08-25T17:42:24.399454Z"}}
+{"data":{"completed_at":"2026-08-25T17:42:25.215108Z","elapsed":0.8932741284370422,"success":true},"info":{"category":"","code":"Q039","extra":{},"invocation_id":"01a03a04-20e1-7270-9947-78421bcb11cd","level":"info","msg":"\n==================== Execution Summary =====================\nFinished 'license' successfully [893ms]","name":"CommandCompleted","pid":8196,"thread":"tokio-rt-worker","ts":"2026-08-25T17:42:25.216292Z"}}
+[0m15:48:52.432103 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001E4DD252510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001E4DFA7BED0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001E4DFA7BC50>]}
+
+
+============================== 15:48:52.441690 | e9d69fc0-6446-4789-999c-b953776ad4c3 ==============================
+[0m15:48:52.441690 [info ] [MainThread]: Running with dbt=1.12.2
+[0m15:48:52.442993 [debug] [MainThread]: running dbt with arguments {'static_parser': 'True', 'no_print': 'None', 'maximum_seed_size_mib': '1', 'target_path': 'None', 'version_check': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'False', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'invocation_command': 'dbt run', 'hints_enabled': 'True', 'use_colors': 'True', 'use_experimental_parser': 'False', 'indirect_selection': 'eager', 'log_path': 'logs'}
+[0m15:48:52.444171 [error] [MainThread]: [[31mERROR[0m]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m15:48:52.446129 [debug] [MainThread]: Command `dbt run` failed at 15:48:52.445830 after 0.44 seconds
+[0m15:48:52.446968 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001E4DFACCFC0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001E4DFA431D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001E4DFABAF10>]}
+[0m15:48:52.447793 [debug] [MainThread]: Flushing usage events
+[0m15:48:53.911155 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m15:51:02.860755 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000029973DD2510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000299765F7ED0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000299765F7C50>]}
+
+
+============================== 15:51:02.869248 | 37ad9260-3f42-4df7-8934-7a75d0314249 ==============================
+[0m15:51:02.869248 [info ] [MainThread]: Running with dbt=1.12.2
+[0m15:51:02.870709 [debug] [MainThread]: running dbt with arguments {'version_check': 'True', 'no_print': 'None', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'target_path': 'None', 'maximum_seed_size_mib': '1', 'printer_width': '80', 'write_json': 'True', 'empty': 'False', 'log_cache_events': 'False', 'introspect': 'True', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'invocation_command': 'dbt run', 'hints_enabled': 'True', 'indirect_selection': 'eager', 'use_experimental_parser': 'False', 'use_colors': 'True', 'log_path': 'C:\\Users\\hally\\OneDrive\\Área de Trabalho\\fundamental_data_analysis\\logs'}
+[0m15:51:10.609226 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '37ad9260-3f42-4df7-8934-7a75d0314249', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002997450E2C0>]}
+[0m15:51:10.766069 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '37ad9260-3f42-4df7-8934-7a75d0314249', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000299735C3570>]}
+[0m15:51:10.767962 [info ] [MainThread]: Registered adapter: bigquery=1.12.0
+[0m15:51:11.744795 [debug] [MainThread]: checksum: 56b8e0779adf4aaaf21f1124f88ce9ec2efc387c1929161730d014472c526c57, vars: {}, profile: transformations, target: dev, version: 1.12.2
+[0m15:51:11.747118 [info ] [MainThread]: Unable to do partial parsing because saved manifest not found. Starting full parse.
+[0m15:51:11.748194 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'partial_parser', 'label': '37ad9260-3f42-4df7-8934-7a75d0314249', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000029908C1B250>]}
+[0m15:51:13.773228 [warn ] [MainThread]: [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 4 unused configuration paths:
+- models.transformations
+- models.transformations.staging
+- models.transformations.marts
+- seeds.transformations
+[0m15:51:13.781610 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '37ad9260-3f42-4df7-8934-7a75d0314249', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000029974A95C70>]}
+[0m15:51:13.923668 [debug] [MainThread]: Wrote artifact WritableManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\manifest.json
+[0m15:51:13.932360 [debug] [MainThread]: Wrote artifact SemanticManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\semantic_manifest.json
+[0m15:51:14.001813 [debug] [MainThread]: Wrote artifact OsiDocument to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\osi_document.json
+[0m15:51:14.029403 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '37ad9260-3f42-4df7-8934-7a75d0314249', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000299092D0830>]}
+[0m15:51:14.030405 [info ] [MainThread]: Found 561 macros
+[0m15:51:14.031354 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '37ad9260-3f42-4df7-8934-7a75d0314249', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000029908ED82C0>]}
+[0m15:51:14.033887 [warn ] [MainThread]: [[33mWARNING[0m]: Nothing to do. Try checking your model configs and model specification args
+[0m15:51:14.035066 [debug] [MainThread]: Command end result
+[0m15:51:14.114771 [debug] [MainThread]: Wrote artifact WritableManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\manifest.json
+[0m15:51:14.122383 [debug] [MainThread]: Wrote artifact SemanticManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\semantic_manifest.json
+[0m15:51:14.130198 [debug] [MainThread]: Wrote artifact OsiDocument to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\osi_document.json
+[0m15:51:14.135505 [debug] [MainThread]: Wrote artifact RunExecutionResult to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\run_results.json
+[0m15:51:14.137276 [debug] [MainThread]: Command `dbt run` succeeded at 15:51:14.136967 after 11.65 seconds
+[0m15:51:14.138141 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000299765B96D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000299091124C0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002990929E2B0>]}
+[0m15:51:14.138984 [debug] [MainThread]: Flushing usage events
+[0m15:51:15.333723 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m16:08:16.755210 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001387546A510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000013877C6FD90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000013877C6F890>]}
+
+
+============================== 16:08:16.763681 | aca5a955-f837-47be-ad75-6b73ff533104 ==============================
+[0m16:08:16.763681 [info ] [MainThread]: Running with dbt=1.12.2
+[0m16:08:16.765209 [debug] [MainThread]: running dbt with arguments {'version_check': 'True', 'no_print': 'None', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'maximum_seed_size_mib': '1', 'target_path': 'None', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'None', 'cache_selected_only': 'False', 'fail_fast': 'False', 'debug': 'False', 'log_format': 'default', 'partial_parse': 'True', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'indirect_selection': 'eager', 'hints_enabled': 'True', 'invocation_command': 'dbt debug', 'use_experimental_parser': 'False', 'use_colors': 'True', 'log_path': 'C:\\Users\\hally\\OneDrive\\Área de Trabalho\\fundamental_data_analysis\\logs'}
+[0m16:08:16.806134 [info ] [MainThread]: dbt version: 1.12.2
+[0m16:08:16.807262 [info ] [MainThread]: python version: 3.13.1
+[0m16:08:16.808859 [info ] [MainThread]: python path: C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\.venv\Scripts\python.exe
+[0m16:08:16.810039 [info ] [MainThread]: os info: Windows-11-10.0.26200-SP0
+[0m16:08:19.050647 [info ] [MainThread]: Using profiles dir at C:\Users\hally\.dbt
+[0m16:08:19.051851 [info ] [MainThread]: Using profiles.yml file at C:\Users\hally\.dbt\profiles.yml
+[0m16:08:19.052756 [info ] [MainThread]: Using dbt_project.yml file at C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml
+[0m16:08:19.053729 [info ] [MainThread]: adapter type: bigquery
+[0m16:08:19.054700 [info ] [MainThread]: adapter version: 1.12.0
+[0m16:08:19.303147 [info ] [MainThread]: Configuration:
+[0m16:08:19.304269 [info ] [MainThread]:   profiles.yml file [[32mOK found and valid[0m]
+[0m16:08:19.305228 [info ] [MainThread]:   dbt_project.yml file [[32mOK found and valid[0m]
+[0m16:08:19.306175 [info ] [MainThread]: Required dependencies:
+[0m16:08:19.307175 [debug] [MainThread]: Executing "git --help"
+[0m16:08:19.376317 [debug] [MainThread]: STDOUT: "b"usage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]\n           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]\n           [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--bare]\n           [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]\n           [--config-env=<name>=<envvar>] <command> [<args>]\n\nThese are common Git commands used in various situations:\n\nstart a working area (see also: git help tutorial)\n   clone     Clone a repository into a new directory\n   init      Create an empty Git repository or reinitialize an existing one\n\nwork on the current change (see also: git help everyday)\n   add       Add file contents to the index\n   mv        Move or rename a file, a directory, or a symlink\n   restore   Restore working tree files\n   rm        Remove files from the working tree and from the index\n\nexamine the history and state (see also: git help revisions)\n   bisect    Use binary search to find the commit that introduced a bug\n   diff      Show changes between commits, commit and working tree, etc\n   grep      Print lines matching a pattern\n   log       Show commit logs\n   show      Show various types of objects\n   status    Show the working tree status\n\ngrow, mark and tweak your common history\n   branch    List, create, or delete branches\n   commit    Record changes to the repository\n   merge     Join two or more development histories together\n   rebase    Reapply commits on top of another base tip\n   reset     Reset current HEAD to the specified state\n   switch    Switch branches\n   tag       Create, list, delete or verify a tag object signed with GPG\n\ncollaborate (see also: git help workflows)\n   fetch     Download objects and refs from another repository\n   pull      Fetch from and integrate with another repository or a local branch\n   push      Update remote refs along with associated objects\n\n'git help -a' and 'git help -g' list available subcommands and some\nconcept guides. See 'git help <command>' or 'git help <concept>'\nto read about a specific subcommand or concept.\nSee 'git help git' for an overview of the system.\n""
+[0m16:08:19.377281 [debug] [MainThread]: STDERR: "b''"
+[0m16:08:19.378203 [info ] [MainThread]:  - git [[32mOK found[0m]
+
+[0m16:08:19.379230 [info ] [MainThread]: Connection:
+[0m16:08:19.380290 [info ] [MainThread]:   method: service-account
+[0m16:08:19.381194 [info ] [MainThread]:   database: projetodbt-479518
+[0m16:08:19.382118 [info ] [MainThread]:   execution_project: projetodbt-479518
+[0m16:08:19.383191 [info ] [MainThread]:   schema: alphavantage
+[0m16:08:19.384145 [info ] [MainThread]:   location: US
+[0m16:08:19.385023 [info ] [MainThread]:   priority: None
+[0m16:08:19.385885 [info ] [MainThread]:   maximum_bytes_billed: None
+[0m16:08:19.386774 [info ] [MainThread]:   reservation: None
+[0m16:08:19.387712 [info ] [MainThread]:   impersonate_service_account: None
+[0m16:08:19.388660 [info ] [MainThread]:   job_retry_deadline_seconds: None
+[0m16:08:19.389697 [info ] [MainThread]:   job_retries: 1
+[0m16:08:19.390661 [info ] [MainThread]:   job_creation_timeout_seconds: None
+[0m16:08:19.391585 [info ] [MainThread]:   job_execution_timeout_seconds: None
+[0m16:08:19.392603 [info ] [MainThread]:   job_link_info_level_log: False
+[0m16:08:19.393582 [info ] [MainThread]:   timeout_seconds: None
+[0m16:08:19.394461 [info ] [MainThread]:   client_id: None
+[0m16:08:19.395382 [info ] [MainThread]:   token_uri: None
+[0m16:08:19.396340 [info ] [MainThread]:   compute_region: None
+[0m16:08:19.397276 [info ] [MainThread]:   dataproc_cluster_name: None
+[0m16:08:19.398181 [info ] [MainThread]:   gcs_bucket: None
+[0m16:08:19.399110 [info ] [MainThread]:   dataproc_batch: None
+[0m16:08:19.400263 [info ] [MainThread]: Registered adapter: bigquery=1.12.0
+[0m16:08:20.231224 [debug] [MainThread]: Acquiring new bigquery connection 'debug'
+[0m16:08:20.232441 [debug] [MainThread]: On debug: select 1 as id
+[0m16:08:20.233269 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m16:08:22.915737 [debug] [MainThread]: BigQuery adapter: https://console.cloud.google.com/bigquery?project=projetodbt-479518&j=bq:US:9e8e5e15-45b8-4490-ae8d-cce52b64e387&page=queryresults
+[0m16:08:23.286642 [debug] [MainThread]: SQL status: OK in 0.370 seconds
+[0m16:08:29.603341 [info ] [MainThread]:   Connection test: [[32mOK connection ok[0m]
+
+[0m16:08:29.604657 [info ] [MainThread]: [32mAll checks passed![0m
+[0m16:08:29.606484 [debug] [MainThread]: Command `dbt debug` succeeded at 16:08:29.606163 after 13.22 seconds
+[0m16:08:29.607342 [debug] [MainThread]: Connection 'debug' was properly closed.
+[0m16:08:29.608120 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000138094E2780>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000138095FB890>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000013809587CE0>]}
+[0m16:08:29.609026 [debug] [MainThread]: Flushing usage events
+[0m16:08:30.865340 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m16:10:14.244960 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002CDF1DB6510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002CDF45B7D90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002CDF45B7890>]}
+
+
+============================== 16:10:14.253473 | e7e2f20f-4cce-40cb-aa0e-97ced167d99f ==============================
+[0m16:10:14.253473 [info ] [MainThread]: Running with dbt=1.12.2
+[0m16:10:14.254926 [debug] [MainThread]: running dbt with arguments {'maximum_seed_size_mib': '1', 'no_print': 'None', 'version_check': 'True', 'target_path': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'static_parser': 'True', 'printer_width': '80', 'write_json': 'True', 'empty': 'None', 'log_cache_events': 'False', 'introspect': 'True', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'invocation_command': 'dbt ls', 'hints_enabled': 'True', 'use_colors': 'True', 'use_experimental_parser': 'False', 'indirect_selection': 'eager', 'log_path': 'C:\\Users\\hally\\OneDrive\\Área de Trabalho\\fundamental_data_analysis\\logs'}
+[0m16:10:16.770683 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': 'e7e2f20f-4cce-40cb-aa0e-97ced167d99f', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002CDF24FE2C0>]}
+[0m16:10:16.919292 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': 'e7e2f20f-4cce-40cb-aa0e-97ced167d99f', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002CDF15A3570>]}
+[0m16:10:16.921079 [info ] [MainThread]: Registered adapter: bigquery=1.12.0
+[0m16:10:17.790637 [debug] [MainThread]: checksum: 56b8e0779adf4aaaf21f1124f88ce9ec2efc387c1929161730d014472c526c57, vars: {}, profile: transformations, target: dev, version: 1.12.2
+[0m16:10:18.031844 [debug] [MainThread]: Partial parsing enabled: 0 files deleted, 0 files added, 0 files changed.
+[0m16:10:18.032719 [debug] [MainThread]: Nothing changed, skipping partial parsing.
+[0m16:10:18.033443 [debug] [MainThread]: Partial parsing enabled, no changes found, skipping parsing
+[0m16:10:18.034467 [warn ] [MainThread]: [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 4 unused configuration paths:
+- models.transformations.marts
+- models.transformations
+- models.transformations.staging
+- seeds.transformations
+[0m16:10:18.043534 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': 'e7e2f20f-4cce-40cb-aa0e-97ced167d99f', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002CD86349950>]}
+[0m16:10:18.187352 [debug] [MainThread]: Wrote artifact WritableManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\manifest.json
+[0m16:10:18.193644 [debug] [MainThread]: Wrote artifact SemanticManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\semantic_manifest.json
+[0m16:10:18.247109 [debug] [MainThread]: Wrote artifact OsiDocument to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\osi_document.json
+[0m16:10:18.293370 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': 'e7e2f20f-4cce-40cb-aa0e-97ced167d99f', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002CD86283B60>]}
+[0m16:10:18.294488 [info ] [MainThread]: Found 561 macros
+[0m16:10:18.295411 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': 'e7e2f20f-4cce-40cb-aa0e-97ced167d99f', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002CD86287070>]}
+[0m16:10:18.296832 [warn ] [MainThread]: [[33mWARNING[0m]: No nodes selected!
+[0m16:10:18.299183 [debug] [MainThread]: Command `dbt ls` succeeded at 16:10:18.298859 after 4.43 seconds
+[0m16:10:18.300057 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002CD85EB8120>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002CDF4293890>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002CD861D8F50>]}
+[0m16:10:18.300975 [debug] [MainThread]: Flushing usage events
+[0m16:10:19.686590 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m16:20:06.569014 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002B9269E6510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002B929227ED0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002B929227C50>]}
+
+
+============================== 16:20:06.577576 | 17a0119c-b954-4df1-8517-396845d24d22 ==============================
+[0m16:20:06.577576 [info ] [MainThread]: Running with dbt=1.12.2
+[0m16:20:06.578943 [debug] [MainThread]: running dbt with arguments {'static_parser': 'True', 'no_print': 'None', 'version_check': 'True', 'target_path': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'maximum_seed_size_mib': '1', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'False', 'cache_selected_only': 'False', 'fail_fast': 'False', 'debug': 'False', 'log_format': 'default', 'partial_parse': 'True', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'use_colors': 'True', 'hints_enabled': 'True', 'invocation_command': 'dbt run', 'use_experimental_parser': 'False', 'indirect_selection': 'eager', 'log_path': 'C:\\Users\\hally\\OneDrive\\Área de Trabalho\\fundamental_data_analysis\\logs'}
+[0m16:20:09.310772 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '17a0119c-b954-4df1-8517-396845d24d22', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002B92712E2C0>]}
+[0m16:20:09.460073 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '17a0119c-b954-4df1-8517-396845d24d22', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002B925203570>]}
+[0m16:20:09.461916 [info ] [MainThread]: Registered adapter: bigquery=1.12.0
+[0m16:20:10.464804 [debug] [MainThread]: checksum: 56b8e0779adf4aaaf21f1124f88ce9ec2efc387c1929161730d014472c526c57, vars: {}, profile: transformations, target: dev, version: 1.12.2
+[0m16:20:10.732017 [debug] [MainThread]: Partial parsing enabled: 0 files deleted, 0 files added, 0 files changed.
+[0m16:20:10.733044 [debug] [MainThread]: Nothing changed, skipping partial parsing.
+[0m16:20:10.733960 [debug] [MainThread]: Partial parsing enabled, no changes found, skipping parsing
+[0m16:20:10.735244 [warn ] [MainThread]: [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 4 unused configuration paths:
+- models.transformations.staging
+- models.transformations
+- models.transformations.marts
+- seeds.transformations
+[0m16:20:10.744799 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '17a0119c-b954-4df1-8517-396845d24d22', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002B93AD5B350>]}
+[0m16:20:10.895349 [debug] [MainThread]: Wrote artifact WritableManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\manifest.json
+[0m16:20:10.903552 [debug] [MainThread]: Wrote artifact SemanticManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\semantic_manifest.json
+[0m16:20:10.958035 [debug] [MainThread]: Wrote artifact OsiDocument to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\osi_document.json
+[0m16:20:10.977212 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '17a0119c-b954-4df1-8517-396845d24d22', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002B93AF0EE40>]}
+[0m16:20:10.978118 [info ] [MainThread]: Found 561 macros
+[0m16:20:10.978888 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '17a0119c-b954-4df1-8517-396845d24d22', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002B93AFCC050>]}
+[0m16:20:10.981843 [warn ] [MainThread]: [[33mWARNING[0m]: Nothing to do. Try checking your model configs and model specification args
+[0m16:20:10.986761 [debug] [MainThread]: Command end result
+[0m16:20:11.056097 [debug] [MainThread]: Wrote artifact WritableManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\manifest.json
+[0m16:20:11.063604 [debug] [MainThread]: Wrote artifact SemanticManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\semantic_manifest.json
+[0m16:20:11.070990 [debug] [MainThread]: Wrote artifact OsiDocument to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\osi_document.json
+[0m16:20:11.078320 [debug] [MainThread]: Wrote artifact RunExecutionResult to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\run_results.json
+[0m16:20:11.080236 [debug] [MainThread]: Command `dbt run` succeeded at 16:20:11.079945 after 4.89 seconds
+[0m16:20:11.081176 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002B93ADE36C0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002B9291E96D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002B93AEBA150>]}
+[0m16:20:11.082100 [debug] [MainThread]: Flushing usage events
+[0m16:20:12.305500 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m16:20:21.854329 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001FC3E272510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001FC40A67D90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001FC40A67890>]}
+
+
+============================== 16:20:21.862757 | 59b7bd7e-efed-4c74-ab36-b26545825525 ==============================
+[0m16:20:21.862757 [info ] [MainThread]: Running with dbt=1.12.2
+[0m16:20:21.864099 [debug] [MainThread]: running dbt with arguments {'version_check': 'True', 'no_print': 'None', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'target_path': 'None', 'maximum_seed_size_mib': '1', 'printer_width': '80', 'write_json': 'True', 'empty': 'None', 'log_cache_events': 'False', 'introspect': 'True', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'partial_parse': 'True', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'use_colors': 'True', 'hints_enabled': 'True', 'indirect_selection': 'eager', 'use_experimental_parser': 'False', 'invocation_command': 'dbt ls', 'log_path': 'C:\\Users\\hally\\OneDrive\\Área de Trabalho\\fundamental_data_analysis\\logs'}
+[0m16:20:24.447233 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '59b7bd7e-efed-4c74-ab36-b26545825525', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001FC3E9AE2C0>]}
+[0m16:20:24.598823 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '59b7bd7e-efed-4c74-ab36-b26545825525', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001FC3CA93570>]}
+[0m16:20:24.600679 [info ] [MainThread]: Registered adapter: bigquery=1.12.0
+[0m16:20:25.544084 [debug] [MainThread]: checksum: 56b8e0779adf4aaaf21f1124f88ce9ec2efc387c1929161730d014472c526c57, vars: {}, profile: transformations, target: dev, version: 1.12.2
+[0m16:20:25.769462 [debug] [MainThread]: Partial parsing enabled: 0 files deleted, 0 files added, 0 files changed.
+[0m16:20:25.770438 [debug] [MainThread]: Nothing changed, skipping partial parsing.
+[0m16:20:25.771699 [debug] [MainThread]: Partial parsing enabled, no changes found, skipping parsing
+[0m16:20:25.772917 [warn ] [MainThread]: [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 4 unused configuration paths:
+- models.transformations.marts
+- models.transformations
+- models.transformations.staging
+- seeds.transformations
+[0m16:20:25.782231 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '59b7bd7e-efed-4c74-ab36-b26545825525', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001FC53759950>]}
+[0m16:20:25.930918 [debug] [MainThread]: Wrote artifact WritableManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\manifest.json
+[0m16:20:25.939405 [debug] [MainThread]: Wrote artifact SemanticManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\semantic_manifest.json
+[0m16:20:25.991121 [debug] [MainThread]: Wrote artifact OsiDocument to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\osi_document.json
+[0m16:20:26.035249 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '59b7bd7e-efed-4c74-ab36-b26545825525', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001FC53693B60>]}
+[0m16:20:26.036321 [info ] [MainThread]: Found 561 macros
+[0m16:20:26.037325 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '59b7bd7e-efed-4c74-ab36-b26545825525', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001FC53687070>]}
+[0m16:20:26.038827 [warn ] [MainThread]: [[33mWARNING[0m]: No nodes selected!
+[0m16:20:26.041105 [debug] [MainThread]: Command `dbt ls` succeeded at 16:20:26.040756 after 4.47 seconds
+[0m16:20:26.042002 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001FC522F0120>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001FC40743890>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001FC535E8F50>]}
+[0m16:20:26.042848 [debug] [MainThread]: Flushing usage events
+[0m16:20:27.239097 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m16:20:44.019598 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001EC2058A510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001EC22D87D90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001EC22D87890>]}
+
+
+============================== 16:20:44.027926 | e53a07fb-3d4c-462b-91cd-dccd71d77a67 ==============================
+[0m16:20:44.027926 [info ] [MainThread]: Running with dbt=1.12.2
+[0m16:20:44.029427 [debug] [MainThread]: running dbt with arguments {'maximum_seed_size_mib': '1', 'no_print': 'None', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'target_path': 'None', 'version_check': 'True', 'printer_width': '80', 'write_json': 'True', 'empty': 'None', 'log_cache_events': 'False', 'introspect': 'True', 'cache_selected_only': 'False', 'fail_fast': 'False', 'debug': 'False', 'log_format': 'default', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'use_colors': 'True', 'hints_enabled': 'True', 'indirect_selection': 'eager', 'use_experimental_parser': 'False', 'invocation_command': 'dbt ls', 'log_path': 'C:\\Users\\hally\\OneDrive\\Área de Trabalho\\fundamental_data_analysis\\logs'}
+[0m16:20:46.701779 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': 'e53a07fb-3d4c-462b-91cd-dccd71d77a67', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001EC20CCE2C0>]}
+[0m16:20:46.843311 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': 'e53a07fb-3d4c-462b-91cd-dccd71d77a67', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001EC1EDB3570>]}
+[0m16:20:46.845018 [info ] [MainThread]: Registered adapter: bigquery=1.12.0
+[0m16:20:47.743105 [debug] [MainThread]: checksum: 56b8e0779adf4aaaf21f1124f88ce9ec2efc387c1929161730d014472c526c57, vars: {}, profile: transformations, target: dev, version: 1.12.2
+[0m16:20:47.955208 [debug] [MainThread]: Partial parsing enabled: 0 files deleted, 0 files added, 0 files changed.
+[0m16:20:47.956163 [debug] [MainThread]: Nothing changed, skipping partial parsing.
+[0m16:20:47.956970 [debug] [MainThread]: Partial parsing enabled, no changes found, skipping parsing
+[0m16:20:47.957947 [warn ] [MainThread]: [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 4 unused configuration paths:
+- models.transformations
+- models.transformations.staging
+- models.transformations.marts
+- seeds.transformations
+[0m16:20:47.966853 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': 'e53a07fb-3d4c-462b-91cd-dccd71d77a67', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001EC34A99950>]}
+[0m16:20:48.101269 [debug] [MainThread]: Wrote artifact WritableManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\manifest.json
+[0m16:20:48.109527 [debug] [MainThread]: Wrote artifact SemanticManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\semantic_manifest.json
+[0m16:20:48.162322 [debug] [MainThread]: Wrote artifact OsiDocument to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\osi_document.json
+[0m16:20:48.207919 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': 'e53a07fb-3d4c-462b-91cd-dccd71d77a67', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001EC349D3B60>]}
+[0m16:20:48.208951 [info ] [MainThread]: Found 561 macros
+[0m16:20:48.209926 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': 'e53a07fb-3d4c-462b-91cd-dccd71d77a67', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001EC349C7070>]}
+[0m16:20:48.211302 [warn ] [MainThread]: [[33mWARNING[0m]: No nodes selected!
+[0m16:20:48.213125 [debug] [MainThread]: Command `dbt ls` succeeded at 16:20:48.212923 after 4.48 seconds
+[0m16:20:48.213645 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001EC34600120>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001EC22A63890>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001EC34944F50>]}
+[0m16:20:48.214183 [debug] [MainThread]: Flushing usage events
+[0m16:20:49.394090 [debug] [MainThread]: An error was encountered while trying to flush usage events
+==================== 2026-08-25T20:57:39.456776Z | 01a03ab6-e373-79c3-8937-51bab750fa97 ====================
+20:57:39.457918 [info ]: dbt-fusion 2.0.0-preview.212
+20:57:39.459843 [info ]: Started loading project
+20:57:39.471412 [info ]: Loading ~/.dbt/profiles.yml
+20:57:39.488061 [debug]:    Started loading packages
+20:57:39.491702 [debug]:     Loaded [  0.00s] packages
+20:57:39.493409 [info ]: Finished loading project [  0.03s]
+20:57:39.495381 [info ]: Started parsing
+20:57:39.841080 [warn ]: [UnusedResourceConfigPath (dbt1097)]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 4 unused configuration paths:
+- models.transformations
+- models.transformations.marts
+- models.transformations.staging
+- seeds.transformations
+20:57:39.844110 [info ]: Finished parsing [  0.35s]
+20:57:39.848786 [info ]: Started scheduling
+20:57:39.849095 [info ]: Finished scheduling [  0.00s]
+20:57:40.449698 [info ]: 
+==================== Execution Summary =====================
+Finished 'list' with 1 warning for target 'dev' [992ms]
+==================== 2026-08-25T20:59:33.843342Z | 01a03ab8-a24f-7b70-8292-729faf46b2fb ====================
+20:59:33.843660 [info ]: dbt-fusion 2.0.0-preview.212
+20:59:33.844455 [info ]: Started loading project
+20:59:33.851468 [info ]: Loading ~/.dbt/profiles.yml
+20:59:33.866464 [debug]:    Started loading packages
+20:59:33.875295 [debug]:     Loaded [  0.01s] packages
+20:59:33.877457 [info ]: Finished loading project [  0.03s]
+20:59:33.879101 [info ]: Started parsing
+20:59:33.974343 [debug]: Finished parsing transformations/models/source.yml [  0.00s]
+20:59:33.976014 [debug]: Finished parsing transformations/models/staging/stg_balance_sheet.yml [  0.00s]
+20:59:33.977123 [debug]: Finished parsing transformations/models/staging/stg_cash_flow.yml [  0.00s]
+20:59:33.977672 [debug]: Finished parsing transformations/models/staging/stg_earning.yml [  0.00s]
+20:59:33.978841 [debug]: Finished parsing transformations/models/staging/stg_income_statement.yml [  0.00s]
+20:59:33.980636 [debug]: Finished parsing transformations/models/staging/stg_overview.yml [  0.00s]
+20:59:34.002122 [debug]: Finished parsing transformations/models/staging/stg_balance_sheet.sql [  0.00s]
+20:59:34.004404 [debug]: Finished parsing transformations/models/staging/stg_cash_flow.sql [  0.00s]
+20:59:34.006298 [debug]: Finished parsing transformations/models/staging/stg_earning.sql [  0.00s]
+20:59:34.008648 [debug]: Finished parsing transformations/models/staging/stg_income_statement.sql [  0.00s]
+20:59:34.013083 [debug]: Finished parsing transformations/models/staging/stg_overview.sql [  0.00s]
+20:59:34.289747 [warn ]: [UnusedResourceConfigPath (dbt1097)]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 1 unused configuration paths:
+- models.transformations.marts
+20:59:34.292406 [info ]: Finished parsing [  0.41s]
+20:59:34.294092 [info ]: Started scheduling
+20:59:34.296743 [info ]: Finished scheduling [  0.00s]
+=======================Selected nodes=======================
+20:59:34.297788 [info ]: transformations/models/staging/stg_balance_sheet.sql
+20:59:34.298455 [info ]: transformations/models/staging/stg_cash_flow.sql
+20:59:34.298855 [info ]: transformations/models/staging/stg_earning.sql
+20:59:34.299162 [info ]: transformations/models/staging/stg_income_statement.sql
+20:59:34.299396 [info ]: transformations/models/staging/stg_overview.sql
+20:59:34.778854 [info ]: 
+==================== Execution Summary =====================
+Finished 'list' with 1 warning for target 'dev' [935ms]
+==================== 2026-08-25T20:59:51.626833Z | 01a03ab8-e7c6-7733-93dd-c004fef45d60 ====================
+20:59:51.627161 [info ]: dbt-fusion 2.0.0-preview.212
+20:59:51.628337 [info ]: Started loading project
+20:59:51.634621 [info ]: Loading ~/.dbt/profiles.yml
+20:59:51.649097 [debug]:    Started loading packages
+20:59:51.656697 [debug]:     Loaded [  0.01s] packages
+20:59:51.658610 [info ]: Finished loading project [  0.03s]
+20:59:51.660809 [info ]: Started parsing
+20:59:51.749762 [debug]: Finished parsing transformations/models/source.yml [  0.00s]
+20:59:51.751153 [debug]: Finished parsing transformations/models/staging/stg_balance_sheet.yml [  0.00s]
+20:59:51.752330 [debug]: Finished parsing transformations/models/staging/stg_cash_flow.yml [  0.00s]
+20:59:51.752964 [debug]: Finished parsing transformations/models/staging/stg_earning.yml [  0.00s]
+20:59:51.753806 [debug]: Finished parsing transformations/models/staging/stg_income_statement.yml [  0.00s]
+20:59:51.755204 [debug]: Finished parsing transformations/models/staging/stg_overview.yml [  0.00s]
+20:59:51.778382 [debug]: Finished parsing transformations/models/staging/stg_balance_sheet.sql [  0.00s]
+20:59:51.781537 [debug]: Finished parsing transformations/models/staging/stg_cash_flow.sql [  0.00s]
+20:59:51.784479 [debug]: Finished parsing transformations/models/staging/stg_earning.sql [  0.00s]
+20:59:51.787260 [debug]: Finished parsing transformations/models/staging/stg_income_statement.sql [  0.00s]
+20:59:51.791603 [debug]: Finished parsing transformations/models/staging/stg_overview.sql [  0.00s]
+20:59:52.072217 [warn ]: [UnusedResourceConfigPath (dbt1097)]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 1 unused configuration paths:
+- models.transformations.marts
+20:59:52.074733 [info ]: Finished parsing [  0.41s]
+20:59:52.076435 [info ]: Started scheduling
+20:59:52.076976 [info ]: Finished scheduling [  0.00s]
+20:59:52.083303 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_income_statement" }) and interval: None
+20:59:52.083350 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_balance_sheet" }) and interval: None
+20:59:52.083360 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_cash_flow" }) and interval: None
+20:59:52.083370 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_earning" }) and interval: None
+20:59:52.083377 [debug]: Initializing schema store with entry: Frontier(CanonicalFqn { catalog: "projetodbt-479518", schema: "alphavantage", table: "ext_overview" }) and interval: None
+20:59:52.088434 [info ]: Started building task graph
+20:59:52.088761 [info ]: Finished building task graph [  0.00s]
+20:59:52.573030 [info ]: Started rendering (5 nodes)
+20:59:52.573324 [info ]: Started model alphavantage.stg_overview
+20:59:52.573347 [debug]: Started rendering model alphavantage.stg_overview
+20:59:52.573426 [info ]: Started model alphavantage.stg_income_statement
+20:59:52.573448 [debug]: Started rendering model alphavantage.stg_income_statement
+20:59:52.573478 [info ]: Started model alphavantage.stg_earning
+20:59:52.573495 [debug]: Started rendering model alphavantage.stg_earning
+20:59:52.573518 [info ]: Started model alphavantage.stg_cash_flow
+20:59:52.573544 [debug]: Started rendering model alphavantage.stg_cash_flow
+20:59:52.573571 [info ]: Started model alphavantage.stg_balance_sheet
+20:59:52.573588 [debug]: Started rendering model alphavantage.stg_balance_sheet
+20:59:52.583228 [debug]: Compiled SQL for node model.transformations.stg_balance_sheet at target\compiled\transformations\transformations\models\staging\stg_balance_sheet.sql
+20:59:52.583661 [debug]: Finished rendering [  0.01s] model alphavantage.stg_balance_sheet [success]
+20:59:52.584459 [info ]: Started analyzing (5 nodes)
+20:59:52.584809 [debug]: Started analyzing model alphavantage.stg_balance_sheet
+20:59:52.586964 [debug]: Compiled SQL for node model.transformations.stg_overview at target\compiled\transformations\transformations\models\staging\stg_overview.sql
+20:59:52.587030 [debug]: Compiled SQL for node model.transformations.stg_earning at target\compiled\transformations\transformations\models\staging\stg_earning.sql
+20:59:52.587209 [debug]: Compiled SQL for node model.transformations.stg_cash_flow at target\compiled\transformations\transformations\models\staging\stg_cash_flow.sql
+20:59:52.587382 [debug]: Compiled SQL for node model.transformations.stg_income_statement at target\compiled\transformations\transformations\models\staging\stg_income_statement.sql
+20:59:52.587390 [debug]: Finished rendering [  0.01s] model alphavantage.stg_earning [success]
+20:59:52.596330 [debug]: Started analyzing model alphavantage.stg_earning
+20:59:52.596407 [debug]: Finished rendering [  0.02s] model alphavantage.stg_overview [success]
+20:59:52.602409 [debug]: Started analyzing model alphavantage.stg_overview
+20:59:52.602472 [debug]: Finished rendering [  0.03s] model alphavantage.stg_cash_flow [success]
+20:59:52.605326 [debug]: Started analyzing model alphavantage.stg_cash_flow
+20:59:52.605393 [debug]: Finished rendering [  0.03s] model alphavantage.stg_income_statement [success]
+20:59:52.607663 [info ]: Finished rendering [  0.03s] (5 nodes, 0 skipped, 0 errors)
+20:59:52.617774 [debug]: Started analyzing model alphavantage.stg_income_statement
+20:59:52.618274 [debug]: Finished analyzing [  0.02s] model alphavantage.stg_overview [success]
+20:59:52.618533 [info ]:  Succeeded [  0.04s] model alphavantage.stg_overview (view)
+20:59:52.623982 [debug]: Finished analyzing [  0.01s] model alphavantage.stg_income_statement [success]
+20:59:52.624843 [info ]:  Succeeded [  0.04s] model alphavantage.stg_income_statement (view)
+20:59:52.624905 [debug]: Finished analyzing [  0.02s] model alphavantage.stg_cash_flow [success]
+20:59:52.628151 [info ]:  Succeeded [  0.05s] model alphavantage.stg_cash_flow (view)
+20:59:52.628213 [debug]: Finished analyzing [  0.04s] model alphavantage.stg_balance_sheet [success]
+20:59:52.628907 [info ]:  Succeeded [  0.05s] model alphavantage.stg_balance_sheet (view)
+20:59:52.629002 [debug]: Finished analyzing [  0.03s] model alphavantage.stg_earning [success]
+20:59:52.629521 [info ]: Finished analyzing [  0.05s] (5 nodes, 0 skipped, 0 errors)
+20:59:52.630957 [info ]:  Succeeded [  0.04s] model alphavantage.stg_earning (view)
+20:59:52.848026 [info ]: 
+==================== Execution Summary =====================
+Finished 'compile' with 1 warning for target 'dev' [1.2s]
+Processed: 5 models
+Summary: 5 total | 5 success
+[0m18:00:40.312497 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D8F6ED2510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D8F9707ED0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D8F9707C50>]}
+
+
+============================== 18:00:40.322590 | 43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd ==============================
+[0m18:00:40.322590 [info ] [MainThread]: Running with dbt=1.12.2
+[0m18:00:40.324066 [debug] [MainThread]: running dbt with arguments {'static_parser': 'True', 'no_print': 'None', 'maximum_seed_size_mib': '1', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'target_path': 'None', 'version_check': 'True', 'printer_width': '80', 'write_json': 'True', 'empty': 'False', 'log_cache_events': 'False', 'introspect': 'True', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'use_colors': 'True', 'hints_enabled': 'True', 'invocation_command': 'dbt run', 'use_experimental_parser': 'False', 'indirect_selection': 'eager', 'log_path': 'C:\\Users\\hally\\OneDrive\\Área de Trabalho\\fundamental_data_analysis\\logs'}
+[0m18:00:43.765685 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D8F760E2C0>]}
+[0m18:00:43.925041 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D8F56F3570>]}
+[0m18:00:43.927122 [info ] [MainThread]: Registered adapter: bigquery=1.12.0
+[0m18:00:44.919543 [debug] [MainThread]: checksum: 56b8e0779adf4aaaf21f1124f88ce9ec2efc387c1929161730d014472c526c57, vars: {}, profile: transformations, target: dev, version: 1.12.2
+[0m18:00:45.045753 [info ] [MainThread]: Unable to do partial parsing because a project config has changed
+[0m18:00:45.046924 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'partial_parser', 'label': '43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D88B3DED50>]}
+[0m18:00:49.459557 [warn ] [MainThread]: [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 1 unused configuration paths:
+- models.transformations.marts
+[0m18:00:49.467966 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D88B542E40>]}
+[0m18:00:49.825369 [debug] [MainThread]: Wrote artifact WritableManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\manifest.json
+[0m18:00:49.835399 [debug] [MainThread]: Wrote artifact SemanticManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\semantic_manifest.json
+[0m18:00:49.902276 [debug] [MainThread]: Wrote artifact OsiDocument to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\osi_document.json
+[0m18:00:49.937454 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D88B112510>]}
+[0m18:00:49.938464 [info ] [MainThread]: Found 5 models, 6 seeds, 5 sources, 568 macros
+[0m18:00:49.939346 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D88CAD7E10>]}
+[0m18:00:49.945704 [info ] [MainThread]: 
+[0m18:00:49.951212 [info ] [MainThread]: Concurrency: 16 threads (target='dev')
+[0m18:00:49.952326 [info ] [MainThread]: 
+[0m18:00:49.953690 [debug] [MainThread]: Acquiring new bigquery connection 'master'
+[0m18:00:49.968721 [debug] [ThreadPool]: Acquiring new bigquery connection 'list_projetodbt-479518'
+[0m18:00:49.969756 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m18:00:52.249304 [debug] [ThreadPool]: Acquiring new bigquery connection 'list_projetodbt-479518_alphavantage_raw'
+[0m18:00:52.250433 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m18:00:52.251593 [debug] [ThreadPool]: Acquiring new bigquery connection 'list_projetodbt-479518_alphavantage'
+[0m18:00:52.252636 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m18:00:55.572739 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D88CA39F10>]}
+[0m18:00:55.573869 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m18:00:55.658809 [debug] [Thread-8 (]: Began running node model.transformations.stg_overview
+[0m18:00:55.659852 [debug] [Thread-6 (]: Began running node model.transformations.stg_earning
+[0m18:00:55.660776 [debug] [Thread-7 (]: Began running node model.transformations.stg_income_statement
+[0m18:00:55.661743 [debug] [Thread-4 (]: Began running node model.transformations.stg_balance_sheet
+[0m18:00:55.662659 [debug] [Thread-5 (]: Began running node model.transformations.stg_cash_flow
+[0m18:00:55.663813 [info ] [Thread-8 (]: 5 of 5 START sql view model alphavantage.stg_overview .......................... [RUN]
+[0m18:00:55.665109 [info ] [Thread-6 (]: 3 of 5 START sql view model alphavantage.stg_earning ........................... [RUN]
+[0m18:00:55.666569 [info ] [Thread-7 (]: 4 of 5 START sql view model alphavantage.stg_income_statement .................. [RUN]
+[0m18:00:55.668055 [info ] [Thread-4 (]: 1 of 5 START sql view model alphavantage.stg_balance_sheet ..................... [RUN]
+[0m18:00:55.670951 [debug] [Thread-8 (]: Acquiring new bigquery connection 'model.transformations.stg_overview'
+[0m18:00:55.669400 [info ] [Thread-5 (]: 2 of 5 START sql view model alphavantage.stg_cash_flow ......................... [RUN]
+[0m18:00:55.672480 [debug] [Thread-6 (]: Acquiring new bigquery connection 'model.transformations.stg_earning'
+[0m18:00:55.673842 [debug] [Thread-7 (]: Acquiring new bigquery connection 'model.transformations.stg_income_statement'
+[0m18:00:55.675151 [debug] [Thread-4 (]: Acquiring new bigquery connection 'model.transformations.stg_balance_sheet'
+[0m18:00:55.676095 [debug] [Thread-8 (]: Began compiling node model.transformations.stg_overview
+[0m18:00:55.677346 [debug] [Thread-5 (]: Acquiring new bigquery connection 'model.transformations.stg_cash_flow'
+[0m18:00:55.678435 [debug] [Thread-6 (]: Began compiling node model.transformations.stg_earning
+[0m18:00:55.679349 [debug] [Thread-7 (]: Began compiling node model.transformations.stg_income_statement
+[0m18:00:55.680213 [debug] [Thread-4 (]: Began compiling node model.transformations.stg_balance_sheet
+[0m18:00:55.705220 [debug] [Thread-8 (]: Writing injected SQL for node "model.transformations.stg_overview"
+[0m18:00:55.706287 [debug] [Thread-5 (]: Began compiling node model.transformations.stg_cash_flow
+[0m18:00:55.719815 [debug] [Thread-6 (]: Writing injected SQL for node "model.transformations.stg_earning"
+[0m18:00:55.730977 [debug] [Thread-7 (]: Writing injected SQL for node "model.transformations.stg_income_statement"
+[0m18:00:55.749390 [debug] [Thread-4 (]: Writing injected SQL for node "model.transformations.stg_balance_sheet"
+[0m18:00:55.762992 [debug] [Thread-5 (]: Writing injected SQL for node "model.transformations.stg_cash_flow"
+[0m18:00:55.765001 [debug] [Thread-8 (]: Began executing node model.transformations.stg_overview
+[0m18:00:55.821764 [debug] [Thread-5 (]: Began executing node model.transformations.stg_cash_flow
+[0m18:00:55.834334 [debug] [Thread-8 (]: Writing runtime sql for node "model.transformations.stg_overview"
+[0m18:00:55.835024 [debug] [Thread-6 (]: Began executing node model.transformations.stg_earning
+[0m18:00:55.835833 [debug] [Thread-7 (]: Began executing node model.transformations.stg_income_statement
+[0m18:00:55.840285 [debug] [Thread-5 (]: Writing runtime sql for node "model.transformations.stg_cash_flow"
+[0m18:00:55.842322 [debug] [Thread-4 (]: Began executing node model.transformations.stg_balance_sheet
+[0m18:00:55.847149 [debug] [Thread-6 (]: Writing runtime sql for node "model.transformations.stg_earning"
+[0m18:00:55.853493 [debug] [Thread-7 (]: Writing runtime sql for node "model.transformations.stg_income_statement"
+[0m18:00:55.858694 [debug] [Thread-4 (]: Writing runtime sql for node "model.transformations.stg_balance_sheet"
+[0m18:00:55.864979 [debug] [Thread-5 (]: On model.transformations.stg_cash_flow: /* {"app": "dbt", "dbt_version": "1.12.2", "profile_name": "transformations", "target_name": "dev", "node_id": "model.transformations.stg_cash_flow"} */
+
+
+  create or replace view `projetodbt-479518`.`alphavantage`.`stg_cash_flow`
+  OPTIONS(
+      description="""Flattened cash flow reports from the Alpha Vantage CASH_FLOW endpoint."""
+    )
+  as 
+
+
+
+WITH raw_source AS (
+    SELECT raw_data, year, month, day
+    FROM `projetodbt-479518`.`alphavantage`.`ext_cash_flow`
+), reports AS (
+    SELECT raw_data, year, month, day, 'annual' AS report_type, report
+    FROM raw_source, UNNEST(JSON_QUERY_ARRAY(raw_data, '$.annualReports')) AS report
+    UNION ALL
+    SELECT raw_data, year, month, day, 'quarterly' AS report_type, report
+    FROM raw_source, UNNEST(JSON_QUERY_ARRAY(raw_data, '$.quarterlyReports')) AS report
+)
+SELECT
+    JSON_VALUE(raw_data, '$.symbol') AS symbol,
+    report_type,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.fiscalDateEnding'), 'None'), '-'), 'N/A') AS DATE) AS fiscaldateending,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.reportedCurrency'), 'None'), '-'), 'N/A') AS STRING) AS reportedcurrency,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.operatingCashflow'), 'None'), '-'), 'N/A') AS INT64) AS operatingcashflow,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.paymentsForOperatingActivities'), 'None'), '-'), 'N/A') AS INT64) AS paymentsforoperatingactivities,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.proceedsFromOperatingActivities'), 'None'), '-'), 'N/A') AS INT64) AS proceedsfromoperatingactivities,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.changeInOperatingLiabilities'), 'None'), '-'), 'N/A') AS INT64) AS changeinoperatingliabilities,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.changeInOperatingAssets'), 'None'), '-'), 'N/A') AS INT64) AS changeinoperatingassets,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.depreciationDepletionAndAmortization'), 'None'), '-'), 'N/A') AS INT64) AS depreciationdepletionandamortization,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.capitalExpenditures'), 'None'), '-'), 'N/A') AS INT64) AS capitalexpenditures,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.changeInReceivables'), 'None'), '-'), 'N/A') AS INT64) AS changeinreceivables,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.changeInInventory'), 'None'), '-'), 'N/A') AS INT64) AS changeininventory,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.profitLoss'), 'None'), '-'), 'N/A') AS INT64) AS profitloss,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.cashflowFromInvestment'), 'None'), '-'), 'N/A') AS INT64) AS cashflowfrominvestment,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.cashflowFromFinancing'), 'None'), '-'), 'N/A') AS INT64) AS cashflowfromfinancing,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.proceedsFromRepaymentsOfShortTermDebt'), 'None'), '-'), 'N/A') AS INT64) AS proceedsfromrepaymentsofshorttermdebt,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.paymentsForRepurchaseOfCommonStock'), 'None'), '-'), 'N/A') AS INT64) AS paymentsforrepurchaseofcommonstock,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.paymentsForRepurchaseOfEquity'), 'None'), '-'), 'N/A') AS INT64) AS paymentsforrepurchaseofequity,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.paymentsForRepurchaseOfPreferredStock'), 'None'), '-'), 'N/A') AS INT64) AS paymentsforrepurchaseofpreferredstock,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.dividendPayout'), 'None'), '-'), 'N/A') AS INT64) AS dividendpayout,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.dividendPayoutCommonStock'), 'None'), '-'), 'N/A') AS INT64) AS dividendpayoutcommonstock,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.dividendPayoutPreferredStock'), 'None'), '-'), 'N/A') AS INT64) AS dividendpayoutpreferredstock,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.proceedsFromIssuanceOfCommonStock'), 'None'), '-'), 'N/A') AS INT64) AS proceedsfromissuanceofcommonstock,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet'), 'None'), '-'), 'N/A') AS INT64) AS proceedsfromissuanceoflongtermdebtandcapitalsecuritiesnet,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.proceedsFromIssuanceOfPreferredStock'), 'None'), '-'), 'N/A') AS INT64) AS proceedsfromissuanceofpreferredstock,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.proceedsFromRepurchaseOfEquity'), 'None'), '-'), 'N/A') AS INT64) AS proceedsfromrepurchaseofequity,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.proceedsFromSaleOfTreasuryStock'), 'None'), '-'), 'N/A') AS INT64) AS proceedsfromsaleoftreasurystock,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.stockBasedCompensation'), 'None'), '-'), 'N/A') AS INT64) AS stockbasedcompensation,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.changeInCashAndCashEquivalents'), 'None'), '-'), 'N/A') AS INT64) AS changeincashandcashequivalents,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.changeInExchangeRate'), 'None'), '-'), 'N/A') AS INT64) AS changeinexchangerate,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.netIncome'), 'None'), '-'), 'N/A') AS INT64) AS netincome
+    ,
+    year AS partition_year,
+    month AS partition_month,
+    day AS partition_day
+FROM reports;
+
+
+[0m18:00:55.866749 [debug] [Thread-5 (]: Opening a new connection, currently in state init
+[0m18:00:55.868770 [debug] [Thread-8 (]: On model.transformations.stg_overview: /* {"app": "dbt", "dbt_version": "1.12.2", "profile_name": "transformations", "target_name": "dev", "node_id": "model.transformations.stg_overview"} */
+
+
+  create or replace view `projetodbt-479518`.`alphavantage`.`stg_overview`
+  OPTIONS(
+      description="""Silver layer model containing fundamental data, financial metrics, and corporate profiles for listed companies. Sourced from Alpha Vantage (OVERVIEW endpoint)."""
+    )
+  as 
+
+-- JSON keys and BigQuery types aligned with OverviewSchema in contract.py
+
+
+WITH raw_source AS (
+    SELECT 
+        raw_data,
+        year,
+        month,
+        day
+    FROM `projetodbt-479518`.`alphavantage`.`ext_overview`
+)
+
+SELECT
+    -- Unpack the tuple into field_name and field_type variables
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.Symbol'), 'None') 
+            AS STRING
+        ) AS symbol,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.AssetType'), 'None') 
+            AS STRING
+        ) AS assettype,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.Name'), 'None') 
+            AS STRING
+        ) AS name,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.Description'), 'None') 
+            AS STRING
+        ) AS description,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.CIK'), 'None') 
+            AS STRING
+        ) AS cik,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.Exchange'), 'None') 
+            AS STRING
+        ) AS exchange,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.Currency'), 'None') 
+            AS STRING
+        ) AS currency,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.Country'), 'None') 
+            AS STRING
+        ) AS country,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.Sector'), 'None') 
+            AS STRING
+        ) AS sector,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.Industry'), 'None') 
+            AS STRING
+        ) AS industry,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.Address'), 'None') 
+            AS STRING
+        ) AS address,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.OfficialSite'), 'None') 
+            AS STRING
+        ) AS officialsite,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.FiscalYearEnd'), 'None') 
+            AS STRING
+        ) AS fiscalyearend,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.LatestQuarter'), 'None') 
+            AS STRING
+        ) AS latestquarter,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.DividendDate'), 'None') 
+            AS STRING
+        ) AS dividenddate,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.ExDividendDate'), 'None') 
+            AS STRING
+        ) AS exdividenddate,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.MarketCapitalization'), 'None') 
+            AS INT64
+        ) AS marketcapitalization,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.EBITDA'), 'None') 
+            AS INT64
+        ) AS ebitda,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.RevenueTTM'), 'None') 
+            AS INT64
+        ) AS revenuettm,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.GrossProfitTTM'), 'None') 
+            AS INT64
+        ) AS grossprofitttm,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.SharesOutstanding'), 'None') 
+            AS INT64
+        ) AS sharesoutstanding,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.SharesFloat'), 'None') 
+            AS INT64
+        ) AS sharesfloat,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.PERatio'), 'None') 
+            AS FLOAT64
+        ) AS peratio,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.PEGRatio'), 'None') 
+            AS FLOAT64
+        ) AS pegratio,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.BookValue'), 'None') 
+            AS FLOAT64
+        ) AS bookvalue,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.DividendPerShare'), 'None') 
+            AS FLOAT64
+        ) AS dividendpershare,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.DividendYield'), 'None') 
+            AS FLOAT64
+        ) AS dividendyield,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.EPS'), 'None') 
+            AS FLOAT64
+        ) AS eps,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.RevenuePerShareTTM'), 'None') 
+            AS FLOAT64
+        ) AS revenuepersharettm,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.ProfitMargin'), 'None') 
+            AS FLOAT64
+        ) AS profitmargin,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.OperatingMarginTTM'), 'None') 
+            AS FLOAT64
+        ) AS operatingmarginttm,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.ReturnOnAssetsTTM'), 'None') 
+            AS FLOAT64
+        ) AS returnonassetsttm,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.ReturnOnEquityTTM'), 'None') 
+            AS FLOAT64
+        ) AS returnonequityttm,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.DilutedEPSTTM'), 'None') 
+            AS FLOAT64
+        ) AS dilutedepsttm,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.QuarterlyEarningsGrowthYOY'), 'None') 
+            AS FLOAT64
+        ) AS quarterlyearningsgrowthyoy,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.QuarterlyRevenueGrowthYOY'), 'None') 
+            AS FLOAT64
+        ) AS quarterlyrevenuegrowthyoy,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.AnalystTargetPrice'), 'None') 
+            AS FLOAT64
+        ) AS analysttargetprice,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.AnalystRatingStrongBuy'), 'None') 
+            AS FLOAT64
+        ) AS analystratingstrongbuy,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.AnalystRatingBuy'), 'None') 
+            AS FLOAT64
+        ) AS analystratingbuy,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.AnalystRatingHold'), 'None') 
+            AS FLOAT64
+        ) AS analystratinghold,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.AnalystRatingSell'), 'None') 
+            AS FLOAT64
+        ) AS analystratingsell,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.AnalystRatingStrongSell'), 'None') 
+            AS FLOAT64
+        ) AS analystratingstrongsell,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.TrailingPE'), 'None') 
+            AS FLOAT64
+        ) AS trailingpe,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.ForwardPE'), 'None') 
+            AS FLOAT64
+        ) AS forwardpe,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.PriceToSalesRatioTTM'), 'None') 
+            AS FLOAT64
+        ) AS pricetosalesratiottm,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.PriceToBookRatio'), 'None') 
+            AS FLOAT64
+        ) AS pricetobookratio,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.EVToRevenue'), 'None') 
+            AS FLOAT64
+        ) AS evtorevenue,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.EVToEBITDA'), 'None') 
+            AS FLOAT64
+        ) AS evtoebitda,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.Beta'), 'None') 
+            AS FLOAT64
+        ) AS beta,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.PercentInsiders'), 'None') 
+            AS FLOAT64
+        ) AS percentinsiders,
+        
+    
+        
+        
+        
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.PercentInstitutions'), 'None') 
+            AS FLOAT64
+        ) AS percentinstitutions,
+        
+    
+        
+        
+        
+        
+            
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.52WeekHigh'), 'None') 
+            AS FLOAT64
+        ) AS _52weekhigh,
+        
+    
+        
+        
+        
+        
+            
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.52WeekLow'), 'None') 
+            AS FLOAT64
+        ) AS _52weeklow,
+        
+    
+        
+        
+        
+        
+            
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.50DayMovingAverage'), 'None') 
+            AS FLOAT64
+        ) AS _50daymovingaverage,
+        
+    
+        
+        
+        
+        
+            
+        
+        
+        -- Safely extract, handle 'None' strings, and cast to the strict type
+        CAST(
+            NULLIF(JSON_EXTRACT_SCALAR(raw_data, '$.200DayMovingAverage'), 'None') 
+            AS FLOAT64
+        ) AS _200daymovingaverage,
+        
+    
+
+    year as partition_year,
+    month as partition_month,
+    day as partition_day
+
+FROM raw_source;
+
+
+[0m18:00:55.870630 [debug] [Thread-8 (]: Opening a new connection, currently in state init
+[0m18:00:55.872112 [debug] [Thread-6 (]: On model.transformations.stg_earning: /* {"app": "dbt", "dbt_version": "1.12.2", "profile_name": "transformations", "target_name": "dev", "node_id": "model.transformations.stg_earning"} */
+
+
+  create or replace view `projetodbt-479518`.`alphavantage`.`stg_earning`
+  OPTIONS(
+      description="""Flattened annual and quarterly earnings reports from the Alpha Vantage EARNINGS endpoint."""
+    )
+  as 
+
+
+
+
+WITH raw_source AS (
+    SELECT raw_data, year, month, day
+    FROM `projetodbt-479518`.`alphavantage`.`ext_earning`
+), reports AS (
+    SELECT raw_data, year, month, day, 'annual' AS report_type, report
+    FROM raw_source, UNNEST(JSON_QUERY_ARRAY(raw_data, '$.annualEarnings')) AS report
+    UNION ALL
+    SELECT raw_data, year, month, day, 'quarterly' AS report_type, report
+    FROM raw_source, UNNEST(JSON_QUERY_ARRAY(raw_data, '$.quarterlyEarnings')) AS report
+)
+SELECT
+    JSON_VALUE(raw_data, '$.symbol') AS symbol,
+    report_type,
+    
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.fiscalDateEnding'), 'None'), '-'), 'N/A') AS DATE) AS fiscaldateending,
+    
+    
+    
+    CAST(NULL AS DATE) AS reporteddate,
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.reportedEPS'), 'None'), '-'), 'N/A') AS FLOAT64) AS reportedeps,
+    
+    
+    CAST(NULL AS FLOAT64) AS estimatedeps,
+    CAST(NULL AS FLOAT64) AS surprise,
+    CAST(NULL AS FLOAT64) AS surprisepercentage,
+    CAST(NULL AS STRING) AS reporttime,
+    year AS partition_year,
+    month AS partition_month,
+    day AS partition_day
+FROM reports
+WHERE report_type = 'annual'
+
+UNION ALL
+
+SELECT
+    JSON_VALUE(raw_data, '$.symbol') AS symbol,
+    report_type,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.fiscalDateEnding'), 'None'), '-'), 'N/A') AS DATE) AS fiscaldateending,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.reportedDate'), 'None'), '-'), 'N/A') AS DATE) AS reporteddate,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.reportedEPS'), 'None'), '-'), 'N/A') AS FLOAT64) AS reportedeps,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.estimatedEPS'), 'None'), '-'), 'N/A') AS FLOAT64) AS estimatedeps,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.surprise'), 'None'), '-'), 'N/A') AS FLOAT64) AS surprise,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.surprisePercentage'), 'None'), '-'), 'N/A') AS FLOAT64) AS surprisepercentage,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.reportTime'), 'None'), '-'), 'N/A') AS STRING) AS reporttime
+    ,
+    year AS partition_year,
+    month AS partition_month,
+    day AS partition_day
+FROM reports
+WHERE report_type = 'quarterly';
+
+
+[0m18:00:55.873565 [debug] [Thread-6 (]: Opening a new connection, currently in state init
+[0m18:00:56.016404 [debug] [Thread-4 (]: On model.transformations.stg_balance_sheet: /* {"app": "dbt", "dbt_version": "1.12.2", "profile_name": "transformations", "target_name": "dev", "node_id": "model.transformations.stg_balance_sheet"} */
+
+
+  create or replace view `projetodbt-479518`.`alphavantage`.`stg_balance_sheet`
+  OPTIONS(
+      description="""Flattened balance sheet reports from the Alpha Vantage BALANCE_SHEET endpoint."""
+    )
+  as 
+
+
+
+WITH raw_source AS (
+    SELECT raw_data, year, month, day
+    FROM `projetodbt-479518`.`alphavantage`.`ext_balance_sheet`
+), reports AS (
+    SELECT raw_data, year, month, day, 'annual' AS report_type, report
+    FROM raw_source, UNNEST(JSON_QUERY_ARRAY(raw_data, '$.annualReports')) AS report
+    UNION ALL
+    SELECT raw_data, year, month, day, 'quarterly' AS report_type, report
+    FROM raw_source, UNNEST(JSON_QUERY_ARRAY(raw_data, '$.quarterlyReports')) AS report
+)
+SELECT
+    JSON_VALUE(raw_data, '$.symbol') AS symbol,
+    report_type,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.fiscalDateEnding'), 'None'), '-'), 'N/A') AS DATE) AS fiscaldateending,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.reportedCurrency'), 'None'), '-'), 'N/A') AS STRING) AS reportedcurrency,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.totalAssets'), 'None'), '-'), 'N/A') AS INT64) AS totalassets,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.totalCurrentAssets'), 'None'), '-'), 'N/A') AS INT64) AS totalcurrentassets,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.cashAndCashEquivalentsAtCarryingValue'), 'None'), '-'), 'N/A') AS INT64) AS cashandcashequivalentsatcarryingvalue,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.cashAndShortTermInvestments'), 'None'), '-'), 'N/A') AS INT64) AS cashandshortterminvestments,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.inventory'), 'None'), '-'), 'N/A') AS INT64) AS inventory,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.currentNetReceivables'), 'None'), '-'), 'N/A') AS INT64) AS currentnetreceivables,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.totalNonCurrentAssets'), 'None'), '-'), 'N/A') AS INT64) AS totalnoncurrentassets,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.propertyPlantEquipment'), 'None'), '-'), 'N/A') AS INT64) AS propertyplantequipment,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.accumulatedDepreciationAmortizationPPE'), 'None'), '-'), 'N/A') AS INT64) AS accumulateddepreciationamortizationppe,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.intangibleAssets'), 'None'), '-'), 'N/A') AS INT64) AS intangibleassets,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.intangibleAssetsExcludingGoodwill'), 'None'), '-'), 'N/A') AS INT64) AS intangibleassetsexcludinggoodwill,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.goodwill'), 'None'), '-'), 'N/A') AS INT64) AS goodwill,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.investments'), 'None'), '-'), 'N/A') AS INT64) AS investments,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.longTermInvestments'), 'None'), '-'), 'N/A') AS INT64) AS longterminvestments,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.shortTermInvestments'), 'None'), '-'), 'N/A') AS INT64) AS shortterminvestments,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.otherCurrentAssets'), 'None'), '-'), 'N/A') AS INT64) AS othercurrentassets,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.otherNonCurrentAssets'), 'None'), '-'), 'N/A') AS INT64) AS othernoncurrentassets,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.totalLiabilities'), 'None'), '-'), 'N/A') AS INT64) AS totalliabilities,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.totalCurrentLiabilities'), 'None'), '-'), 'N/A') AS INT64) AS totalcurrentliabilities,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.currentAccountsPayable'), 'None'), '-'), 'N/A') AS INT64) AS currentaccountspayable,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.deferredRevenue'), 'None'), '-'), 'N/A') AS INT64) AS deferredrevenue,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.currentDebt'), 'None'), '-'), 'N/A') AS INT64) AS currentdebt,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.shortTermDebt'), 'None'), '-'), 'N/A') AS INT64) AS shorttermdebt,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.totalNonCurrentLiabilities'), 'None'), '-'), 'N/A') AS INT64) AS totalnoncurrentliabilities,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.capitalLeaseObligations'), 'None'), '-'), 'N/A') AS INT64) AS capitalleaseobligations,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.longTermDebt'), 'None'), '-'), 'N/A') AS INT64) AS longtermdebt,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.currentLongTermDebt'), 'None'), '-'), 'N/A') AS INT64) AS currentlongtermdebt,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.longTermDebtNoncurrent'), 'None'), '-'), 'N/A') AS INT64) AS longtermdebtnoncurrent,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.shortLongTermDebtTotal'), 'None'), '-'), 'N/A') AS INT64) AS shortlongtermdebttotal,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.otherCurrentLiabilities'), 'None'), '-'), 'N/A') AS INT64) AS othercurrentliabilities,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.otherNonCurrentLiabilities'), 'None'), '-'), 'N/A') AS INT64) AS othernoncurrentliabilities,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.totalShareholderEquity'), 'None'), '-'), 'N/A') AS INT64) AS totalshareholderequity,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.treasuryStock'), 'None'), '-'), 'N/A') AS INT64) AS treasurystock,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.retainedEarnings'), 'None'), '-'), 'N/A') AS INT64) AS retainedearnings,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.commonStock'), 'None'), '-'), 'N/A') AS INT64) AS commonstock,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.commonStockSharesOutstanding'), 'None'), '-'), 'N/A') AS INT64) AS commonstocksharesoutstanding
+    ,
+    year AS partition_year,
+    month AS partition_month,
+    day AS partition_day
+FROM reports;
+
+
+[0m18:00:56.017833 [debug] [Thread-7 (]: On model.transformations.stg_income_statement: /* {"app": "dbt", "dbt_version": "1.12.2", "profile_name": "transformations", "target_name": "dev", "node_id": "model.transformations.stg_income_statement"} */
+
+
+  create or replace view `projetodbt-479518`.`alphavantage`.`stg_income_statement`
+  OPTIONS(
+      description="""Flattened income statement reports from the Alpha Vantage INCOME_STATEMENT endpoint."""
+    )
+  as 
+
+
+
+WITH raw_source AS (
+    SELECT raw_data, year, month, day
+    FROM `projetodbt-479518`.`alphavantage`.`ext_income_statement`
+), reports AS (
+    SELECT raw_data, year, month, day, 'annual' AS report_type, report
+    FROM raw_source, UNNEST(JSON_QUERY_ARRAY(raw_data, '$.annualReports')) AS report
+    UNION ALL
+    SELECT raw_data, year, month, day, 'quarterly' AS report_type, report
+    FROM raw_source, UNNEST(JSON_QUERY_ARRAY(raw_data, '$.quarterlyReports')) AS report
+)
+SELECT
+    JSON_VALUE(raw_data, '$.symbol') AS symbol,
+    report_type,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.fiscalDateEnding'), 'None'), '-'), 'N/A') AS DATE) AS fiscaldateending,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.reportedCurrency'), 'None'), '-'), 'N/A') AS STRING) AS reportedcurrency,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.grossProfit'), 'None'), '-'), 'N/A') AS INT64) AS grossprofit,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.totalRevenue'), 'None'), '-'), 'N/A') AS INT64) AS totalrevenue,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.costOfRevenue'), 'None'), '-'), 'N/A') AS INT64) AS costofrevenue,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.costofGoodsAndServicesSold'), 'None'), '-'), 'N/A') AS INT64) AS costofgoodsandservicessold,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.operatingIncome'), 'None'), '-'), 'N/A') AS INT64) AS operatingincome,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.sellingGeneralAndAdministrative'), 'None'), '-'), 'N/A') AS INT64) AS sellinggeneralandadministrative,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.researchAndDevelopment'), 'None'), '-'), 'N/A') AS INT64) AS researchanddevelopment,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.operatingExpenses'), 'None'), '-'), 'N/A') AS INT64) AS operatingexpenses,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.investmentIncomeNet'), 'None'), '-'), 'N/A') AS INT64) AS investmentincomenet,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.netInterestIncome'), 'None'), '-'), 'N/A') AS INT64) AS netinterestincome,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.interestIncome'), 'None'), '-'), 'N/A') AS INT64) AS interestincome,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.interestExpense'), 'None'), '-'), 'N/A') AS INT64) AS interestexpense,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.nonInterestIncome'), 'None'), '-'), 'N/A') AS INT64) AS noninterestincome,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.otherNonOperatingIncome'), 'None'), '-'), 'N/A') AS INT64) AS othernonoperatingincome,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.depreciation'), 'None'), '-'), 'N/A') AS INT64) AS depreciation,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.depreciationAndAmortization'), 'None'), '-'), 'N/A') AS INT64) AS depreciationandamortization,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.incomeBeforeTax'), 'None'), '-'), 'N/A') AS INT64) AS incomebeforetax,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.incomeTaxExpense'), 'None'), '-'), 'N/A') AS INT64) AS incometaxexpense,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.interestAndDebtExpense'), 'None'), '-'), 'N/A') AS INT64) AS interestanddebtexpense,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.netIncomeFromContinuingOperations'), 'None'), '-'), 'N/A') AS INT64) AS netincomefromcontinuingoperations,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.comprehensiveIncomeNetOfTax'), 'None'), '-'), 'N/A') AS INT64) AS comprehensiveincomenetoftax,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.ebit'), 'None'), '-'), 'N/A') AS INT64) AS ebit,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.ebitda'), 'None'), '-'), 'N/A') AS INT64) AS ebitda,
+    
+    SAFE_CAST(NULLIF(NULLIF(NULLIF(JSON_VALUE(report, '$.netIncome'), 'None'), '-'), 'N/A') AS INT64) AS netincome
+    ,
+    year AS partition_year,
+    month AS partition_month,
+    day AS partition_day
+FROM reports;
+
+
+[0m18:00:56.019479 [debug] [Thread-4 (]: Opening a new connection, currently in state init
+[0m18:00:56.021554 [debug] [Thread-7 (]: Opening a new connection, currently in state init
+[0m18:00:58.942473 [debug] [Thread-6 (]: BigQuery adapter: https://console.cloud.google.com/bigquery?project=projetodbt-479518&j=bq:US:6eee8a0a-8cd1-4815-b380-c1f21198189b&page=queryresults
+[0m18:00:58.943315 [error] [Thread-6 (]: BigQuery adapter: https://console.cloud.google.com/bigquery?project=projetodbt-479518&j=bq:US:6eee8a0a-8cd1-4815-b380-c1f21198189b&page=queryresults
+[0m18:00:59.061751 [debug] [Thread-7 (]: BigQuery adapter: https://console.cloud.google.com/bigquery?project=projetodbt-479518&j=bq:US:e1fa1bfc-6091-473f-b474-a786e927d35d&page=queryresults
+[0m18:00:59.062598 [error] [Thread-7 (]: BigQuery adapter: https://console.cloud.google.com/bigquery?project=projetodbt-479518&j=bq:US:e1fa1bfc-6091-473f-b474-a786e927d35d&page=queryresults
+[0m18:00:59.104813 [debug] [Thread-6 (]: Database Error in model stg_earning (transformations/models\staging\stg_earning.sql)
+  Not found: Table projetodbt-479518:alphavantage.ext_earning was not found in location US
+  compiled code at target\run\transformations\transformations/models\staging\stg_earning.sql
+[0m18:00:59.107204 [debug] [Thread-7 (]: Database Error in model stg_income_statement (transformations/models\staging\stg_income_statement.sql)
+  Not found: Table projetodbt-479518:alphavantage.ext_income_statement was not found in location US
+  compiled code at target\run\transformations\transformations/models\staging\stg_income_statement.sql
+[0m18:00:59.113234 [debug] [Thread-6 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D88CAD8E10>]}
+[0m18:00:59.114147 [debug] [Thread-7 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D8F758E710>]}
+[0m18:00:59.115616 [error] [Thread-6 (]: 3 of 5 ERROR creating sql view model alphavantage.stg_earning .................. [[31mERROR[0m in 3.44s]
+[0m18:00:59.118561 [debug] [Thread-6 (]: Finished running node model.transformations.stg_earning
+[0m18:00:59.117039 [error] [Thread-7 (]: 4 of 5 ERROR creating sql view model alphavantage.stg_income_statement ......... [[31mERROR[0m in 3.44s]
+[0m18:00:59.120138 [debug] [Thread-22 ]: Marking all children of 'model.transformations.stg_earning' to be skipped because of status 'error'.  Reason: Database Error in model stg_earning (transformations/models\staging\stg_earning.sql)
+  Not found: Table projetodbt-479518:alphavantage.ext_earning was not found in location US
+  compiled code at target\run\transformations\transformations/models\staging\stg_earning.sql.
+[0m18:00:59.121466 [debug] [Thread-7 (]: Finished running node model.transformations.stg_income_statement
+[0m18:00:59.124655 [debug] [Thread-22 ]: Marking all children of 'model.transformations.stg_income_statement' to be skipped because of status 'error'.  Reason: Database Error in model stg_income_statement (transformations/models\staging\stg_income_statement.sql)
+  Not found: Table projetodbt-479518:alphavantage.ext_income_statement was not found in location US
+  compiled code at target\run\transformations\transformations/models\staging\stg_income_statement.sql.
+[0m18:00:59.171293 [debug] [Thread-5 (]: BigQuery adapter: https://console.cloud.google.com/bigquery?project=projetodbt-479518&j=bq:US:724c6656-09da-46ad-9667-3915227667cc&page=queryresults
+[0m18:00:59.172528 [error] [Thread-5 (]: BigQuery adapter: https://console.cloud.google.com/bigquery?project=projetodbt-479518&j=bq:US:724c6656-09da-46ad-9667-3915227667cc&page=queryresults
+[0m18:00:59.180988 [debug] [Thread-8 (]: BigQuery adapter: https://console.cloud.google.com/bigquery?project=projetodbt-479518&j=bq:US:8d3edb10-aabb-477f-a37e-f54dd539b452&page=queryresults
+[0m18:00:59.192190 [debug] [Thread-5 (]: Database Error in model stg_cash_flow (transformations/models\staging\stg_cash_flow.sql)
+  Not found: Table projetodbt-479518:alphavantage.ext_cash_flow was not found in location US
+  compiled code at target\run\transformations\transformations/models\staging\stg_cash_flow.sql
+[0m18:00:59.193321 [debug] [Thread-5 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D88C7C92D0>]}
+[0m18:00:59.194727 [error] [Thread-5 (]: 2 of 5 ERROR creating sql view model alphavantage.stg_cash_flow ................ [[31mERROR[0m in 3.52s]
+[0m18:00:59.196452 [debug] [Thread-5 (]: Finished running node model.transformations.stg_cash_flow
+[0m18:00:59.197814 [debug] [Thread-22 ]: Marking all children of 'model.transformations.stg_cash_flow' to be skipped because of status 'error'.  Reason: Database Error in model stg_cash_flow (transformations/models\staging\stg_cash_flow.sql)
+  Not found: Table projetodbt-479518:alphavantage.ext_cash_flow was not found in location US
+  compiled code at target\run\transformations\transformations/models\staging\stg_cash_flow.sql.
+[0m18:00:59.289888 [debug] [Thread-4 (]: BigQuery adapter: https://console.cloud.google.com/bigquery?project=projetodbt-479518&j=bq:US:cc8868e2-5df8-4e65-990e-67ebe53980a5&page=queryresults
+[0m18:00:59.291062 [error] [Thread-4 (]: BigQuery adapter: https://console.cloud.google.com/bigquery?project=projetodbt-479518&j=bq:US:cc8868e2-5df8-4e65-990e-67ebe53980a5&page=queryresults
+[0m18:00:59.320123 [debug] [Thread-4 (]: Database Error in model stg_balance_sheet (transformations/models\staging\stg_balance_sheet.sql)
+  Not found: Table projetodbt-479518:alphavantage.ext_balance_sheet was not found in location US
+  compiled code at target\run\transformations\transformations/models\staging\stg_balance_sheet.sql
+[0m18:00:59.321268 [debug] [Thread-4 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D88C8AABA0>]}
+[0m18:00:59.322687 [error] [Thread-4 (]: 1 of 5 ERROR creating sql view model alphavantage.stg_balance_sheet ............ [[31mERROR[0m in 3.65s]
+[0m18:00:59.324308 [debug] [Thread-4 (]: Finished running node model.transformations.stg_balance_sheet
+[0m18:00:59.325613 [debug] [Thread-22 ]: Marking all children of 'model.transformations.stg_balance_sheet' to be skipped because of status 'error'.  Reason: Database Error in model stg_balance_sheet (transformations/models\staging\stg_balance_sheet.sql)
+  Not found: Table projetodbt-479518:alphavantage.ext_balance_sheet was not found in location US
+  compiled code at target\run\transformations\transformations/models\staging\stg_balance_sheet.sql.
+[0m18:00:59.778272 [debug] [Thread-8 (]: SQL status: OK in 0.596 seconds
+[0m18:01:02.221294 [debug] [Thread-8 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '43f8504b-3ce6-494d-b1e9-5aee6c6d1ddd', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D88CA9FE30>]}
+[0m18:01:02.222762 [info ] [Thread-8 (]: 5 of 5 OK created sql view model alphavantage.stg_overview ..................... [[32mCREATE VIEW (0 processed)[0m in 6.55s]
+[0m18:01:02.224521 [debug] [Thread-8 (]: Finished running node model.transformations.stg_overview
+[0m18:01:02.227901 [debug] [MainThread]: Opening a new connection, currently in state closed
+[0m18:01:02.303929 [debug] [MainThread]: Connection 'master' was properly closed.
+[0m18:01:02.304734 [debug] [MainThread]: Connection 'list_projetodbt-479518' was properly closed.
+[0m18:01:02.305452 [debug] [MainThread]: Connection 'list_projetodbt-479518_alphavantage_raw' was properly closed.
+[0m18:01:02.306240 [debug] [MainThread]: Connection 'list_projetodbt-479518_alphavantage' was properly closed.
+[0m18:01:02.307123 [debug] [MainThread]: Connection 'model.transformations.stg_overview' was properly closed.
+[0m18:01:02.307919 [debug] [MainThread]: Connection 'model.transformations.stg_earning' was properly closed.
+[0m18:01:02.308590 [debug] [MainThread]: Connection 'model.transformations.stg_income_statement' was properly closed.
+[0m18:01:02.309218 [debug] [MainThread]: Connection 'model.transformations.stg_balance_sheet' was properly closed.
+[0m18:01:02.309832 [debug] [MainThread]: Connection 'model.transformations.stg_cash_flow' was properly closed.
+[0m18:01:02.310686 [info ] [MainThread]: 
+[0m18:01:02.311734 [info ] [MainThread]: Finished running 5 view models in 0 hours 0 minutes and 12.36 seconds (12.36s).
+[0m18:01:02.314716 [debug] [MainThread]: Command end result
+[0m18:01:02.420519 [debug] [MainThread]: Wrote artifact WritableManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\manifest.json
+[0m18:01:02.428206 [debug] [MainThread]: Wrote artifact SemanticManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\semantic_manifest.json
+[0m18:01:02.435962 [debug] [MainThread]: Wrote artifact OsiDocument to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\osi_document.json
+[0m18:01:02.452702 [debug] [MainThread]: Wrote artifact RunExecutionResult to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\run_results.json
+[0m18:01:02.453587 [info ] [MainThread]: 
+[0m18:01:02.454551 [info ] [MainThread]: [31mCompleted with 4 errors, 0 partial successes, and 0 warnings:[0m
+[0m18:01:02.455219 [info ] [MainThread]: 
+[0m18:01:02.456045 [error] [MainThread]: [[31mERROR[0m]: in model stg_earning (transformations/models\staging\stg_earning.sql)
+[0m18:01:02.457099 [error] [MainThread]:   Database Error in model stg_earning (transformations/models\staging\stg_earning.sql)
+  Not found: Table projetodbt-479518:alphavantage.ext_earning was not found in location US
+  compiled code at target\run\transformations\transformations/models\staging\stg_earning.sql
+[0m18:01:02.458116 [info ] [MainThread]: 
+[0m18:01:02.459216 [info ] [MainThread]:   compiled code at target\compiled\transformations\transformations/models\staging\stg_earning.sql
+[0m18:01:02.460171 [info ] [MainThread]: 
+[0m18:01:02.461455 [error] [MainThread]: [[31mERROR[0m]: in model stg_income_statement (transformations/models\staging\stg_income_statement.sql)
+[0m18:01:02.462654 [error] [MainThread]:   Database Error in model stg_income_statement (transformations/models\staging\stg_income_statement.sql)
+  Not found: Table projetodbt-479518:alphavantage.ext_income_statement was not found in location US
+  compiled code at target\run\transformations\transformations/models\staging\stg_income_statement.sql
+[0m18:01:02.463516 [info ] [MainThread]: 
+[0m18:01:02.464587 [info ] [MainThread]:   compiled code at target\compiled\transformations\transformations/models\staging\stg_income_statement.sql
+[0m18:01:02.465554 [info ] [MainThread]: 
+[0m18:01:02.466754 [error] [MainThread]: [[31mERROR[0m]: in model stg_cash_flow (transformations/models\staging\stg_cash_flow.sql)
+[0m18:01:02.468065 [error] [MainThread]:   Database Error in model stg_cash_flow (transformations/models\staging\stg_cash_flow.sql)
+  Not found: Table projetodbt-479518:alphavantage.ext_cash_flow was not found in location US
+  compiled code at target\run\transformations\transformations/models\staging\stg_cash_flow.sql
+[0m18:01:02.469080 [info ] [MainThread]: 
+[0m18:01:02.470840 [info ] [MainThread]:   compiled code at target\compiled\transformations\transformations/models\staging\stg_cash_flow.sql
+[0m18:01:02.472317 [info ] [MainThread]: 
+[0m18:01:02.476754 [error] [MainThread]: [[31mERROR[0m]: in model stg_balance_sheet (transformations/models\staging\stg_balance_sheet.sql)
+[0m18:01:02.477868 [error] [MainThread]:   Database Error in model stg_balance_sheet (transformations/models\staging\stg_balance_sheet.sql)
+  Not found: Table projetodbt-479518:alphavantage.ext_balance_sheet was not found in location US
+  compiled code at target\run\transformations\transformations/models\staging\stg_balance_sheet.sql
+[0m18:01:02.478703 [info ] [MainThread]: 
+[0m18:01:02.479651 [info ] [MainThread]:   compiled code at target\compiled\transformations\transformations/models\staging\stg_balance_sheet.sql
+[0m18:01:02.483502 [info ] [MainThread]: 
+[0m18:01:02.484483 [info ] [MainThread]: Done. PASS=1 WARN=0 ERROR=4 SKIP=0 NO-OP=0 REUSED=0 TOTAL=5
+[0m18:01:02.486283 [debug] [MainThread]: Command `dbt run` failed at 18:01:02.485963 after 22.59 seconds
+[0m18:01:02.487274 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D8F7473BF0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D88CB46510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D88CB46570>]}
+[0m18:01:02.488531 [debug] [MainThread]: Flushing usage events
+[0m18:01:03.829594 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m18:12:25.381105 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C52F1F2510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C5319DFD90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C5319DF890>]}
+
+
+============================== 18:12:25.389361 | 20821731-4e86-4fb8-938c-a7d21278cc4e ==============================
+[0m18:12:25.389361 [info ] [MainThread]: Running with dbt=1.12.2
+[0m18:12:25.390873 [debug] [MainThread]: running dbt with arguments {'maximum_seed_size_mib': '1', 'no_print': 'None', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'target_path': 'None', 'version_check': 'True', 'printer_width': '80', 'write_json': 'True', 'empty': 'None', 'log_cache_events': 'False', 'introspect': 'True', 'cache_selected_only': 'False', 'fail_fast': 'False', 'debug': 'False', 'log_format': 'default', 'partial_parse': 'True', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'invocation_command': 'dbt run-operation stage_external_sources', 'hints_enabled': 'True', 'indirect_selection': 'eager', 'use_experimental_parser': 'False', 'use_colors': 'True', 'log_path': 'C:\\Users\\hally\\OneDrive\\Área de Trabalho\\fundamental_data_analysis\\logs'}
+[0m18:12:27.903962 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '20821731-4e86-4fb8-938c-a7d21278cc4e', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C52F9222C0>]}
+[0m18:12:28.058178 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '20821731-4e86-4fb8-938c-a7d21278cc4e', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C52E9E3570>]}
+[0m18:12:28.060008 [info ] [MainThread]: Registered adapter: bigquery=1.12.0
+[0m18:12:29.014322 [debug] [MainThread]: checksum: 56b8e0779adf4aaaf21f1124f88ce9ec2efc387c1929161730d014472c526c57, vars: {}, profile: transformations, target: dev, version: 1.12.2
+[0m18:12:29.409934 [debug] [MainThread]: Partial parsing enabled: 0 files deleted, 0 files added, 0 files changed.
+[0m18:12:29.410810 [debug] [MainThread]: Nothing changed, skipping partial parsing.
+[0m18:12:29.411534 [debug] [MainThread]: Partial parsing enabled, no changes found, skipping parsing
+[0m18:12:29.424346 [warn ] [MainThread]: [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 1 unused configuration paths:
+- models.transformations.marts
+[0m18:12:29.433336 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '20821731-4e86-4fb8-938c-a7d21278cc4e', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C5437CAE50>]}
+[0m18:12:29.776245 [debug] [MainThread]: Wrote artifact WritableManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\manifest.json
+[0m18:12:29.784085 [debug] [MainThread]: Wrote artifact SemanticManifest to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\semantic_manifest.json
+[0m18:12:29.836224 [debug] [MainThread]: Wrote artifact OsiDocument to C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\target\osi_document.json
+[0m18:12:29.892512 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '20821731-4e86-4fb8-938c-a7d21278cc4e', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C543630D70>]}
+[0m18:12:29.893599 [info ] [MainThread]: Found 5 models, 6 seeds, 5 sources, 568 macros
+[0m18:12:29.894702 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '20821731-4e86-4fb8-938c-a7d21278cc4e', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C543617AF0>]}
+[0m18:12:29.895997 [debug] [MainThread]: Acquiring new bigquery connection 'macro_stage_external_sources'
+[0m18:12:29.897400 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m18:12:29.981224 [error] [MainThread]: [[31mERROR[0m]: Encountered an error while running operation: Runtime Error
+  dbt could not find a macro with the name "stage_external_sources" in any package
+[0m18:12:30.006917 [debug] [MainThread]: Traceback (most recent call last):
+  File "C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\.venv\Lib\site-packages\dbt\task\run_operation.py", line 141, in run
+    self._run_unsafe(package_name, operation_name)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\.venv\Lib\site-packages\dbt\task\run_operation.py", line 50, in _run_unsafe
+    res = adapter.execute_macro(
+        macro_name, project=package_name, kwargs=macro_kwargs, macro_resolver=self.manifest
+    )
+  File "C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\.venv\Lib\site-packages\dbt\adapters\base\impl.py", line 1356, in execute_macro
+    raise DbtRuntimeError(
+    ...<3 lines>...
+    )
+dbt_common.exceptions.base.DbtRuntimeError: Runtime Error
+  dbt could not find a macro with the name "stage_external_sources" in any package
+
+[0m18:12:30.008163 [error] [MainThread]: [[31mERROR[0m]: Encountered an error:
+Compilation Error
+  dbt could not find a macro with the name 'stage_external_sources' in any package. This can happen when calling a macro that does not exist. Check for typos and/or install package dependencies with "dbt deps".
+[0m18:12:30.010582 [debug] [MainThread]: Command `dbt run-operation` failed at 18:12:30.010250 after 5.01 seconds
+[0m18:12:30.011359 [debug] [MainThread]: Connection 'macro_stage_external_sources' was properly closed.
+[0m18:12:30.012060 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C5435BDD90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C5316C3890>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C543546090>]}
+[0m18:12:30.012807 [debug] [MainThread]: Flushing usage events
+[0m18:12:31.414344 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m18:13:03.578322 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001F8B438A510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001F8B6B7FD90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001F8B6B7F890>]}
+
+
+============================== 18:13:03.586622 | 3c8254fa-58cd-4067-80a4-2433a413220a ==============================
+[0m18:13:03.586622 [info ] [MainThread]: Running with dbt=1.12.2
+[0m18:13:03.588105 [debug] [MainThread]: running dbt with arguments {'maximum_seed_size_mib': '1', 'no_print': 'None', 'static_parser': 'True', 'target_path': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'version_check': 'True', 'printer_width': '80', 'write_json': 'True', 'empty': 'None', 'log_cache_events': 'False', 'introspect': 'True', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'partial_parse': 'True', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'use_colors': 'True', 'hints_enabled': 'True', 'indirect_selection': 'eager', 'use_experimental_parser': 'False', 'invocation_command': 'dbt deps', 'log_path': 'C:\\Users\\hally\\OneDrive\\Área de Trabalho\\fundamental_data_analysis\\logs'}
+[0m18:13:03.893713 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '3c8254fa-58cd-4067-80a4-2433a413220a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001F8B4ADE2C0>]}
+[0m18:13:03.963454 [info ] [MainThread]: Warning: No packages were found in packages.yml
+[0m18:13:03.965850 [info ] [MainThread]: Warning: No packages were found in packages.yml
+[0m18:13:03.967932 [debug] [MainThread]: Command `dbt deps` succeeded at 18:13:03.967613 after 0.68 seconds
+[0m18:13:03.968783 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001F8B45D6360>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001F8B6D82BE0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001F8B69D2850>]}
+[0m18:13:03.969723 [debug] [MainThread]: Flushing usage events
+[0m18:13:05.094945 [debug] [MainThread]: An error was encountered while trying to flush usage events
+{"data":{"log_version":3,"version":"=2.0.0-preview.212"},"info":{"category":"","code":"A001","extra":{},"invocation_id":"01a0401e-497e-7fd2-b647-2c9732cd0f76","level":"info","msg":"Running with dbt-fusion=2.0.0-preview.212","name":"MainReportVersion","pid":15668,"thread":"tokio-rt-worker","ts":"2026-08-26T22:08:41.896005Z"}}
+{"data":{"args":{"debug":"false","invocation_command":"C:\\Users\\hally\\.local\\bin\\dbt.exe license info --json --log-format json","log_format":"json","quiet":"false","write_json":"true"}},"info":{"category":"","code":"A002","extra":{},"invocation_id":"01a0401e-497e-7fd2-b647-2c9732cd0f76","level":"debug","msg":"running dbt-fusion with arguments {\"command\":\"license\",\"vars\":\"{}\",\"limit\":\"10\",\"debug\":false,\"log_format\":\"json\",\"quiet\":false,\"write_json\":true,\"write_catalog\":false,\"manage_state\":false}","name":"MainReportArgs","pid":15668,"thread":"tokio-rt-worker","ts":"2026-08-26T22:08:41.896533Z"}}
+{"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a0401e-497e-7fd2-b647-2c9732cd0f76","level":"debug","msg":"No platform credentials found, skipping remote license","name":"Generic","pid":15668,"thread":"tokio-rt-worker","ts":"2026-08-26T22:08:41.935050Z"}}
+{"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a0401e-497e-7fd2-b647-2c9732cd0f76","level":"debug","msg":"Trial license from file C:\\Users\\hally\\.dbt\\license.trial is expired","name":"Generic","pid":15668,"thread":"tokio-rt-worker","ts":"2026-08-26T22:08:41.953571Z"}}
+{"data":{"columns":[],"is_inline":true,"node_name":"license_info","output_format":"json","preview":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","unique_id":"license.info"},"info":{"category":"","code":"Q041","extra":{},"invocation_id":"01a0401e-497e-7fd2-b647-2c9732cd0f76","level":"info","msg":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","name":"ShowNode","pid":15668,"thread":"tokio-rt-worker","ts":"2026-08-26T22:08:41.955023Z"}}
+{"data":{"completed_at":"2026-08-26T22:08:42.949047Z","elapsed":1.0570330619812012,"success":true},"info":{"category":"","code":"Q039","extra":{},"invocation_id":"01a0401e-497e-7fd2-b647-2c9732cd0f76","level":"info","msg":"\n==================== Execution Summary =====================\nFinished 'license' successfully [1.1s]","name":"CommandCompleted","pid":15668,"thread":"tokio-rt-worker","ts":"2026-08-26T22:08:42.951010Z"}}
+{"data":{"log_version":3,"version":"=2.0.0-preview.212"},"info":{"category":"","code":"A001","extra":{},"invocation_id":"01a044e3-8822-77f1-8dae-e5e4894cb78d","level":"info","msg":"Running with dbt-fusion=2.0.0-preview.212","name":"MainReportVersion","pid":18684,"thread":"tokio-rt-worker","ts":"2026-08-27T20:22:37.398959Z"}}
+{"data":{"args":{"debug":"false","invocation_command":"C:\\Users\\hally\\.local\\bin\\dbt.exe license info --json --log-format json","log_format":"json","quiet":"false","write_json":"true"}},"info":{"category":"","code":"A002","extra":{},"invocation_id":"01a044e3-8822-77f1-8dae-e5e4894cb78d","level":"debug","msg":"running dbt-fusion with arguments {\"command\":\"license\",\"vars\":\"{}\",\"limit\":\"10\",\"debug\":false,\"log_format\":\"json\",\"quiet\":false,\"write_json\":true,\"write_catalog\":false,\"manage_state\":false}","name":"MainReportArgs","pid":18684,"thread":"tokio-rt-worker","ts":"2026-08-27T20:22:37.399479Z"}}
+{"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a044e3-8822-77f1-8dae-e5e4894cb78d","level":"debug","msg":"No platform credentials found, skipping remote license","name":"Generic","pid":18684,"thread":"tokio-rt-worker","ts":"2026-08-27T20:22:37.445433Z"}}
+{"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a044e3-8822-77f1-8dae-e5e4894cb78d","level":"debug","msg":"Trial license from file C:\\Users\\hally\\.dbt\\license.trial is expired","name":"Generic","pid":18684,"thread":"tokio-rt-worker","ts":"2026-08-27T20:22:37.470823Z"}}
+{"data":{"columns":[],"is_inline":true,"node_name":"license_info","output_format":"json","preview":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","unique_id":"license.info"},"info":{"category":"","code":"Q041","extra":{},"invocation_id":"01a044e3-8822-77f1-8dae-e5e4894cb78d","level":"info","msg":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","name":"ShowNode","pid":18684,"thread":"tokio-rt-worker","ts":"2026-08-27T20:22:37.472917Z"}}
+{"data":{"completed_at":"2026-08-27T20:22:38.274448Z","elapsed":0.8788031935691833,"success":true},"info":{"category":"","code":"Q039","extra":{},"invocation_id":"01a044e3-8822-77f1-8dae-e5e4894cb78d","level":"info","msg":"\n==================== Execution Summary =====================\nFinished 'license' successfully [878ms]","name":"CommandCompleted","pid":18684,"thread":"tokio-rt-worker","ts":"2026-08-27T20:22:38.277985Z"}}
+==================== 2026-08-28T18:39:03.596044Z | 01a049ab-1396-77e3-9fe8-d35e1bcf2b12 ====================
+18:39:03.601125 [info ]: dbt-fusion 2.0.0-preview.212
+18:39:03.606577 [info ]: Started loading project
+18:39:03.613125 [info ]: Finished loading project [  0.01s]
+18:39:03.617950 [error]: [IoError (dbt1001)]: Cannot open file C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml: Failed to open file: C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml: O sistema não pode encontrar o arquivo especificado. (os error 2): O sistema não pode encontrar o arquivo especificado. (os error 2)
+18:39:04.337745 [info ]: 
+==================== Execution Summary =====================
+Finished 'parse' with 1 error [741ms]
+[0m11:07:00.865580 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001B753476510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001B755CA7ED0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001B755CA7C50>]}
+
+
+============================== 11:07:00.870922 | 31d69357-81d6-474e-a235-19a68c32be4b ==============================
+[0m11:07:00.870922 [info ] [MainThread]: Running with dbt=1.12.2
+[0m11:07:00.871487 [debug] [MainThread]: running dbt with arguments {'maximum_seed_size_mib': '1', 'no_print': 'None', 'version_check': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'target_path': 'None', 'static_parser': 'True', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'False', 'cache_selected_only': 'False', 'fail_fast': 'False', 'debug': 'False', 'log_format': 'default', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'indirect_selection': 'eager', 'hints_enabled': 'True', 'use_colors': 'True', 'use_experimental_parser': 'False', 'invocation_command': 'dbt run -s stg_overview_teste', 'log_path': 'logs'}
+[0m11:07:00.871992 [error] [MainThread]: [[31mERROR[0m]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m11:07:00.872709 [debug] [MainThread]: Command `dbt run` failed at 11:07:00.872602 after 0.19 seconds
+[0m11:07:00.873086 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001B755CF0FC0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001B755C631D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001B755CDB020>]}
+[0m11:07:00.873431 [debug] [MainThread]: Flushing usage events
+[0m11:07:01.835718 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m11:10:17.883133 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DF46682510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DF48EB7ED0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DF48EB7C50>]}
+
+
+============================== 11:10:17.887612 | 9df07065-62d8-4f3e-a9a4-1677b57f983d ==============================
+[0m11:10:17.887612 [info ] [MainThread]: Running with dbt=1.12.2
+[0m11:10:17.888199 [debug] [MainThread]: running dbt with arguments {'version_check': 'True', 'no_print': 'None', 'maximum_seed_size_mib': '1', 'target_path': 'None', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'False', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'invocation_command': 'dbt run -s stg_overview_teste', 'hints_enabled': 'True', 'indirect_selection': 'eager', 'use_experimental_parser': 'False', 'use_colors': 'True', 'log_path': 'logs'}
+[0m11:10:17.888680 [error] [MainThread]: [[31mERROR[0m]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m11:10:17.889412 [debug] [MainThread]: Command `dbt run` failed at 11:10:17.889305 after 0.18 seconds
+[0m11:10:17.889744 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DF48EFCFC0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DF48E731D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DF48EEB020>]}
+[0m11:10:17.890081 [debug] [MainThread]: Flushing usage events
+[0m11:10:18.882828 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m11:11:08.489401 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000211F00D2510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000211F2907ED0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000211F2907C50>]}
+
+
+============================== 11:11:08.493306 | 1a0879f0-f22c-4e52-b90a-f03bd99c0ddd ==============================
+[0m11:11:08.493306 [info ] [MainThread]: Running with dbt=1.12.2
+[0m11:11:08.493914 [debug] [MainThread]: running dbt with arguments {'static_parser': 'True', 'no_print': 'None', 'maximum_seed_size_mib': '1', 'target_path': 'None', 'version_check': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'False', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'indirect_selection': 'eager', 'hints_enabled': 'True', 'invocation_command': 'dbt run -s stg_overview_teste', 'use_experimental_parser': 'False', 'use_colors': 'True', 'log_path': 'logs'}
+[0m11:11:08.494439 [error] [MainThread]: [[31mERROR[0m]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m11:11:08.495219 [debug] [MainThread]: Command `dbt run` failed at 11:11:08.495110 after 0.16 seconds
+[0m11:11:08.495549 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000211F294CFC0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000211F28C31D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000211F293B020>]}
+[0m11:11:08.495889 [debug] [MainThread]: Flushing usage events
+[0m11:11:09.409288 [debug] [MainThread]: An error was encountered while trying to flush usage events
