@@ -1,31 +1,38 @@
-from datetime import date
-import time
+import os as _os
+import sys
+
+sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))))
 import json
 import os
 import tempfile
+import time
+from datetime import date
 
-from src.extract.api_client import AlphaVantageAPIClient
-from src.utils.logger import setup_logger, log_extraction, upload_and_clean_log
-from src.utils.helpers import count_real_rows
-from src.load.loader import GCPSLoader
-from src.extract.contract import IncomeStatementSchema, has_extra_fields
 from pydantic import ValidationError
-from config.config import BASE_URL, ALPHA_VANTAGE_API_KEY, SYMBOLS, PROJECT_ID, BUCKET_BRONZE, ENDPOINTS_API
+
+from config.config import ALPHA_VANTAGE_API_KEY, BASE_URL, BUCKET_BRONZE, ENDPOINTS_API, PROJECT_ID, get_symbols_for_day
+from src.extract.api_client import AlphaVantageAPIClient
+from src.extract.contract import IncomeStatementSchema, has_extra_fields
+from src.load.loader import GCPSLoader
+from src.utils.helpers import count_real_rows
+from src.utils.logger import log_extraction, setup_logger, upload_and_clean_log
 
 
-def extract_income_statement():
+def extract_income_statement(symbols: list[str] | None = None):
     logger = setup_logger()
-    logger.info("Iniciando extração de income_statement para todos os símbolos.")
     function = ENDPOINTS_API["income_statement"]
-
     today = date.today()
+
+    if symbols is None:
+        symbols = get_symbols_for_day(today.weekday())
+
+    logger.info(f"Iniciando extração de income_statement para {len(symbols)} símbolos: {symbols}")
     files_generated = []
 
     gcp_loader = GCPSLoader(project_id=PROJECT_ID, bucket_name=BUCKET_BRONZE)
     client = AlphaVantageAPIClient(BASE_URL, ALPHA_VANTAGE_API_KEY)
 
-    for symbol in SYMBOLS:
-
+    for symbol in symbols:
         length = 0
         file_size_mb = 0.0
         file_path = None
@@ -49,10 +56,9 @@ def extract_income_statement():
             if has_extra_fields(validated_data):
                 extra_keys = list(validated_data.model_extra.keys())
                 logger.warning(
-                    f"Campos novos detectados para {symbol} em '{function}': {extra_keys}. "
-                    f"Roteando para quarentena."
+                    f"Campos novos detectados para {symbol} em '{function}': {extra_keys}. Roteando para quarentena."
                 )
-                with open(file_path, 'w', encoding='utf-8') as f:
+                with open(file_path, "w", encoding="utf-8") as f:
                     json.dump(raw_data, f, ensure_ascii=False)
 
                 file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
@@ -82,7 +88,7 @@ def extract_income_statement():
 
             logger.info(f"Validação bem-sucedida para {symbol}.")
 
-            data = validated_data.model_dump(mode='json', by_alias=True, exclude_unset=True)
+            data = validated_data.model_dump(mode="json", by_alias=True, exclude_unset=True)
 
             if isinstance(data, list):
                 for item in data:
@@ -90,7 +96,7 @@ def extract_income_statement():
             elif isinstance(data, dict):
                 data["extraction_date"] = extraction_date
 
-            with open(file_path, 'w', encoding='utf-8') as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False)
 
             file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
@@ -100,8 +106,7 @@ def extract_income_statement():
             logger.info(f"Linhas processadas para {symbol}: {length}")
 
             destination_blob_name = (
-                f"financial/income_statement/"
-                f"year={today.year}/month={today.month:02d}/day={today.day:02d}/{file_name}"
+                f"financial/income_statement/year={today.year}/month={today.month:02d}/day={today.day:02d}/{file_name}"
             )
 
             gcp_loader.upload_file(file_path, destination_blob_name)
@@ -186,10 +191,14 @@ def extract_income_statement():
         f"financial/metadata/income_statement/"
         f"year={today.year}/month={today.month:02d}/day={today.day:02d}/income_statement_extraction.log"
     )
-    upload_and_clean_log(gcp_loader, 'extraction.log', log_destination)
+    upload_and_clean_log(gcp_loader, "extraction.log", log_destination)
 
     return files_generated
 
 
 if __name__ == "__main__":
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
     extract_income_statement()

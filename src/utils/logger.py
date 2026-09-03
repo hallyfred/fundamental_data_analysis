@@ -1,27 +1,48 @@
-import logging
 import json
-from datetime import datetime, timezone
+import logging
 import os
+import sys
+from datetime import UTC, datetime
 
 
-def setup_logger(file_name='extraction.log'):
-    """Configura e retorna um logger com FileHandler para o arquivo especificado."""
-    logger = logging.getLogger('extraction_logger')
+def setup_logger(file_name="extraction.log"):
+    """
+    Configura e retorna um logger formatado para o console (sys.stdout).
+    O arquivo de log que sobe para o GCP conterá estritamente as entradas
+    JSON geradas por log_extraction(), sem misturar mensagens de texto narrativas.
+    """
+    logger = logging.getLogger("extraction_logger")
     logger.setLevel(logging.INFO)
+    logger.log_file = file_name
 
     # Evita duplicação de handlers se o logger já foi configurado
     if not logger.handlers:
-        handler = logging.FileHandler(file_name, encoding='utf-8')
-        handler.setFormatter(logging.Formatter('%(message)s'))
-        logger.addHandler(handler)
+        stream_handler = logging.StreamHandler(sys.stdout)
+        stream_handler.setFormatter(logging.Formatter("%(message)s"))
+        logger.addHandler(stream_handler)
 
     return logger
 
 
-def log_extraction(logger, status, stage_location_bucket, last_updated, endpoint, symbol, rows=0, size=0.0, time_seconds=0.0, error_message=None):
-    """Registra uma entrada estruturada em JSON no logger."""
+def log_extraction(
+    logger,
+    status,
+    stage_location_bucket,
+    last_updated,
+    endpoint,
+    symbol,
+    rows=0,
+    size=0.0,
+    time_seconds=0.0,
+    error_message=None,
+):
+    """
+    Registra uma entrada estruturada em JSON no arquivo de log do pipeline.
+    Garante que o arquivo de log no GCS seja estritamente um JSON Lines (NDJSON)
+    enxuto com apenas os metadados de cada extração.
+    """
     log_entry = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "status": status,
         "stage_location_bucket": stage_location_bucket,
         "last_updated": last_updated,
@@ -32,7 +53,11 @@ def log_extraction(logger, status, stage_location_bucket, last_updated, endpoint
         "time_seconds": time_seconds,
         "error_message": str(error_message) if error_message else None,
     }
-    logger.info(json.dumps(log_entry))
+
+    # Grava exclusivamente a linha JSON no arquivo que será enviado ao GCS
+    log_file = getattr(logger, "log_file", "extraction.log") if logger else "extraction.log"
+    with open(log_file, "a", encoding="utf-8") as f:
+        f.write(json.dumps(log_entry) + "\n")
 
 
 def upload_and_clean_log(gcp_loader, local_log_file, destination_log_path):

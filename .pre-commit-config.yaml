@@ -4,3 +4,12 @@ repos:
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.9
+    hooks:
+      # Executa o linter e corrige problemas automaticamente
+      - id: ruff
+        args: [--fix]
+      # Executa o formatador de código padronizado
+      - id: ruff-format

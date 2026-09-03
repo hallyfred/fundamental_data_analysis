@@ -1,5 +1,6 @@
-import time
 import logging
+import time
+
 import requests
 
 from config.config import TIMEOUT
@@ -13,12 +14,14 @@ _logger = logging.getLogger(__name__)
 # explícita e permitem tratamento diferenciado (ex: retry só no rate-limit).
 # =============================================================================
 
+
 class AlphaVantageRateLimitError(Exception):
     """
     Levantada quando a Alpha Vantage retorna um corpo com 'Note',
     indicando que o limite de requisições por minuto/dia foi atingido.
     Passível de retry com backoff.
     """
+
 
 class AlphaVantageAPIError(Exception):
     """
@@ -32,8 +35,8 @@ class AlphaVantageAPIError(Exception):
 # Cliente HTTP com timeout, retry/backoff e detecção de erros semânticos
 # =============================================================================
 
-class AlphaVantageAPIClient:
 
+class AlphaVantageAPIClient:
     MAX_RETRIES = 3
     BACKOFF_BASE_SECONDS = 2  # delays: 2s, 4s, 8s
 
@@ -54,8 +57,7 @@ class AlphaVantageAPIClient:
         """
         if "Note" in data:
             raise AlphaVantageRateLimitError(
-                f"Rate-limit atingido ao consultar '{function}' para '{symbol}'. "
-                f"Resposta da API: {data['Note']}"
+                f"Rate-limit atingido ao consultar '{function}' para '{symbol}'. Resposta da API: {data['Note']}"
             )
         if "Information" in data:
             raise AlphaVantageAPIError(
@@ -64,8 +66,7 @@ class AlphaVantageAPIClient:
             )
         if "Error Message" in data:
             raise AlphaVantageAPIError(
-                f"Chamada inválida ao consultar '{function}' para '{symbol}'. "
-                f"Resposta da API: {data['Error Message']}"
+                f"Chamada inválida ao consultar '{function}' para '{symbol}'. Resposta da API: {data['Error Message']}"
             )
 
     def get(self, function: str, symbol: str) -> dict:
@@ -92,28 +93,26 @@ class AlphaVantageAPIClient:
 
                 return data
 
-            except AlphaVantageRateLimitError as e:
+            except AlphaVantageRateLimitError:
                 # Rate-limit: vale a pena aguardar e tentar novamente
                 if attempt < self.MAX_RETRIES:
-                    wait = self.BACKOFF_BASE_SECONDS ** attempt
+                    wait = self.BACKOFF_BASE_SECONDS**attempt
                     _logger.warning(
                         f"[{symbol}/{function}] Rate-limit (tentativa {attempt}/{self.MAX_RETRIES}). "
                         f"Aguardando {wait}s antes de nova tentativa..."
                     )
                     time.sleep(wait)
                 else:
-                    _logger.error(
-                        f"[{symbol}/{function}] Rate-limit persistente após {self.MAX_RETRIES} tentativas."
-                    )
+                    _logger.error(f"[{symbol}/{function}] Rate-limit persistente após {self.MAX_RETRIES} tentativas.")
                     raise
 
             except AlphaVantageAPIError:
                 # Erro não-retriável (símbolo inválido, plano free, etc.) — falha imediata
                 raise
 
-            except requests.exceptions.Timeout as e:
+            except requests.exceptions.Timeout:
                 if attempt < self.MAX_RETRIES:
-                    wait = self.BACKOFF_BASE_SECONDS ** attempt
+                    wait = self.BACKOFF_BASE_SECONDS**attempt
                     _logger.warning(
                         f"[{symbol}/{function}] Timeout na tentativa {attempt}/{self.MAX_RETRIES}. "
                         f"Aguardando {wait}s..."
@@ -125,7 +124,7 @@ class AlphaVantageAPIClient:
             except requests.exceptions.RequestException as e:
                 # Erros de rede genéricos (conexão recusada, DNS, etc.)
                 if attempt < self.MAX_RETRIES:
-                    wait = self.BACKOFF_BASE_SECONDS ** attempt
+                    wait = self.BACKOFF_BASE_SECONDS**attempt
                     _logger.warning(
                         f"[{symbol}/{function}] Erro de rede na tentativa {attempt}/{self.MAX_RETRIES}: {e}. "
                         f"Aguardando {wait}s..."

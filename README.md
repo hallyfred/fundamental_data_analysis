@@ -33,9 +33,9 @@ fundamental_data_analysis/
 ├── .github/
 │   └── workflows/    # CI/CD pipelines (GitHub Actions for Pytest & dbt)
 ├── src/
-│   ├── extract/      # API connection logic and rate-limit handling
-│   ├── transform/    # dbt project (models, macros, tests)
-│   └── load/         # GCS to BigQuery loading routines
+│   ├── extract/          # API connection logic and rate-limit handling
+│   ├── transformations/  # dbt project (models, macros, tests)
+│   └── load/             # GCS to BigQuery loading routines
 ├── dags/             # Apache Airflow DAGs
 ├── tests/            # Pytest for Python modules
 ├── docker-compose.yml# Local infrastructure orchestration
@@ -161,11 +161,11 @@ From the Airflow UI, you can unpause the DAGs, monitor the round-robin API inges
 
 #### External tables
 
-The dbt project creates the BigQuery external tables automatically before each `dbt run`, using the external source definitions in `transformations/models/source.yml`. No manual table creation is required. The configured service account must have permission to create tables in the target dataset and read the GCS bucket.
+The dbt project creates the BigQuery external tables automatically before each `dbt run`, using the external source definitions in `src/transformations/models/source.yml`. No manual table creation is required. The configured service account must have permission to create tables in the target dataset and read the GCS bucket.
 
 To create or recreate only the external tables, run:
 
 ```bash
-dbt run-operation dbt_external_tables.stage_external_sources --vars "ext_full_refresh: true"
+dbt run-operation dbt_external_tables.stage_external_sources --project-dir src/transformations --vars "ext_full_refresh: true"
 ```
 

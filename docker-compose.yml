@@ -18,7 +18,7 @@ services:
       - ./config:/opt/airflow/config
       - ./dags:/opt/airflow/dags
       - ./src:/opt/airflow/src
-      - ./transformations:/opt/airflow/transformations
+      - ./src/transformations:/opt/airflow/src/transformations
     ports:
       - "8080:8080"
     depends_on:
@@ -40,7 +40,7 @@ services:
       - ./config:/opt/airflow/config
       - ./dags:/opt/airflow/dags
       - ./src:/opt/airflow/src
-      - ./transformations:/opt/airflow/transformations
+      - ./src/transformations:/opt/airflow/src/transformations
     depends_on:
       - postgres
 

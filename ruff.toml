@@ -1,0 +1,27 @@
+# Configurações do Ruff Formatter & Linter
+line-length = 120
+target-version = "py311"
+
+[lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes (imports não utilizados, variáveis não definidas)
+    "I",   # isort (ordenação automática de imports)
+    "UP",  # pyupgrade (sintaxe moderna de Python)
+    "B",   # flake8-bugbear (bugs comuns)
+]
+ignore = [
+    "E501", # line-too-long (delegado ao ruff-format)
+    "B008", # do not perform function calls in argument defaults
+    "E402", # module level import not at top of file (preserva sys.path.insert na linha 1)
+]
+
+[lint.isort]
+known-first-party = ["src", "config"]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

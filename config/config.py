@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # 1. Encontra o caminho absoluto da pasta raiz do projeto
@@ -47,16 +48,13 @@ ENDPOINTS_API = {
     "income_statement": "INCOME_STATEMENT",
     "cash_flow": "CASH_FLOW",
     "earnings": "EARNINGS",
-    "overview": "OVERVIEW"
+    "overview": "OVERVIEW",
 }
 
 
 def build_ticker_batches(symbols=None, batch_size: int = BATCH_SIZE):
     ordered_symbols = list(symbols or SYMBOLS)
-    return [
-        ordered_symbols[index:index + batch_size]
-        for index in range(0, len(ordered_symbols), batch_size)
-    ]
+    return [ordered_symbols[index : index + batch_size] for index in range(0, len(ordered_symbols), batch_size)]
 
 
 def enumerate_ticker_batches(symbols=None, batch_size: int = BATCH_SIZE):
