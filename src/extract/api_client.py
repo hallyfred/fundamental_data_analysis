@@ -1,4 +1,5 @@
 import logging
+import re
 import time
 
 import requests
@@ -50,23 +51,38 @@ class AlphaVantageAPIClient:
         self.base_url = base_url
         self.api_key = api_key
 
+    def _sanitize(self, message: str) -> str:
+        """Remove qualquer ocorrência da API key do texto de logs/exceções."""
+        if not message:
+            return ""
+        sanitized = message.replace(self.api_key, "***REDACTED_API_KEY***")
+        return re.sub(r"(API key as )([A-Z0-9]+)", r"\1***REDACTED_API_KEY***", sanitized)
+
     def _check_semantic_errors(self, data: dict, symbol: str, function: str) -> None:
         """
         Fix #10 — detecta erros semânticos da Alpha Vantage antes de retornar o dado.
         A API retorna HTTP 200 com um dict de erro em vez de status 4xx/5xx.
+        Todas as mensagens são sanitizadas para não expor a chave da API.
         """
         if "Note" in data:
+            msg = self._sanitize(str(data["Note"]))
             raise AlphaVantageRateLimitError(
-                f"Rate-limit atingido ao consultar '{function}' para '{symbol}'. Resposta da API: {data['Note']}"
+                f"Rate-limit atingido ao consultar '{function}' para '{symbol}'. Resposta da API: {msg}"
             )
         if "Information" in data:
+            raw_info = str(data["Information"])
+            msg = self._sanitize(raw_info)
+            if "rate limit" in raw_info.lower():
+                raise AlphaVantageRateLimitError(
+                    f"Limite diário de requisições atingido ao consultar '{function}' para '{symbol}'. Resposta da API: {msg}"
+                )
             raise AlphaVantageAPIError(
-                f"Acesso bloqueado (plano free ou demo key) ao consultar '{function}' para '{symbol}'. "
-                f"Resposta da API: {data['Information']}"
+                f"Acesso bloqueado (plano free ou demo key) ao consultar '{function}' para '{symbol}'. Resposta da API: {msg}"
             )
         if "Error Message" in data:
+            msg = self._sanitize(str(data["Error Message"]))
             raise AlphaVantageAPIError(
-                f"Chamada inválida ao consultar '{function}' para '{symbol}'. Resposta da API: {data['Error Message']}"
+                f"Chamada inválida ao consultar '{function}' para '{symbol}'. Resposta da API: {msg}"
             )
 
     def get(self, function: str, symbol: str) -> dict:
@@ -74,7 +90,7 @@ class AlphaVantageAPIClient:
         Faz uma requisição GET para a Alpha Vantage com:
         - Fix #7: timeout configurável (TIMEOUT de config.py)
         - Fix #8: retry com backoff exponencial para erros transitórios
-        - Fix #10: detecção de erros semânticos no corpo da resposta
+        - Fix #10: detecção de erros semânticos no corpo da resposta com sanitização
         """
         params = {
             "function": function,
@@ -93,8 +109,16 @@ class AlphaVantageAPIClient:
 
                 return data
 
-            except AlphaVantageRateLimitError:
-                # Rate-limit: vale a pena aguardar e tentar novamente
+            except AlphaVantageRateLimitError as e:
+                # Se for limite diário (25/dia), falha imediatamente para não desperdiçar tempo em retentativas
+                err_msg = str(e).lower()
+                if "25 requests per day" in err_msg or "limite diário" in err_msg:
+                    _logger.error(
+                        f"[{symbol}/{function}] Limite diário da Alpha Vantage atingido. Interrompendo execução."
+                    )
+                    raise
+
+                # Rate-limit por minuto transitório: aguarda e tenta novamente
                 if attempt < self.MAX_RETRIES:
                     wait = self.BACKOFF_BASE_SECONDS**attempt
                     _logger.warning(

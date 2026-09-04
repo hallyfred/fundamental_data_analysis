@@ -5,7 +5,8 @@ from datetime import datetime
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
-from cosmos import DbtTaskGroup, ExecutionConfig, ProfileConfig, ProjectConfig
+from cosmos import DbtTaskGroup, ExecutionConfig, ProfileConfig, ProjectConfig, RenderConfig
+from cosmos.constants import LoadMode
 
 from config.config import get_symbols_for_day
 
@@ -84,40 +85,64 @@ with DAG(
         python_callable=run_extractor,
         op_kwargs={"extractor_name": "earnings"},
     )
-    load_bronze = EmptyOperator(task_id="load_bronze")
 
-    dbt_tasks = DbtTaskGroup(
-        group_id="dbt_daily_models",
-        project_config=ProjectConfig(
-            dbt_project_path="/opt/airflow/src/transformations",
-            manifest_path="/opt/airflow/src/transformations/target/manifest.json",
-        ),
-        profile_config=ProfileConfig(
-            profile_name="default",
-            target_name="dev",
-            profiles_dir="/opt/airflow/src/transformations",
-        ),
-        execution_config=ExecutionConfig(
-            dbt_executable_path="dbt",
-        ),
+    # Configuração base compartilhada do Cosmos / dbt
+    project_cfg = ProjectConfig(
+        dbt_project_path="/opt/airflow/src/transformations",
+        manifest_path="/opt/airflow/src/transformations/target/manifest.json",
     )
+    profile_cfg = ProfileConfig(
+        profile_name="transformations",
+        target_name="dev",
+        profiles_dir="/opt/airflow/src/transformations",
+    )
+    exec_cfg = ExecutionConfig(dbt_executable_path="dbt")
+
+    def make_dbt_group(group_id: str, select_model: str) -> DbtTaskGroup:
+        return DbtTaskGroup(
+            group_id=group_id,
+            project_config=project_cfg,
+            profile_config=profile_cfg,
+            execution_config=exec_cfg,
+            render_config=RenderConfig(
+                select=[select_model],
+                load_mode=LoadMode.DBT_MANIFEST,
+                emit_datasets=False,
+            ),
+        )
+
+    # 1. Camada Staging (disparada pelo respectivo endpoint)
+    dbt_stg_overview = make_dbt_group("dbt_stg_overview", "stg_overview")
+    dbt_stg_income = make_dbt_group("dbt_stg_income", "stg_income_statement")
+    dbt_stg_balance = make_dbt_group("dbt_stg_balance", "stg_balance_sheet")
+    dbt_stg_cash_flow = make_dbt_group("dbt_stg_cash_flow", "stg_cash_flow")
+    dbt_stg_earning = make_dbt_group("dbt_stg_earning", "stg_earning")
+
+    # 2. Camada Intermediate (aguarda os stagings correspondentes)
+    dbt_int_overview = make_dbt_group("dbt_int_overview", "int_overview_normalized")
+    dbt_int_financial = make_dbt_group("dbt_int_financial", "int_financial_metrics")
+
+    # 3. Camada Gold / Marts (aguarda os intermediates)
+    dbt_gold = make_dbt_group("dbt_gold", "fundamental_metrics")
 
     validate_gold = EmptyOperator(task_id="validate_gold_data")
     finish = EmptyOperator(task_id="finish_pipeline")
 
+    # Orquestração:
+    # 1. Extrações em série estrita (sem paralelismo entre chamadas da API)
     start >> select_batch
-    select_batch >> [
-        extract_overview,
-        extract_income,
-        extract_balance,
-        extract_cash_flow,
-        extract_earnings,
-    ]
+    select_batch >> extract_overview >> extract_income >> extract_balance >> extract_cash_flow >> extract_earnings
 
-    extract_overview >> load_bronze
-    extract_income >> load_bronze
-    extract_balance >> load_bronze
-    extract_cash_flow >> load_bronze
-    extract_earnings >> load_bronze
+    # 2. Cada modelo dbt roda logo após o seu respectivo endpoint de extração
+    extract_overview >> dbt_stg_overview
+    extract_income >> dbt_stg_income
+    extract_balance >> dbt_stg_balance
+    extract_cash_flow >> dbt_stg_cash_flow
+    extract_earnings >> dbt_stg_earning
 
-    load_bronze >> dbt_tasks >> validate_gold >> finish
+    # 3. Cada modelo dbt roda após a sua etapa anterior (stg > intermediate > gold)
+    dbt_stg_overview >> dbt_int_overview
+    [dbt_stg_balance, dbt_stg_income, dbt_stg_cash_flow] >> dbt_int_financial
+
+    [dbt_int_overview, dbt_int_financial] >> dbt_gold
+    [dbt_stg_earning, dbt_gold] >> validate_gold >> finish

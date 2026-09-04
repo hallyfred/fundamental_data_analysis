@@ -1,11 +1,33 @@
 version: '3.8'
 
 services:
+  airflow-init:
+    build: .
+    container_name: fundamental_airflow_init
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate
+        airflow users create \
+          --username admin \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com \
+          --password admin || true
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    depends_on:
+      - postgres
+
   airflow-webserver:
     build: .
     container_name: fundamental_airflow_webserver
     command: webserver
     restart: always
+    env_file:
+      - .env
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
@@ -13,6 +35,9 @@ services:
       AIRFLOW__CORE__FERNET_KEY: 'X6iQ2ZxD0Nn2Y3nv7wZ8kH1dYQ8q1lW7kqc4Fj4d6I8='
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'True'
       PYTHONPATH: /opt/airflow
+      GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/gcp_key.json
+      GCP_PROJECT_ID: projetodbt-479518
+      BUCKET_BRONZE: hallyson-bronze
     volumes:
       - .:/opt/airflow
       - ./config:/opt/airflow/config
@@ -22,19 +47,27 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - postgres
+      airflow-init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_started
 
   airflow-scheduler:
     build: .
     container_name: fundamental_airflow_scheduler
     command: scheduler
     restart: always
+    env_file:
+      - .env
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__FERNET_KEY: 'X6iQ2ZxD0Nn2Y3nv7wZ8kH1dYQ8q1lW7kqc4Fj4d6I8='
       PYTHONPATH: /opt/airflow
+      GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/gcp_key.json
+      GCP_PROJECT_ID: projetodbt-479518
+      BUCKET_BRONZE: hallyson-bronze
     volumes:
       - .:/opt/airflow
       - ./config:/opt/airflow/config
@@ -42,7 +75,10 @@ services:
       - ./src:/opt/airflow/src
       - ./src/transformations:/opt/airflow/src/transformations
     depends_on:
-      - postgres
+      airflow-init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_started
 
   postgres:
     image: postgres:15
@@ -58,3 +94,4 @@ services:
 
 volumes:
   postgres_data:
+

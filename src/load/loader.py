@@ -20,3 +20,20 @@ class GCPSLoader:
         blob = self.bucket.blob(destination_blob_name)
         blob.upload_from_filename(local_file_path)
         logger.info(f"Upload concluído: {local_file_path} → gs://{self.bucket_name}/{destination_blob_name}")
+
+    def download_as_text(self, destination_blob_name: str) -> str | None:
+        """Baixa o conteúdo de um blob como string de texto. Retorna None se o blob não existir."""
+        try:
+            blob = self.bucket.blob(destination_blob_name)
+            if not blob.exists():
+                return None
+            return blob.download_as_text()
+        except Exception as e:
+            logger.warning(f"Não foi possível ler {destination_blob_name} do GCS: {e}")
+            return None
+
+    def upload_text(self, text_content: str, destination_blob_name: str, content_type: str = "application/json"):
+        """Faz upload direto de uma string de texto para o GCS sem necessidade de arquivo local."""
+        blob = self.bucket.blob(destination_blob_name)
+        blob.upload_from_string(text_content, content_type=content_type)
+        logger.info(f"Upload de texto concluído → gs://{self.bucket_name}/{destination_blob_name}")

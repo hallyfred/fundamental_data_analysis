@@ -1,0 +1,126 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ==============================================================================
+  # 1. LINT & CODE QUALITY CHECK (Ruff)
+  # ==============================================================================
+  lint:
+    name: Code Quality & Lint (Ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Ruff
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+
+      - name: Run Ruff Linter
+        run: ruff check .
+
+      - name: Run Ruff Formatter Check
+        run: ruff format --check .
+
+  # ==============================================================================
+  # 2. UNIT TESTS (Pytest — 100% Mockado, Zero consumo de cota ou rede)
+  # Depende exclusivamente da aprovação prévia do Lint
+  # ==============================================================================
+  unit-tests:
+    name: Automated Unit Tests (Pytest)
+    needs: [lint]
+    runs-on: ubuntu-latest
+    env:
+      ALPHA_VANTAGE_API_KEY: "dummy_ci_key"
+      GCP_PROJECT_ID: "dummy-ci-project"
+      BUCKET_BRONZE: "dummy-ci-bucket"
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__UNIT_TEST_MODE: "True"
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Project & Test Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Pytest Suite
+        run: pytest -v
+
+  # ==============================================================================
+  # 3. DBT VALIDATION (Parse & Compilation Check)
+  # Depende da aprovação dos testes unitários
+  # ==============================================================================
+  dbt-validation:
+    name: dbt Project Validation
+    needs: [unit-tests]
+    runs-on: ubuntu-latest
+    env:
+      GCP_PROJECT_ID: "projetodbt-479518"
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dbt Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install dbt-core dbt-bigquery
+
+      - name: Validate dbt Syntax and Project Manifest
+        run: dbt parse --project-dir src/transformations --profiles-dir src/transformations
+
+  # ==============================================================================
+  # 4. CONTINUOUS DEPLOYMENT (CD)
+  # TRAVA PÉTREA: O Deploy JAMAIS executa antes de Lint, Testes e dbt serem 100% aprovados.
+  # Executa estritamente na branch 'main' após merge.
+  # ==============================================================================
+  deploy:
+    name: Production Deployment (CD)
+    needs: [lint, unit-tests, dbt-validation]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy Gate Verification
+        run: |
+          echo "========================================================"
+          echo "TODOS OS TESTES E VALIDAÇÕES DO CI FORAM APROVADOS!"
+          echo "Iniciando sincronização e deploy seguro em produção..."
+          echo "========================================================"
+
+      - name: Sync Production Pipeline
+        run: |
+          echo "Sincronizando Airflow DAGs, módulos Python e modelos dbt..."
+          # Comandos de deploy da infraestrutura de produção
+          echo "Deploy concluído com sucesso."

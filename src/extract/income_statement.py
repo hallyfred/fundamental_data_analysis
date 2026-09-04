@@ -16,6 +16,7 @@ from src.extract.contract import IncomeStatementSchema, has_extra_fields
 from src.load.loader import GCPSLoader
 from src.utils.helpers import count_real_rows
 from src.utils.logger import log_extraction, setup_logger, upload_and_clean_log
+from src.utils.watermark import WatermarkManager
 
 
 def extract_income_statement(symbols: list[str] | None = None):
@@ -30,6 +31,7 @@ def extract_income_statement(symbols: list[str] | None = None):
     files_generated = []
 
     gcp_loader = GCPSLoader(project_id=PROJECT_ID, bucket_name=BUCKET_BRONZE)
+    watermark = WatermarkManager(gcp_loader=gcp_loader, endpoint="income_statement")
     client = AlphaVantageAPIClient(BASE_URL, ALPHA_VANTAGE_API_KEY)
 
     for symbol in symbols:
@@ -105,6 +107,21 @@ def extract_income_statement(symbols: list[str] | None = None):
             length = count_real_rows(data)
             logger.info(f"Linhas processadas para {symbol}: {length}")
 
+            fiscal_date = str(
+                validated_data.annualReports[0].fiscalDateEnding
+                if validated_data.annualReports
+                else (validated_data.quarterlyReports[0].fiscalDateEnding if validated_data.quarterlyReports else "")
+            )
+
+            # Checagem de Watermark: se o exercício fiscal já foi ingerido, ignora upload
+            if not watermark.should_upload(symbol, fiscal_date):
+                logger.info(
+                    f"Exercício fiscal '{fiscal_date}' para {symbol} já existe no Data Lake. Upload no GCS ignorado."
+                )
+                if file_path and os.path.exists(file_path):
+                    os.remove(file_path)
+                continue
+
             destination_blob_name = (
                 f"financial/income_statement/year={today.year}/month={today.month:02d}/day={today.day:02d}/{file_name}"
             )
@@ -113,6 +130,7 @@ def extract_income_statement(symbols: list[str] | None = None):
             os.remove(file_path)
             logger.info(f"Upload concluído e arquivo local removido: {file_name}")
 
+            watermark.record_success(symbol, fiscal_date)
             files_generated.append(destination_blob_name)
 
             time_seconds = time.perf_counter() - start_time
@@ -182,6 +200,9 @@ def extract_income_statement(symbols: list[str] | None = None):
         finally:
             if file_path and os.path.exists(file_path):
                 os.remove(file_path)
+
+    # Persiste os watermarks atualizados no GCS
+    watermark.save()
 
     for handler in logger.handlers[:]:
         handler.close()

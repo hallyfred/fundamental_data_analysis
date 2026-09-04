@@ -32,15 +32,26 @@ BUCKET_BRONZE = os.getenv("BUCKET_BRONZE", "")
 # Para 5 endpoints, cada dia só pode processar 5 empresas.
 # Temos 35 empresas em 7 grupos de 5, um grupo por dia da semana.
 # O mesmo ciclo se repete mensalmente, sem necessidade de rotação aleatória.
+# WEEKDAY_SYMBOLS = {
+#    0: ["AAPL", "MSFT", "GOOGL", "AMZN", "META"],
+#    1: ["JPM", "JNJ", "WMT", "XOM", "NVDA"],
+#    2: ["INTC", "AMD", "NFLX", "PFE", "COST"],
+#    3: ["KO", "PG", "UNH", "HD", "V"],
+#    4: ["DIS", "CRM", "IBM", "NKE", "MCD"],
+#    5: ["T", "CVX", "XLE", "ABBV", "MRK"],
+#    6: ["BA", "CAT", "GE", "C", "GS"],
+# }
+
 WEEKDAY_SYMBOLS = {
-    0: ["AAPL", "MSFT", "GOOGL", "AMZN", "META"],
-    1: ["JPM", "JNJ", "WMT", "XOM", "NVDA"],
-    2: ["INTC", "AMD", "NFLX", "PFE", "COST"],
-    3: ["KO", "PG", "UNH", "HD", "V"],
-    4: ["DIS", "CRM", "IBM", "NKE", "MCD"],
-    5: ["T", "CVX", "XLE", "ABBV", "MRK"],
-    6: ["BA", "CAT", "GE", "C", "GS"],
+    0: ["AAPL"],
+    1: ["JPM"],
+    2: ["INTC"],
+    3: ["KO"],
+    4: ["DIS"],
+    5: ["T"],
+    6: ["BA"],
 }
+
 
 SYMBOLS = [symbol for group in WEEKDAY_SYMBOLS.values() for symbol in group]
 ENDPOINTS_API = {
