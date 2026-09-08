@@ -94,7 +94,7 @@ with DAG(
     profile_cfg = ProfileConfig(
         profile_name="transformations",
         target_name="dev",
-        profiles_dir="/opt/airflow/src/transformations",
+        profiles_yml_filepath="/opt/airflow/src/transformations/profiles.yml",
     )
     exec_cfg = ExecutionConfig(dbt_executable_path="dbt")
 
@@ -106,7 +106,7 @@ with DAG(
             execution_config=exec_cfg,
             render_config=RenderConfig(
                 select=[select_model],
-                load_mode=LoadMode.DBT_MANIFEST,
+                load_method=LoadMode.DBT_MANIFEST,
                 emit_datasets=False,
             ),
         )

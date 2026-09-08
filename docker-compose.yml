@@ -38,6 +38,11 @@ services:
       GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/gcp_key.json
       GCP_PROJECT_ID: projetodbt-479518
       BUCKET_BRONZE: hallyson-bronze
+      # --- Opção B: tuning de memória ---
+      AIRFLOW__WEBSERVER__WORKERS: '2'
+      AIRFLOW__WEBSERVER__WORKER_TIMEOUT: '120'
+      AIRFLOW__CORE__LAZY_LOAD_PLUGINS: 'True'
+      AIRFLOW__CORE__LAZY_DISCOVER_PROVIDERS: 'True'
     volumes:
       - .:/opt/airflow
       - ./config:/opt/airflow/config
@@ -68,6 +73,10 @@ services:
       GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/gcp_key.json
       GCP_PROJECT_ID: projetodbt-479518
       BUCKET_BRONZE: hallyson-bronze
+      # --- Opção B: tuning de memória ---
+      AIRFLOW__SCHEDULER__PARSING_PROCESSES: '1'
+      AIRFLOW__CORE__LAZY_LOAD_PLUGINS: 'True'
+      AIRFLOW__CORE__LAZY_DISCOVER_PROVIDERS: 'True'
     volumes:
       - .:/opt/airflow
       - ./config:/opt/airflow/config
