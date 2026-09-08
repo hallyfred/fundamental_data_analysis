@@ -3,6 +3,14 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 
+@pytest.fixture(autouse=True)
+def mock_storage_client():
+    """Keep client initialization and watermark reads/writes offline in CI."""
+    with patch("src.load.loader.storage.Client") as client:
+        client.return_value.bucket.return_value.blob.return_value.exists.return_value = False
+        yield client
+
+
 @pytest.fixture
 def mock_loader():
     with patch("src.load.loader.GCPSLoader") as mock_cls:

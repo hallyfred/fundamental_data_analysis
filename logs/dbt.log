@@ -1834,3 +1834,33 @@ Runtime Error
 {"data":{},"info":{"category":"","code":"","extra":{},"invocation_id":"01a0591b-786f-7b33-b449-54f8a886f8b0","level":"debug","msg":"Trial license from file C:\\Users\\hally\\.dbt\\license.trial is expired","name":"Generic","pid":29572,"thread":"tokio-rt-worker","ts":"2026-08-31T18:36:07.894935Z"}}
 {"data":{"columns":[],"is_inline":true,"node_name":"license_info","output_format":"json","preview":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","unique_id":"license.info"},"info":{"category":"","code":"Q041","extra":{},"invocation_id":"01a0591b-786f-7b33-b449-54f8a886f8b0","level":"info","msg":"{\n  \"status\": \"trial_expired\",\n  \"licensing_enabled\": true,\n  \"expires_at\": \"2025-12-30T18:07:57+00:00\",\n  \"license_type\": \"trial\"\n}","name":"ShowNode","pid":29572,"thread":"tokio-rt-worker","ts":"2026-08-31T18:36:07.896750Z"}}
 {"data":{"completed_at":"2026-08-31T18:36:08.628452Z","elapsed":0.9161356091499329,"success":true},"info":{"category":"","code":"Q039","extra":{},"invocation_id":"01a0591b-786f-7b33-b449-54f8a886f8b0","level":"info","msg":"\n==================== Execution Summary =====================\nFinished 'license' successfully [916ms]","name":"CommandCompleted","pid":29572,"thread":"tokio-rt-worker","ts":"2026-08-31T18:36:08.633679Z"}}
+[0m18:48:22.334248 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000271955A3620>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000027197CA7ED0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000027197CA7B10>]}
+
+
+============================== 18:48:22.339629 | ac98a223-6252-4b92-b676-db9529ce9b96 ==============================
+[0m18:48:22.339629 [info ] [MainThread]: Running with dbt=1.12.2
+[0m18:48:22.340456 [debug] [MainThread]: running dbt with arguments {'static_parser': 'True', 'no_print': 'None', 'maximum_seed_size_mib': '1', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'target_path': 'None', 'version_check': 'True', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'False', 'cache_selected_only': 'False', 'fail_fast': 'False', 'debug': 'False', 'log_format': 'default', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'indirect_selection': 'eager', 'hints_enabled': 'True', 'invocation_command': 'dbt run -s --project-dir src/transformations', 'use_experimental_parser': 'False', 'use_colors': 'True', 'log_path': 'logs'}
+[0m18:48:22.341274 [error] [MainThread]: [[31mERROR[0m]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m18:48:22.342732 [debug] [MainThread]: Command `dbt run` failed at 18:48:22.342502 after 0.20 seconds
+[0m18:48:22.343400 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000027197C77CE0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000027197D203B0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000027197D28380>]}
+[0m18:48:22.344016 [debug] [MainThread]: Flushing usage events
+[0m18:48:23.332735 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m19:32:03.353298 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000225644B3620>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022566BB7ED0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022566BB7B10>]}
+
+
+============================== 19:32:03.358094 | 0d60f96c-46ca-40ba-858d-9eabd47f8385 ==============================
+[0m19:32:03.358094 [info ] [MainThread]: Running with dbt=1.12.2
+[0m19:32:03.358702 [debug] [MainThread]: running dbt with arguments {'static_parser': 'True', 'no_print': 'None', 'version_check': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'maximum_seed_size_mib': '1', 'target_path': 'None', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'False', 'cache_selected_only': 'False', 'fail_fast': 'False', 'debug': 'False', 'log_format': 'default', 'partial_parse': 'True', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\hally\\.dbt', 'indirect_selection': 'eager', 'hints_enabled': 'True', 'use_colors': 'True', 'use_experimental_parser': 'False', 'invocation_command': 'dbt run', 'log_path': 'logs'}
+[0m19:32:03.359221 [error] [MainThread]: [[31mERROR[0m]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\hally\OneDrive\Área de Trabalho\fundamental_data_analysis\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m19:32:03.360058 [debug] [MainThread]: Command `dbt run` failed at 19:32:03.359938 after 0.16 seconds
+[0m19:32:03.360410 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022566B7FCE0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022566C303B0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022566C38380>]}
+[0m19:32:03.360766 [debug] [MainThread]: Flushing usage events
+[0m19:32:04.462350 [debug] [MainThread]: An error was encountered while trying to flush usage events

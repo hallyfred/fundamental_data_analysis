@@ -67,15 +67,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Check Silver Coverage Against Extraction Contracts
+        run: pytest -v tests/test_silver_contracts.py
+
       - name: Run Pytest Suite
-        run: pytest -v
+        run: pytest -v --ignore=tests/test_silver_contracts.py
 
   # ==============================================================================
-  # 3. DBT VALIDATION (Parse & Compilation Check)
+  # 3. DBT VALIDATION (Parse, Silver/Gold unit tests & data quality)
   # Depende da aprovação dos testes unitários
   # ==============================================================================
   dbt-validation:
-    name: dbt Project Validation
+    name: dbt Silver and Gold Validation
+    concurrency:
+      group: dbt-silver-ci
+      cancel-in-progress: false
     needs: [unit-tests]
     runs-on: ubuntu-latest
     env:
@@ -93,7 +99,10 @@ jobs:
       - name: Install dbt Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install dbt-core dbt-bigquery
+          pip install "dbt-core>=1.10.5,<2" "dbt-bigquery>=1.10,<2"
+
+      - name: Install dbt Packages
+        run: dbt deps --project-dir src/transformations --profiles-dir src/transformations
 
       - name: Autenticar no Google Cloud
         uses: google-github-actions/auth@v2
@@ -101,7 +110,30 @@ jobs:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Validate dbt Syntax and Project Manifest
-        run: dbt parse --project-dir src/transformations --profiles-dir src/transformations
+        run: dbt parse --project-dir src/transformations --profiles-dir src/transformations --target ci --no-partial-parse
+
+      - name: Prepare CI Dataset for Unit Tests
+        run: dbt run-operation prepare_ci_schema --project-dir src/transformations --profiles-dir src/transformations --target ci
+
+      # SQL fixtures mock all inputs; unit tests never read Bronze data.
+      - name: Run Silver and Gold Unit Tests
+        run: dbt test --select "intermediate,test_type:unit marts,test_type:unit" --project-dir src/transformations --profiles-dir src/transformations --target ci
+
+      # Read existing Bronze external tables; build views and the Gold table in alphavantage_ci.
+      # The CI target disables external-table recreation in the production dataset.
+      - name: Build Silver and Gold and Run Data Quality Tests
+        run: dbt build --select +marts --exclude test_type:unit --project-dir src/transformations --profiles-dir src/transformations --target ci
+
+      - name: Upload dbt Validation Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-silver-gold-results
+          path: |
+            src/transformations/target/manifest.json
+            src/transformations/target/run_results.json
+            src/transformations/logs/dbt.log
+          if-no-files-found: ignore
 
   # ==============================================================================
   # 4. CONTINUOUS DEPLOYMENT (CD)

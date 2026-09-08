@@ -1,0 +1,199 @@
+version: 2
+models:
+- name: int_earning
+  description: 'Silver earning: Earnings per share for the fiscal period. Typed fields
+    and latest ingestion per (symbol, fiscaldateending, report_type). Invalid fields
+    remain NULL for quality checks.'
+  columns:
+  - name: symbol
+    data_type: string
+    description: Company stock ticker.
+    tests:
+    - not_null
+    meta:
+      source_field: symbol
+  - name: report_type
+    data_type: string
+    description: Annual or quarterly report frequency.
+    tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - annual
+          - quarterly
+  - name: fiscaldateending_raw
+    data_type: string
+    description: Original fiscalDateEnding preserved for audit.
+  - name: fiscaldateending
+    data_type: date
+    description: Fiscal period end; invalid dates remain NULL and fail the quality
+      gate.
+    tests:
+    - not_null
+    meta:
+      source_field: fiscalDateEnding
+  - name: reported_date
+    data_type: date
+    description: Quarterly earnings release date; NULL for annual reports or invalid
+      dates.
+    meta:
+      source_field: reportedDate
+  - name: reported_eps
+    data_type: numeric
+    description: Reported eps from Alpha Vantage reportedEPS. Missing, sentinel or
+      invalid values become NULL.
+    meta:
+      source_field: reportedEPS
+  - name: estimated_eps
+    data_type: numeric
+    description: Estimated eps from Alpha Vantage estimatedEPS. Missing, sentinel
+      or invalid values become NULL.
+    meta:
+      source_field: estimatedEPS
+  - name: surprise
+    data_type: numeric
+    description: Surprise from Alpha Vantage surprise. Missing, sentinel or invalid
+      values become NULL.
+    meta:
+      source_field: surprise
+  - name: surprise_percentage
+    data_type: numeric
+    description: Surprise percentage from Alpha Vantage surprisePercentage. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: surprisePercentage
+  - name: partition_year
+    data_type: int64
+    description: GCS Hive ingestion partition year.
+  - name: partition_month
+    data_type: int64
+    description: GCS Hive ingestion partition month.
+  - name: partition_day
+    data_type: int64
+    description: GCS Hive ingestion partition day.
+  - name: ingest_date
+    data_type: date
+    description: Ingestion date from DATE(partition_year, partition_month, partition_day).
+  - name: report_time
+    data_type: string
+    description: Report time from Alpha Vantage reportTime. Quarterly release timing
+      (e.g. post-market); NULL for annual reports.
+    meta:
+      source_field: reportTime
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - symbol
+        - fiscaldateending
+        - report_type
+unit_tests:
+- name: earning_latest_ingestion_and_frequency
+  model: int_earning
+  given:
+  - input: ref('stg_earning')
+    format: sql
+    rows: |-
+      select '{"symbol":"TEST","annualEarnings":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","reportedEPS":"100"}],"quarterlyEarnings":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","reportedEPS":"100"}]}' as raw_data, 2026 as year, 9 as month, 7 as day
+      union all
+      select '{"symbol":"TEST","annualEarnings":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","reportedEPS":"200"}],"quarterlyEarnings":[]}' as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      reported_eps: 200
+      ingest_date: '2026-09-08'
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: quarterly
+      reported_eps: 100
+      ingest_date: '2026-09-07'
+- name: earning_invalid_fields_are_retained
+  model: int_earning
+  given:
+  - input: ref('stg_earning')
+    format: sql
+    rows: select '{"symbol":"TEST","annualEarnings":[{"fiscalDateEnding":"2025-01-28","reportedEPS":"None"},{"fiscalDateEnding":"2025-02-28","reportedEPS":"-"},{"fiscalDateEnding":"2025-03-28","reportedEPS":"N/A"},{"fiscalDateEnding":"2025-04-28","reportedEPS":""},{"fiscalDateEnding":"2025-05-28","reportedEPS":"bad-number"},{"fiscalDateEnding":"2025-06-28","reportedEPS":"1e100"},{"fiscalDateEnding":"broken-date","reportedEPS":"42"}],"quarterlyEarnings":[]}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - fiscaldateending: '2025-01-28'
+      reported_eps: null
+      fiscaldateending_raw: '2025-01-28'
+    - fiscaldateending: '2025-02-28'
+      reported_eps: null
+      fiscaldateending_raw: '2025-02-28'
+    - fiscaldateending: '2025-03-28'
+      reported_eps: null
+      fiscaldateending_raw: '2025-03-28'
+    - fiscaldateending: '2025-04-28'
+      reported_eps: null
+      fiscaldateending_raw: '2025-04-28'
+    - fiscaldateending: '2025-05-28'
+      reported_eps: null
+      fiscaldateending_raw: '2025-05-28'
+    - fiscaldateending: '2025-06-28'
+      reported_eps: null
+      fiscaldateending_raw: '2025-06-28'
+    - fiscaldateending: null
+      fiscaldateending_raw: broken-date
+      reported_eps: 42
+- name: earning_empty_arrays
+  model: int_earning
+  given:
+  - input: ref('stg_earning')
+    format: sql
+    rows: select '{"symbol":"TEST","annualEarnings":[],"quarterlyEarnings":[]}' as
+      raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows: []
+- name: earning_annual_and_quarterly_fields
+  model: int_earning
+  given:
+  - input: ref('stg_earning')
+    format: sql
+    rows: select '{"symbol":"TEST","annualEarnings":[{"fiscalDateEnding":"2025-12-31","reportedEPS":"2.125","reportedDate":"2026-01-15"}],"quarterlyEarnings":[{"fiscalDateEnding":"2025-12-31","reportedEPS":"2.125","reportedDate":"2026-01-15","estimatedEPS":"2.0","surprise":"0.125","surprisePercentage":"6.25"}]}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - report_type: annual
+      reported_date: null
+      reported_eps: 2.125
+      estimated_eps: null
+      surprise: null
+      surprise_percentage: null
+    - report_type: quarterly
+      reported_date: '2026-01-15'
+      reported_eps: 2.125
+      estimated_eps: 2.0
+      surprise: 0.125
+      surprise_percentage: 6.25
+- name: earning_all_contract_fields
+  model: int_earning
+  given:
+  - input: ref('stg_earning')
+    format: sql
+    rows: select '{"symbol":"TEST","annualEarnings":[{"fiscalDateEnding":"2025-12-31","reportedEPS":"3.125"}],"quarterlyEarnings":[{"fiscalDateEnding":"2025-12-31","reportedDate":"2025-12-31","reportedEPS":"3.125","estimatedEPS":"4.125","surprise":"5.125","surprisePercentage":"6.125","reportTime":"sample_reportTime"}]}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - fiscaldateending: '2025-12-31'
+      reported_date: '2025-12-31'
+      reported_eps: 3.125
+      estimated_eps: 4.125
+      surprise: 5.125
+      surprise_percentage: 6.125
+      report_time: sample_reportTime
+      symbol: TEST
+      report_type: quarterly
+    - fiscaldateending: '2025-12-31'
+      reported_date: null
+      reported_eps: 3.125
+      estimated_eps: null
+      surprise: null
+      surprise_percentage: null
+      report_time: null
+      symbol: TEST
+      report_type: annual

@@ -184,8 +184,14 @@ parsed as (
             nullif(nullif(nullif(nullif(
                 json_value(report, '$.netIncome'),
             'None'), '-'), 'N/A'), '') as int64
-        )                                             as net_income
-
+        )                                             as net_income,
+        safe_cast(nullif(nullif(nullif(nullif(json_value(report, '$.costofGoodsAndServicesSold'), 'None'), '-'), 'N/A'), '') as int64) as cost_of_goods_and_services_sold,
+        safe_cast(nullif(nullif(nullif(nullif(json_value(report, '$.investmentIncomeNet'), 'None'), '-'), 'N/A'), '') as int64) as investment_income_net,
+        safe_cast(nullif(nullif(nullif(nullif(json_value(report, '$.nonInterestIncome'), 'None'), '-'), 'N/A'), '') as int64) as non_interest_income,
+        safe_cast(nullif(nullif(nullif(nullif(json_value(report, '$.otherNonOperatingIncome'), 'None'), '-'), 'N/A'), '') as int64) as other_non_operating_income,
+        safe_cast(nullif(nullif(nullif(nullif(json_value(report, '$.depreciation'), 'None'), '-'), 'N/A'), '') as int64) as depreciation,
+        safe_cast(nullif(nullif(nullif(nullif(json_value(report, '$.interestAndDebtExpense'), 'None'), '-'), 'N/A'), '') as int64) as interest_and_debt_expense,
+        safe_cast(nullif(nullif(nullif(nullif(json_value(report, '$.comprehensiveIncomeNetOfTax'), 'None'), '-'), 'N/A'), '') as int64) as comprehensive_income_net_of_tax
     from unnested
 
 ),
@@ -213,7 +219,6 @@ filtered as (
 
     select * from deduped
     where rn = 1
-      and fiscaldateending is not null
 
 )
 
@@ -249,7 +254,7 @@ select
         ebitda,
         case
             when ebit is not null and depreciation_and_amortization is not null
-                then ebit + depreciation_and_amortization
+                then safe_add(ebit, depreciation_and_amortization)
             else null
         end
     )                                                 as ebitda_calc,
@@ -257,5 +262,12 @@ select
     ingest_date,
     partition_year,
     partition_month,
-    partition_day
+    partition_day,
+    cost_of_goods_and_services_sold,
+    investment_income_net,
+    non_interest_income,
+    other_non_operating_income,
+    depreciation,
+    interest_and_debt_expense,
+    comprehensive_income_net_of_tax
 from filtered
