@@ -169,3 +169,75 @@ To create or recreate only the external tables, run:
 dbt run-operation dbt_external_tables.stage_external_sources --project-dir src/transformations --vars "ext_full_refresh: true"
 ```
 
+
+
+### Silver models and validation
+
+The five `intermediate` views parse the staging JSON payloads, normalize numeric
+sentinels, preserve the original fiscal date, and retain the latest ingestion per
+`(symbol, fiscaldateending, report_type)`. `int_overview` instead retains the latest
+snapshot per `symbol`. Each SQL model has a co-located YAML column catalog, data
+quality tests, and native dbt unit tests with synthetic JSON inputs.
+
+Silver exposes every scalar field declared in `src/extract/contract.py`, including
+all annual and quarterly report fields. Column metadata (`meta.source_field`)
+records the original JSON key, including API aliases. The CI contract coverage
+check detects missing fields, type mismatches, and missing full-payload test
+assertions when an extraction contract changes.
+
+Following `.specify/memory/constitution.md`, invalid fiscal dates remain `NULL`
+and fail the `not_null` quality gate instead of disappearing. This takes precedence
+over the older Kiro requirement to filter those records. Numeric conversion failures
+remain `NULL`; derived sums and differences also return `NULL` on overflow.
+
+```bash
+dbt deps --project-dir src/transformations --profiles-dir src/transformations
+dbt parse --project-dir src/transformations --profiles-dir src/transformations
+dbt test --select "intermediate,test_type:unit" --project-dir src/transformations --profiles-dir src/transformations --target ci
+dbt build --select +intermediate --exclude test_type:unit --project-dir src/transformations --profiles-dir src/transformations --target ci
+```
+
+The GitHub workflow runs these checks using the `ci` target (`alphavantage_ci`),
+serializing dbt jobs that share that dataset. This target does not recreate production
+external tables. Integration checks read the existing Bronze external tables in
+`projetodbt-479518.alphavantage`; these must already exist. The CI service account
+needs permission to run BigQuery jobs, create/update the CI dataset and views, and
+read the Bronze external tables and their GCS objects. Configure `GCP_PROJECT_ID`
+and `GCP_SA_KEY` in GitHub Actions; locally set `GOOGLE_APPLICATION_CREDENTIALS`.
+The unit fixtures mock staging inputs, but executing native dbt Core unit tests still
+requires a BigQuery connection. See the [dbt unit test documentation](https://docs.getdbt.com/docs/build/unit-tests).
+
+
+### Gold mart: fundamental KPIs
+
+`src/transformations/models/marts/fct_fundamental_kpis.sql` creates a table with
+29 documented columns: statement keys, ingestion/snapshot metadata, the eight
+financial inputs used by the KPIs, and eleven calculated or inherited metrics.
+Income statement anchors LEFT JOINs on `(symbol, fiscaldateending, report_type)`;
+overview joins on `symbol`. Missing statements leave NULL metrics while retaining
+the income row. Periods found only in other statements are excluded.
+
+ROE uses closing equity; EBITDA ratios use the reported period, without TTM or
+annualization. Margins and YoY growth are fractions (0.10 means 10%); earnings
+surprise follows the API percentage (6.25 means 6.25%). Overview valuation always
+reflects the latest snapshot, identified by `overview_snapshot_date`, even for
+historical periods. YoY uses LAG(4) quarterly and LAG(1) annual and assumes
+contiguous reporting periods. No currency conversion is performed.
+
+KPI arithmetic promotes integer inputs using `NUMERIC '1'` before safe division
+and subtraction, preserving the NUMERIC output contract and avoiding integer
+subtraction overflow. See [BigQuery safe arithmetic](https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions#safe_divide).
+
+```bash
+# Native dbt unit tests with synthetic inputs (requires BigQuery credentials):
+dbt run-operation prepare_ci_schema --project-dir src/transformations --profiles-dir src/transformations --target ci
+dbt test --select "marts,test_type:unit" --project-dir src/transformations --profiles-dir src/transformations --target ci
+# Build ancestors, the Gold table and data quality tests in the CI dataset:
+dbt build --select +marts --exclude test_type:unit --project-dir src/transformations --profiles-dir src/transformations --target ci
+```
+
+The GitHub workflow runs both Silver and Gold unit tests, followed by the full
+`+marts` dependency graph and its data quality checks. The CI service account also
+needs permission to create/update tables in `alphavantage_ci`. The guarded
+`prepare_ci_schema` macro creates the CI dataset if needed before unit tests;
+it refuses to run with a target other than `ci`.

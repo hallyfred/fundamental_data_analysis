@@ -1,0 +1,516 @@
+version: 2
+models:
+- name: fct_fundamental_kpis
+  description: 'Gold OBT: one row per (symbol, fiscaldateending, report_type), anchored
+    on income statement. LEFT JOINs preserve rows with missing statements. Only KPI
+    inputs, metadata and KPIs are exposed; full financial fields remain in Silver.
+    Current overview valuation enriches all historical periods.'
+  columns:
+  - name: symbol
+    data_type: string
+    description: Company ticker from income statement.
+    tests:
+    - not_null
+  - name: fiscaldateending
+    data_type: date
+    description: Fiscal period end from income statement. Invalid dates remain NULL
+      and fail the quality gate.
+    tests:
+    - not_null
+  - name: report_type
+    data_type: string
+    description: Annual or quarterly frequency; part of every statement join key.
+    tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - annual
+          - quarterly
+  - name: reportedcurrency
+    data_type: string
+    description: Currency reported by income statement; amounts are not currency-converted.
+  - name: ingest_date
+    data_type: date
+    description: Ingestion date of the income statement anchoring this row, not the
+      latest ingestion across all sources.
+  - name: sector
+    data_type: string
+    description: Company sector from the latest overview; NULL when no overview exists.
+  - name: industry
+    data_type: string
+    description: Company industry from the latest overview; NULL when no overview
+      exists.
+  - name: country
+    data_type: string
+    description: Company country from the latest overview; NULL when no overview exists.
+  - name: exchange
+    data_type: string
+    description: Company exchange from the latest overview; NULL when no overview
+      exists.
+  - name: overview_snapshot_date
+    data_type: date
+    description: Ingestion date of the latest overview applied to all historical periods.
+      Valuation is a current snapshot, not historical valuation.
+  - name: total_revenue
+    data_type: int64
+    description: Income statement revenue for the fiscal period. Monetary amount in
+      reported currency; NULL when unavailable.
+  - name: net_income
+    data_type: int64
+    description: Income statement net income for the fiscal period. Monetary amount
+      in reported currency; NULL when unavailable.
+  - name: ebitda_calc
+    data_type: int64
+    description: EBITDA already derived in Silver from the direct value or EBIT plus
+      D&A. Monetary amount in reported currency; NULL when unavailable.
+  - name: total_shareholder_equity
+    data_type: int64
+    description: Closing shareholder equity from balance sheet; ROE uses closing,
+      not average, equity. Monetary amount in reported currency; NULL when unavailable.
+  - name: total_current_assets
+    data_type: int64
+    description: Closing current assets from balance sheet. Monetary amount in reported
+      currency; NULL when unavailable.
+  - name: total_current_liabilities
+    data_type: int64
+    description: Closing current liabilities from balance sheet. Monetary amount in
+      reported currency; NULL when unavailable.
+  - name: net_debt
+    data_type: int64
+    description: Net debt already derived in Silver. Monetary amount in reported currency;
+      NULL when unavailable.
+  - name: operating_cashflow
+    data_type: int64
+    description: Operating cash flow for the fiscal period. Monetary amount in reported
+      currency; NULL when unavailable.
+  - name: roe
+    data_type: numeric
+    description: SAFE_DIVIDE(net_income, total_shareholder_equity). Fraction; 0.10
+      means 10%. Not annualized. Exact NUMERIC arithmetic; NULL for missing inputs
+      or a zero denominator. Negative values are retained.
+  - name: net_margin
+    data_type: numeric
+    description: SAFE_DIVIDE(net_income, total_revenue). Fraction; 0.10 means 10%.
+      Exact NUMERIC arithmetic; NULL for missing inputs or a zero denominator. Negative
+      values are retained.
+  - name: ebitda_margin
+    data_type: numeric
+    description: SAFE_DIVIDE(ebitda_calc, total_revenue). Fraction; 0.10 means 10%.
+      Exact NUMERIC arithmetic; NULL for missing inputs or a zero denominator. Negative
+      values are retained.
+  - name: net_debt_to_ebitda
+    data_type: numeric
+    description: SAFE_DIVIDE(net_debt, ebitda_calc). Multiple using the reported period
+      EBITDA, not TTM. Exact NUMERIC arithmetic; NULL for missing inputs or a zero
+      denominator. Negative values are retained.
+  - name: current_ratio
+    data_type: numeric
+    description: SAFE_DIVIDE(total_current_assets, total_current_liabilities). Liquidity
+      multiple. Exact NUMERIC arithmetic; NULL for missing inputs or a zero denominator.
+      Negative values are retained.
+  - name: free_cash_flow
+    data_type: int64
+    description: 'Free cash flow inherited from int_cash_flow: operating_cashflow
+      minus capital_expenditures. Monetary amount in reported currency; NULL for missing
+      components or overflow.'
+  - name: quality_of_earnings
+    data_type: numeric
+    description: SAFE_DIVIDE(operating_cashflow, net_income). Cash conversion multiple;
+      NULL for missing inputs or a zero denominator. Negative values are retained.
+  - name: revenue_yoy_growth
+    data_type: numeric
+    description: SAFE_DIVIDE(total_revenue - prior_revenue, prior_revenue), using
+      NUMERIC subtraction. prior_revenue is LAG(4) for quarterly and LAG(1) for annual,
+      partitioned by symbol and report_type ordered by fiscaldateending. Assumes contiguous
+      reporting periods; missing periods are not filled. Fraction (0.10 = 10%); NULL
+      for missing current/prior revenue or a zero prior revenue.
+  - name: earnings_surprise_pct
+    data_type: numeric
+    description: surprise_percentage inherited from int_earning using the complete
+      statement key. Percentage points (6.25 means 6.25%), not a fraction. NULL when
+      no matching earnings report exists.
+  - name: pe_ratio
+    data_type: numeric
+    description: Price/earnings multiple from the latest overview, not historical
+      valuation. NULL when unavailable; see overview_snapshot_date.
+  - name: ev_to_ebitda
+    data_type: numeric
+    description: Enterprise value/EBITDA multiple from the latest overview, not historical
+      valuation. NULL when unavailable; see overview_snapshot_date.
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - symbol
+        - fiscaldateending
+        - report_type
+unit_tests:
+- name: gold_reconciles_all_kpis_and_columns
+  model: fct_fundamental_kpis
+  given:
+  - input: ref('int_income_statement')
+    format: sql
+    rows: select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual'
+      as report_type, 'USD' as reportedcurrency, date '2026-09-08' as ingest_date,
+      1000 as total_revenue, 100 as net_income, 200 as ebitda_calc
+  - input: ref('int_balance_sheet')
+    format: sql
+    rows: select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual'
+      as report_type, 500 as total_shareholder_equity, 300 as total_current_assets,
+      150 as total_current_liabilities, 400 as net_debt
+  - input: ref('int_cash_flow')
+    format: sql
+    rows: select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual'
+      as report_type, 120 as operating_cashflow, 90 as free_cash_flow
+  - input: ref('int_earning')
+    format: sql
+    rows: select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual'
+      as report_type, numeric '6.25' as surprise_percentage
+  - input: ref('int_overview')
+    format: sql
+    rows: select 'TEST' as symbol, 'Technology' as sector, 'Software' as industry,
+      'USA' as country, 'NYSE' as exchange, date '2026-09-07' as ingest_date, numeric
+      '20' as pe_ratio, numeric '8' as ev_to_ebitda
+  expect:
+    rows:
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      reportedcurrency: USD
+      ingest_date: '2026-09-08'
+      total_revenue: 1000
+      net_income: 100
+      ebitda_calc: 200
+      total_shareholder_equity: 500
+      total_current_assets: 300
+      total_current_liabilities: 150
+      net_debt: 400
+      operating_cashflow: 120
+      sector: Technology
+      industry: Software
+      country: USA
+      exchange: NYSE
+      pe_ratio: 20
+      ev_to_ebitda: 8
+      overview_snapshot_date: '2026-09-07'
+      roe: 0.2
+      net_margin: 0.1
+      ebitda_margin: 0.2
+      net_debt_to_ebitda: 2
+      current_ratio: 2
+      free_cash_flow: 90
+      quality_of_earnings: 1.2
+      revenue_yoy_growth: null
+      earnings_surprise_pct: 6.25
+- name: gold_preserves_income_anchor_and_full_join_key
+  model: fct_fundamental_kpis
+  given:
+  - input: ref('int_income_statement')
+    format: sql
+    rows: |-
+      select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, 'USD' as reportedcurrency, date '2026-09-08' as ingest_date, 1000 as total_revenue, 100 as net_income, 200 as ebitda_calc
+      union all
+      select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'quarterly' as report_type, 'USD' as reportedcurrency, date '2026-09-08' as ingest_date, 1000 as total_revenue, 100 as net_income, 200 as ebitda_calc
+      union all
+      select 'MISSING' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, 200 as total_revenue, 20 as net_income, cast(null as int64) as ebitda_calc
+  - input: ref('int_balance_sheet')
+    format: sql
+    rows: |-
+      select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, 500 as total_shareholder_equity, 300 as total_current_assets, 150 as total_current_liabilities, 400 as net_debt
+      union all
+      select 'ORPHAN' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, 500 as total_shareholder_equity, 300 as total_current_assets, 150 as total_current_liabilities, 400 as net_debt
+  - input: ref('int_cash_flow')
+    format: sql
+    rows: select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'quarterly'
+      as report_type, 120 as operating_cashflow, 90 as free_cash_flow
+  - input: ref('int_earning')
+    format: sql
+    rows: select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'quarterly'
+      as report_type, numeric '5' as surprise_percentage
+  - input: ref('int_overview')
+    format: sql
+    rows: select 'TEST' as symbol, 'Technology' as sector, 'Software' as industry,
+      'USA' as country, 'NYSE' as exchange, date '2026-09-07' as ingest_date, numeric
+      '20' as pe_ratio, numeric '8' as ev_to_ebitda
+  expect:
+    rows:
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      roe: 0.2
+      free_cash_flow: null
+      earnings_surprise_pct: null
+      pe_ratio: 20
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: quarterly
+      roe: null
+      free_cash_flow: 90
+      earnings_surprise_pct: 5
+      pe_ratio: 20
+    - symbol: MISSING
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      roe: null
+      free_cash_flow: null
+      earnings_surprise_pct: null
+      pe_ratio: null
+- name: gold_zero_and_null_denominators
+  model: fct_fundamental_kpis
+  given:
+  - input: ref('int_income_statement')
+    format: sql
+    rows: |-
+      select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, 'USD' as reportedcurrency, date '2026-09-08' as ingest_date, 0 as total_revenue, 0 as net_income, 0 as ebitda_calc
+      union all
+      select 'NULLS' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, 'USD' as reportedcurrency, date '2026-09-08' as ingest_date, cast(null as int64) as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+  - input: ref('int_balance_sheet')
+    format: sql
+    rows: |-
+      select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, 0 as total_shareholder_equity, 300 as total_current_assets, 0 as total_current_liabilities, 400 as net_debt
+      union all
+      select 'NULLS' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, cast(null as int64) as total_shareholder_equity, 300 as total_current_assets, cast(null as int64) as total_current_liabilities, 400 as net_debt
+  - input: ref('int_cash_flow')
+    format: sql
+    rows: |-
+      select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, 120 as operating_cashflow, 90 as free_cash_flow
+      union all
+      select 'NULLS' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, 120 as operating_cashflow, 90 as free_cash_flow
+  - input: ref('int_earning')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as date) as fiscaldateending,
+      cast(null as string) as report_type, cast(null as numeric) as surprise_percentage
+      limit 0
+  - input: ref('int_overview')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as string) as sector, cast(null
+      as string) as industry, cast(null as string) as country, cast(null as string)
+      as exchange, cast(null as date) as ingest_date, cast(null as numeric) as pe_ratio,
+      cast(null as numeric) as ev_to_ebitda limit 0
+  expect:
+    rows:
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      roe: null
+      net_margin: null
+      ebitda_margin: null
+      net_debt_to_ebitda: null
+      current_ratio: null
+      quality_of_earnings: null
+      revenue_yoy_growth: null
+    - symbol: NULLS
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      roe: null
+      net_margin: null
+      ebitda_margin: null
+      net_debt_to_ebitda: null
+      current_ratio: null
+      quality_of_earnings: null
+      revenue_yoy_growth: null
+- name: gold_yoy_partitions_and_lag_offsets
+  model: fct_fundamental_kpis
+  given:
+  - input: ref('int_income_statement')
+    format: sql
+    rows: |-
+      select 'NULLPRIOR' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, 50 as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+      union all
+      select 'NULLPRIOR' as symbol, date '2024-12-31' as fiscaldateending, 'annual' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, cast(null as int64) as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+      union all
+      select 'OTHER' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, 100 as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+      union all
+      select 'OTHER' as symbol, date '2024-12-31' as fiscaldateending, 'annual' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, 0 as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+      union all
+      select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, 1200 as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+      union all
+      select 'TEST' as symbol, date '2024-12-31' as fiscaldateending, 'annual' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, 1000 as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+      union all
+      select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'quarterly' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, 150 as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+      union all
+      select 'TEST' as symbol, date '2025-09-30' as fiscaldateending, 'quarterly' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, 140 as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+      union all
+      select 'TEST' as symbol, date '2025-06-30' as fiscaldateending, 'quarterly' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, 130 as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+      union all
+      select 'TEST' as symbol, date '2025-03-31' as fiscaldateending, 'quarterly' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, 120 as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+      union all
+      select 'TEST' as symbol, date '2024-12-31' as fiscaldateending, 'quarterly' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, 100 as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+  - input: ref('int_balance_sheet')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as date) as fiscaldateending,
+      cast(null as string) as report_type, cast(null as int64) as total_shareholder_equity,
+      cast(null as int64) as total_current_assets, cast(null as int64) as total_current_liabilities,
+      cast(null as int64) as net_debt limit 0
+  - input: ref('int_cash_flow')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as date) as fiscaldateending,
+      cast(null as string) as report_type, cast(null as int64) as operating_cashflow,
+      cast(null as int64) as free_cash_flow limit 0
+  - input: ref('int_earning')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as date) as fiscaldateending,
+      cast(null as string) as report_type, cast(null as numeric) as surprise_percentage
+      limit 0
+  - input: ref('int_overview')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as string) as sector, cast(null
+      as string) as industry, cast(null as string) as country, cast(null as string)
+      as exchange, cast(null as date) as ingest_date, cast(null as numeric) as pe_ratio,
+      cast(null as numeric) as ev_to_ebitda limit 0
+  expect:
+    rows:
+    - symbol: TEST
+      fiscaldateending: '2024-12-31'
+      report_type: quarterly
+      revenue_yoy_growth: null
+    - symbol: TEST
+      fiscaldateending: '2025-03-31'
+      report_type: quarterly
+      revenue_yoy_growth: null
+    - symbol: TEST
+      fiscaldateending: '2025-06-30'
+      report_type: quarterly
+      revenue_yoy_growth: null
+    - symbol: TEST
+      fiscaldateending: '2025-09-30'
+      report_type: quarterly
+      revenue_yoy_growth: null
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: quarterly
+      revenue_yoy_growth: 0.5
+    - symbol: TEST
+      fiscaldateending: '2024-12-31'
+      report_type: annual
+      revenue_yoy_growth: null
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      revenue_yoy_growth: 0.2
+    - symbol: OTHER
+      fiscaldateending: '2024-12-31'
+      report_type: annual
+      revenue_yoy_growth: null
+    - symbol: OTHER
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      revenue_yoy_growth: null
+    - symbol: NULLPRIOR
+      fiscaldateending: '2024-12-31'
+      report_type: annual
+      revenue_yoy_growth: null
+    - symbol: NULLPRIOR
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      revenue_yoy_growth: null
+- name: gold_numeric_subtraction_avoids_int64_overflow
+  model: fct_fundamental_kpis
+  given:
+  - input: ref('int_income_statement')
+    format: sql
+    rows: |-
+      select 'TEST' as symbol, date '2024-12-31' as fiscaldateending, 'annual' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, -9223372036854775807 as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+      union all
+      select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual' as report_type, cast(null as string) as reportedcurrency, cast(null as date) as ingest_date, 9223372036854775807 as total_revenue, cast(null as int64) as net_income, cast(null as int64) as ebitda_calc
+  - input: ref('int_balance_sheet')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as date) as fiscaldateending,
+      cast(null as string) as report_type, cast(null as int64) as total_shareholder_equity,
+      cast(null as int64) as total_current_assets, cast(null as int64) as total_current_liabilities,
+      cast(null as int64) as net_debt limit 0
+  - input: ref('int_cash_flow')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as date) as fiscaldateending,
+      cast(null as string) as report_type, cast(null as int64) as operating_cashflow,
+      cast(null as int64) as free_cash_flow limit 0
+  - input: ref('int_earning')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as date) as fiscaldateending,
+      cast(null as string) as report_type, cast(null as numeric) as surprise_percentage
+      limit 0
+  - input: ref('int_overview')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as string) as sector, cast(null
+      as string) as industry, cast(null as string) as country, cast(null as string)
+      as exchange, cast(null as date) as ingest_date, cast(null as numeric) as pe_ratio,
+      cast(null as numeric) as ev_to_ebitda limit 0
+  expect:
+    rows:
+    - symbol: TEST
+      fiscaldateending: '2024-12-31'
+      report_type: annual
+      revenue_yoy_growth: null
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      revenue_yoy_growth: -2
+- name: gold_retains_invalid_dates_for_quality_gate
+  model: fct_fundamental_kpis
+  given:
+  - input: ref('int_income_statement')
+    format: sql
+    rows: select 'TEST' as symbol, cast(null as date) as fiscaldateending, 'annual'
+      as report_type, 'USD' as reportedcurrency, date '2026-09-08' as ingest_date,
+      1000 as total_revenue, 100 as net_income, 200 as ebitda_calc
+  - input: ref('int_balance_sheet')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as date) as fiscaldateending,
+      cast(null as string) as report_type, cast(null as int64) as total_shareholder_equity,
+      cast(null as int64) as total_current_assets, cast(null as int64) as total_current_liabilities,
+      cast(null as int64) as net_debt limit 0
+  - input: ref('int_cash_flow')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as date) as fiscaldateending,
+      cast(null as string) as report_type, cast(null as int64) as operating_cashflow,
+      cast(null as int64) as free_cash_flow limit 0
+  - input: ref('int_earning')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as date) as fiscaldateending,
+      cast(null as string) as report_type, cast(null as numeric) as surprise_percentage
+      limit 0
+  - input: ref('int_overview')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as string) as sector, cast(null
+      as string) as industry, cast(null as string) as country, cast(null as string)
+      as exchange, cast(null as date) as ingest_date, cast(null as numeric) as pe_ratio,
+      cast(null as numeric) as ev_to_ebitda limit 0
+  expect:
+    rows:
+    - symbol: TEST
+      fiscaldateending: null
+      report_type: annual
+      net_margin: 0.1
+      roe: null
+      revenue_yoy_growth: null
+- name: gold_empty_income_produces_no_rows
+  model: fct_fundamental_kpis
+  given:
+  - input: ref('int_income_statement')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as date) as fiscaldateending,
+      cast(null as string) as report_type, cast(null as string) as reportedcurrency,
+      cast(null as date) as ingest_date, cast(null as int64) as total_revenue, cast(null
+      as int64) as net_income, cast(null as int64) as ebitda_calc limit 0
+  - input: ref('int_balance_sheet')
+    format: sql
+    rows: select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual'
+      as report_type, 500 as total_shareholder_equity, 300 as total_current_assets,
+      150 as total_current_liabilities, 400 as net_debt
+  - input: ref('int_cash_flow')
+    format: sql
+    rows: select 'TEST' as symbol, date '2025-12-31' as fiscaldateending, 'annual'
+      as report_type, 120 as operating_cashflow, 90 as free_cash_flow
+  - input: ref('int_earning')
+    format: sql
+    rows: select cast(null as string) as symbol, cast(null as date) as fiscaldateending,
+      cast(null as string) as report_type, cast(null as numeric) as surprise_percentage
+      limit 0
+  - input: ref('int_overview')
+    format: sql
+    rows: select 'TEST' as symbol, 'Technology' as sector, 'Software' as industry,
+      'USA' as country, 'NYSE' as exchange, date '2026-09-07' as ingest_date, numeric
+      '20' as pe_ratio, numeric '8' as ev_to_ebitda
+  expect:
+    rows: []

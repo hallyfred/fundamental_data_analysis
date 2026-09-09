@@ -1,0 +1,442 @@
+version: 2
+models:
+- name: int_overview
+  description: 'Silver overview: Latest company snapshot; no fiscal-period grain.
+    Typed fields and latest ingestion per (symbol). Invalid fields remain NULL for
+    quality checks.'
+  columns:
+  - name: symbol
+    data_type: string
+    description: Symbol from Alpha Vantage Symbol.
+    tests:
+    - not_null
+    - unique
+    meta:
+      source_field: Symbol
+  - name: asset_type
+    data_type: string
+    description: Asset type from Alpha Vantage AssetType.
+    meta:
+      source_field: AssetType
+  - name: name
+    data_type: string
+    description: Name from Alpha Vantage Name.
+    meta:
+      source_field: Name
+  - name: exchange
+    data_type: string
+    description: Exchange from Alpha Vantage Exchange.
+    meta:
+      source_field: Exchange
+  - name: currency
+    data_type: string
+    description: Currency from Alpha Vantage Currency.
+    meta:
+      source_field: Currency
+  - name: country
+    data_type: string
+    description: Country from Alpha Vantage Country.
+    meta:
+      source_field: Country
+  - name: sector
+    data_type: string
+    description: Sector from Alpha Vantage Sector.
+    meta:
+      source_field: Sector
+  - name: industry
+    data_type: string
+    description: Industry from Alpha Vantage Industry.
+    meta:
+      source_field: Industry
+  - name: fiscal_year_end
+    data_type: string
+    description: Fiscal year end from Alpha Vantage FiscalYearEnd.
+    meta:
+      source_field: FiscalYearEnd
+  - name: latest_quarter
+    data_type: string
+    description: Latest quarter from Alpha Vantage LatestQuarter.
+    meta:
+      source_field: LatestQuarter
+  - name: market_capitalization
+    data_type: int64
+    description: Market capitalization from Alpha Vantage MarketCapitalization. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: MarketCapitalization
+  - name: pe_ratio
+    data_type: numeric
+    description: Pe ratio from Alpha Vantage PERatio. Missing, sentinel or invalid
+      values become NULL.
+    meta:
+      source_field: PERatio
+  - name: peg_ratio
+    data_type: numeric
+    description: Peg ratio from Alpha Vantage PEGRatio. Missing, sentinel or invalid
+      values become NULL.
+    meta:
+      source_field: PEGRatio
+  - name: book_value
+    data_type: numeric
+    description: Book value from Alpha Vantage BookValue. Missing, sentinel or invalid
+      values become NULL.
+    meta:
+      source_field: BookValue
+  - name: dividend_per_share
+    data_type: numeric
+    description: Dividend per share from Alpha Vantage DividendPerShare. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: DividendPerShare
+  - name: dividend_yield
+    data_type: numeric
+    description: Dividend yield from Alpha Vantage DividendYield. Missing, sentinel
+      or invalid values become NULL.
+    meta:
+      source_field: DividendYield
+  - name: eps
+    data_type: numeric
+    description: Eps from Alpha Vantage EPS. Missing, sentinel or invalid values become
+      NULL.
+    meta:
+      source_field: EPS
+  - name: revenue_per_share_ttm
+    data_type: numeric
+    description: Revenue per share ttm from Alpha Vantage RevenuePerShareTTM. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: RevenuePerShareTTM
+  - name: profit_margin
+    data_type: numeric
+    description: Profit margin from Alpha Vantage ProfitMargin. Missing, sentinel
+      or invalid values become NULL.
+    meta:
+      source_field: ProfitMargin
+  - name: return_on_equity_ttm
+    data_type: numeric
+    description: Return on equity ttm from Alpha Vantage ReturnOnEquityTTM. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: ReturnOnEquityTTM
+  - name: ev_to_revenue
+    data_type: numeric
+    description: Ev to revenue from Alpha Vantage EVToRevenue. Missing, sentinel or
+      invalid values become NULL.
+    meta:
+      source_field: EVToRevenue
+  - name: ev_to_ebitda
+    data_type: numeric
+    description: Ev to ebitda from Alpha Vantage EVToEBITDA. Missing, sentinel or
+      invalid values become NULL.
+    meta:
+      source_field: EVToEBITDA
+  - name: beta
+    data_type: numeric
+    description: Beta from Alpha Vantage Beta. Missing, sentinel or invalid values
+      become NULL.
+    meta:
+      source_field: Beta
+  - name: trailing_pe
+    data_type: numeric
+    description: Trailing pe from Alpha Vantage TrailingPE. Missing, sentinel or invalid
+      values become NULL.
+    meta:
+      source_field: TrailingPE
+  - name: forward_pe
+    data_type: numeric
+    description: Forward pe from Alpha Vantage ForwardPE. Missing, sentinel or invalid
+      values become NULL.
+    meta:
+      source_field: ForwardPE
+  - name: price_to_sales_ratio_ttm
+    data_type: numeric
+    description: Price to sales ratio ttm from Alpha Vantage PriceToSalesRatioTTM.
+      Missing, sentinel or invalid values become NULL.
+    meta:
+      source_field: PriceToSalesRatioTTM
+  - name: price_to_book_ratio
+    data_type: numeric
+    description: Price to book ratio from Alpha Vantage PriceToBookRatio. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: PriceToBookRatio
+  - name: partition_year
+    data_type: int64
+    description: GCS Hive ingestion partition year.
+  - name: partition_month
+    data_type: int64
+    description: GCS Hive ingestion partition month.
+  - name: partition_day
+    data_type: int64
+    description: GCS Hive ingestion partition day.
+  - name: ingest_date
+    data_type: date
+    description: Ingestion date from DATE(partition_year, partition_month, partition_day).
+  - name: description
+    data_type: string
+    description: Description from Alpha Vantage Description.
+    meta:
+      source_field: Description
+  - name: cik
+    data_type: string
+    description: Cik from Alpha Vantage CIK.
+    meta:
+      source_field: CIK
+  - name: address
+    data_type: string
+    description: Address from Alpha Vantage Address.
+    meta:
+      source_field: Address
+  - name: official_site
+    data_type: string
+    description: Official site from Alpha Vantage OfficialSite.
+    meta:
+      source_field: OfficialSite
+  - name: dividend_date
+    data_type: string
+    description: Dividend date from Alpha Vantage DividendDate.
+    meta:
+      source_field: DividendDate
+  - name: ex_dividend_date
+    data_type: string
+    description: Ex dividend date from Alpha Vantage ExDividendDate.
+    meta:
+      source_field: ExDividendDate
+  - name: ebitda
+    data_type: int64
+    description: Ebitda from Alpha Vantage EBITDA. Missing, sentinel or invalid values
+      become NULL.
+    meta:
+      source_field: EBITDA
+  - name: revenue_ttm
+    data_type: int64
+    description: Revenue ttm from Alpha Vantage RevenueTTM. Missing, sentinel or invalid
+      values become NULL.
+    meta:
+      source_field: RevenueTTM
+  - name: gross_profit_ttm
+    data_type: int64
+    description: Gross profit ttm from Alpha Vantage GrossProfitTTM. Missing, sentinel
+      or invalid values become NULL.
+    meta:
+      source_field: GrossProfitTTM
+  - name: shares_outstanding
+    data_type: int64
+    description: Shares outstanding from Alpha Vantage SharesOutstanding. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: SharesOutstanding
+  - name: shares_float
+    data_type: int64
+    description: Shares float from Alpha Vantage SharesFloat. Missing, sentinel or
+      invalid values become NULL.
+    meta:
+      source_field: SharesFloat
+  - name: operating_margin_ttm
+    data_type: numeric
+    description: Operating margin ttm from Alpha Vantage OperatingMarginTTM. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: OperatingMarginTTM
+  - name: return_on_assets_ttm
+    data_type: numeric
+    description: Return on assets ttm from Alpha Vantage ReturnOnAssetsTTM. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: ReturnOnAssetsTTM
+  - name: diluted_epsttm
+    data_type: numeric
+    description: Diluted epsttm from Alpha Vantage DilutedEPSTTM. Missing, sentinel
+      or invalid values become NULL.
+    meta:
+      source_field: DilutedEPSTTM
+  - name: quarterly_earnings_growth_yoy
+    data_type: numeric
+    description: Quarterly earnings growth yoy from Alpha Vantage QuarterlyEarningsGrowthYOY.
+      Missing, sentinel or invalid values become NULL.
+    meta:
+      source_field: QuarterlyEarningsGrowthYOY
+  - name: quarterly_revenue_growth_yoy
+    data_type: numeric
+    description: Quarterly revenue growth yoy from Alpha Vantage QuarterlyRevenueGrowthYOY.
+      Missing, sentinel or invalid values become NULL.
+    meta:
+      source_field: QuarterlyRevenueGrowthYOY
+  - name: analyst_target_price
+    data_type: numeric
+    description: Analyst target price from Alpha Vantage AnalystTargetPrice. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: AnalystTargetPrice
+  - name: analyst_rating_strong_buy
+    data_type: numeric
+    description: Analyst rating strong buy from Alpha Vantage AnalystRatingStrongBuy.
+      Missing, sentinel or invalid values become NULL.
+    meta:
+      source_field: AnalystRatingStrongBuy
+  - name: analyst_rating_buy
+    data_type: numeric
+    description: Analyst rating buy from Alpha Vantage AnalystRatingBuy. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: AnalystRatingBuy
+  - name: analyst_rating_hold
+    data_type: numeric
+    description: Analyst rating hold from Alpha Vantage AnalystRatingHold. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: AnalystRatingHold
+  - name: analyst_rating_sell
+    data_type: numeric
+    description: Analyst rating sell from Alpha Vantage AnalystRatingSell. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: AnalystRatingSell
+  - name: analyst_rating_strong_sell
+    data_type: numeric
+    description: Analyst rating strong sell from Alpha Vantage AnalystRatingStrongSell.
+      Missing, sentinel or invalid values become NULL.
+    meta:
+      source_field: AnalystRatingStrongSell
+  - name: percent_insiders
+    data_type: numeric
+    description: Percent insiders from Alpha Vantage PercentInsiders. Missing, sentinel
+      or invalid values become NULL.
+    meta:
+      source_field: PercentInsiders
+  - name: percent_institutions
+    data_type: numeric
+    description: Percent institutions from Alpha Vantage PercentInstitutions. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: PercentInstitutions
+  - name: week_high_52
+    data_type: numeric
+    description: Week high 52 from Alpha Vantage 52WeekHigh. Missing, sentinel or
+      invalid values become NULL.
+    meta:
+      source_field: 52WeekHigh
+  - name: week_low_52
+    data_type: numeric
+    description: Week low 52 from Alpha Vantage 52WeekLow. Missing, sentinel or invalid
+      values become NULL.
+    meta:
+      source_field: 52WeekLow
+  - name: moving_average_50
+    data_type: numeric
+    description: Moving average 50 from Alpha Vantage 50DayMovingAverage. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: 50DayMovingAverage
+  - name: moving_average_200
+    data_type: numeric
+    description: Moving average 200 from Alpha Vantage 200DayMovingAverage. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: 200DayMovingAverage
+unit_tests:
+- name: overview_latest_snapshot_per_symbol
+  model: int_overview
+  given:
+  - input: ref('stg_overview')
+    format: sql
+    rows: |-
+      select '{"Symbol":"TEST","PERatio":"10"}' as raw_data, 2026 as year, 9 as month, 7 as day
+      union all
+      select '{"Symbol":"TEST","PERatio":"20.125","EVToEBITDA":"8.5","MarketCapitalization":"3000000000","Sector":"Technology"}' as raw_data, 2026 as year, 9 as month, 8 as day
+      union all
+      select '{"Symbol":"OTHER","PERatio":"0"}' as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - symbol: TEST
+      pe_ratio: 20.125
+      ev_to_ebitda: 8.5
+      market_capitalization: 3000000000
+      sector: Technology
+      ingest_date: '2026-09-08'
+    - symbol: OTHER
+      pe_ratio: 0
+      ev_to_ebitda: null
+      market_capitalization: null
+      sector: null
+      ingest_date: '2026-09-08'
+- name: overview_sentinel_and_invalid_numbers
+  model: int_overview
+  given:
+  - input: ref('stg_overview')
+    format: sql
+    rows: select '{"Symbol":"TEST","PERatio":"None","PEGRatio":"-","BookValue":"N/A","DividendPerShare":"","EPS":"bad","MarketCapitalization":"9223372036854775808"}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - symbol: TEST
+      pe_ratio: null
+      peg_ratio: null
+      book_value: null
+      dividend_per_share: null
+      eps: null
+      market_capitalization: null
+- name: overview_all_contract_fields
+  model: int_overview
+  given:
+  - input: ref('stg_overview')
+    format: sql
+    rows: select '{"Symbol":"TEST","AssetType":"sample_AssetType","Name":"sample_Name","Description":"sample_Description","CIK":"sample_CIK","Exchange":"sample_Exchange","Currency":"sample_Currency","Country":"sample_Country","Sector":"sample_Sector","Industry":"sample_Industry","Address":"sample_Address","OfficialSite":"sample_OfficialSite","FiscalYearEnd":"sample_FiscalYearEnd","LatestQuarter":"sample_LatestQuarter","DividendDate":"sample_DividendDate","ExDividendDate":"sample_ExDividendDate","MarketCapitalization":"1017","EBITDA":"1018","RevenueTTM":"1019","GrossProfitTTM":"1020","SharesOutstanding":"1021","SharesFloat":"1022","PERatio":"23.125","PEGRatio":"24.125","BookValue":"25.125","DividendPerShare":"26.125","DividendYield":"27.125","EPS":"28.125","RevenuePerShareTTM":"29.125","ProfitMargin":"30.125","OperatingMarginTTM":"31.125","ReturnOnAssetsTTM":"32.125","ReturnOnEquityTTM":"33.125","DilutedEPSTTM":"34.125","QuarterlyEarningsGrowthYOY":"35.125","QuarterlyRevenueGrowthYOY":"36.125","AnalystTargetPrice":"37.125","AnalystRatingStrongBuy":"38.125","AnalystRatingBuy":"39.125","AnalystRatingHold":"40.125","AnalystRatingSell":"41.125","AnalystRatingStrongSell":"42.125","TrailingPE":"43.125","ForwardPE":"44.125","PriceToSalesRatioTTM":"45.125","PriceToBookRatio":"46.125","EVToRevenue":"47.125","EVToEBITDA":"48.125","Beta":"49.125","PercentInsiders":"50.125","PercentInstitutions":"51.125","52WeekHigh":"52.125","52WeekLow":"53.125","50DayMovingAverage":"54.125","200DayMovingAverage":"55.125"}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - symbol: TEST
+      asset_type: sample_AssetType
+      name: sample_Name
+      description: sample_Description
+      cik: sample_CIK
+      exchange: sample_Exchange
+      currency: sample_Currency
+      country: sample_Country
+      sector: sample_Sector
+      industry: sample_Industry
+      address: sample_Address
+      official_site: sample_OfficialSite
+      fiscal_year_end: sample_FiscalYearEnd
+      latest_quarter: sample_LatestQuarter
+      dividend_date: sample_DividendDate
+      ex_dividend_date: sample_ExDividendDate
+      market_capitalization: 1017
+      ebitda: 1018
+      revenue_ttm: 1019
+      gross_profit_ttm: 1020
+      shares_outstanding: 1021
+      shares_float: 1022
+      pe_ratio: 23.125
+      peg_ratio: 24.125
+      book_value: 25.125
+      dividend_per_share: 26.125
+      dividend_yield: 27.125
+      eps: 28.125
+      revenue_per_share_ttm: 29.125
+      profit_margin: 30.125
+      operating_margin_ttm: 31.125
+      return_on_assets_ttm: 32.125
+      return_on_equity_ttm: 33.125
+      diluted_epsttm: 34.125
+      quarterly_earnings_growth_yoy: 35.125
+      quarterly_revenue_growth_yoy: 36.125
+      analyst_target_price: 37.125
+      analyst_rating_strong_buy: 38.125
+      analyst_rating_buy: 39.125
+      analyst_rating_hold: 40.125
+      analyst_rating_sell: 41.125
+      analyst_rating_strong_sell: 42.125
+      trailing_pe: 43.125
+      forward_pe: 44.125
+      price_to_sales_ratio_ttm: 45.125
+      price_to_book_ratio: 46.125
+      ev_to_revenue: 47.125
+      ev_to_ebitda: 48.125
+      beta: 49.125
+      percent_insiders: 50.125
+      percent_institutions: 51.125
+      week_high_52: 52.125
+      week_low_52: 53.125
+      moving_average_50: 54.125
+      moving_average_200: 55.125

@@ -1,138 +1,340 @@
 version: 2
-
 models:
-  - name: int_income_statement
-    description: >
-      Silver layer for the Alpha Vantage INCOME_STATEMENT endpoint.
-      Flattens the raw JSON payload into typed columns, deduplicates by most-recent
-      ingestion date, and adds the derived field `ebitda_calc`.
-      Grain: one row per (symbol, fiscaldateending, report_type).
-
-    columns:
-      - name: symbol
-        data_type: string
-        description: "Stock ticker symbol identifying the company (e.g. IBM, AAPL)."
-        tests:
-          - not_null
-
-      - name: report_type
-        data_type: string
-        description: "Report frequency — 'annual' (from annualReports) or 'quarterly' (from quarterlyReports)."
-        tests:
-          - not_null
-          - accepted_values:
-              arguments:
-                values: ['annual', 'quarterly']
-
-      - name: fiscaldateending
-        data_type: date
-        description: "Fiscal period end date parsed from fiscalDateEnding. Records where parsing fails are excluded."
-        tests:
-          - not_null
-
-      - name: fiscaldateending_raw
-        data_type: string
-        description: "Original fiscalDateEnding string value before date parsing, preserved for audit purposes."
-
-      - name: reportedcurrency
-        data_type: string
-        description: "Currency in which financial figures are reported (e.g. USD)."
-
-      - name: gross_profit
-        data_type: int64
-        description: "Gross profit: total revenue minus cost of revenue."
-
-      - name: total_revenue
-        data_type: int64
-        description: "Total revenue for the period. Used as denominator for net_margin, ebitda_margin, and YoY growth."
-
-      - name: cost_of_revenue
-        data_type: int64
-        description: "Cost of revenue (cost of goods sold)."
-
-      - name: operating_income
-        data_type: int64
-        description: "Operating income (EBIT before D&A adjustments)."
-
-      - name: selling_general_and_administrative
-        data_type: int64
-        description: "Selling, general, and administrative expenses."
-
-      - name: research_and_development
-        data_type: int64
-        description: "Research and development expenses."
-
-      - name: operating_expenses
-        data_type: int64
-        description: "Total operating expenses."
-
-      - name: net_interest_income
-        data_type: int64
-        description: "Net interest income (interest income minus interest expense)."
-
-      - name: interest_income
-        data_type: int64
-        description: "Interest income earned."
-
-      - name: interest_expense
-        data_type: int64
-        description: "Interest expense paid."
-
-      - name: depreciation_and_amortization
-        data_type: int64
-        description: "Depreciation and amortization. Used as a component of ebitda_calc when ebitda is NULL."
-
-      - name: income_before_tax
-        data_type: int64
-        description: "Earnings before income tax."
-
-      - name: income_tax_expense
-        data_type: int64
-        description: "Income tax expense for the period."
-
-      - name: net_income_from_continuing_operations
-        data_type: int64
-        description: "Net income from continuing operations only (excludes discontinued operations)."
-
-      - name: ebit
-        data_type: int64
-        description: "Earnings before interest and taxes. Used as a component of ebitda_calc."
-
-      - name: ebitda
-        data_type: int64
-        description: "Earnings before interest, taxes, depreciation, and amortization as reported by the API."
-
-      - name: net_income
-        data_type: int64
-        description: "Net income for the period. Used in ROE, net_margin, and quality_of_earnings calculations."
-
-      - name: ebitda_calc
-        data_type: int64
-        description: >
-          Derived EBITDA: COALESCE(ebitda, ebit + depreciation_and_amortization).
-          Falls back to the component sum when the API does not provide ebitda directly.
-          NULL when all components are NULL.
-
-      - name: ingest_date
-        data_type: date
-        description: "Ingestion date derived from Hive partitions (DATE(partition_year, partition_month, partition_day))."
-
-      - name: partition_year
-        data_type: int64
-        description: "Year component of the GCS Hive partition."
-
-      - name: partition_month
-        data_type: int64
-        description: "Month component of the GCS Hive partition."
-
-      - name: partition_day
-        data_type: int64
-        description: "Day component of the GCS Hive partition."
-
+- name: int_income_statement
+  description: |
+    Silver layer for the Alpha Vantage INCOME_STATEMENT endpoint. Flattens the raw JSON payload into typed columns, deduplicates by most-recent ingestion date, and adds the derived field `ebitda_calc`. Grain: one row per (symbol, fiscaldateending, report_type).
+  columns:
+  - name: symbol
+    data_type: string
+    description: Stock ticker symbol identifying the company (e.g. IBM, AAPL).
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments:
-            combination_of_columns:
-              - symbol
-              - fiscaldateending
-              - report_type
+    - not_null
+    meta:
+      source_field: symbol
+  - name: report_type
+    data_type: string
+    description: Report frequency — 'annual' (from annualReports) or 'quarterly' (from
+      quarterlyReports).
+    tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - annual
+          - quarterly
+  - name: fiscaldateending
+    data_type: date
+    description: Fiscal period end date parsed from fiscalDateEnding. Invalid dates
+      remain NULL and fail the quality gate.
+    tests:
+    - not_null
+    meta:
+      source_field: fiscalDateEnding
+  - name: fiscaldateending_raw
+    data_type: string
+    description: Original fiscalDateEnding string value before date parsing, preserved
+      for audit purposes.
+  - name: reportedcurrency
+    data_type: string
+    description: Currency in which financial figures are reported (e.g. USD).
+    meta:
+      source_field: reportedCurrency
+  - name: gross_profit
+    data_type: int64
+    description: 'Gross profit: total revenue minus cost of revenue.'
+    meta:
+      source_field: grossProfit
+  - name: total_revenue
+    data_type: int64
+    description: Total revenue for the period. Used as denominator for net_margin,
+      ebitda_margin, and YoY growth.
+    meta:
+      source_field: totalRevenue
+  - name: cost_of_revenue
+    data_type: int64
+    description: Cost of revenue (cost of goods sold).
+    meta:
+      source_field: costOfRevenue
+  - name: operating_income
+    data_type: int64
+    description: Operating income (EBIT before D&A adjustments).
+    meta:
+      source_field: operatingIncome
+  - name: selling_general_and_administrative
+    data_type: int64
+    description: Selling, general, and administrative expenses.
+    meta:
+      source_field: sellingGeneralAndAdministrative
+  - name: research_and_development
+    data_type: int64
+    description: Research and development expenses.
+    meta:
+      source_field: researchAndDevelopment
+  - name: operating_expenses
+    data_type: int64
+    description: Total operating expenses.
+    meta:
+      source_field: operatingExpenses
+  - name: net_interest_income
+    data_type: int64
+    description: Net interest income (interest income minus interest expense).
+    meta:
+      source_field: netInterestIncome
+  - name: interest_income
+    data_type: int64
+    description: Interest income earned.
+    meta:
+      source_field: interestIncome
+  - name: interest_expense
+    data_type: int64
+    description: Interest expense paid.
+    meta:
+      source_field: interestExpense
+  - name: depreciation_and_amortization
+    data_type: int64
+    description: Depreciation and amortization. Used as a component of ebitda_calc
+      when ebitda is NULL.
+    meta:
+      source_field: depreciationAndAmortization
+  - name: income_before_tax
+    data_type: int64
+    description: Earnings before income tax.
+    meta:
+      source_field: incomeBeforeTax
+  - name: income_tax_expense
+    data_type: int64
+    description: Income tax expense for the period.
+    meta:
+      source_field: incomeTaxExpense
+  - name: net_income_from_continuing_operations
+    data_type: int64
+    description: Net income from continuing operations only (excludes discontinued
+      operations).
+    meta:
+      source_field: netIncomeFromContinuingOperations
+  - name: ebit
+    data_type: int64
+    description: Earnings before interest and taxes. Used as a component of ebitda_calc.
+    meta:
+      source_field: ebit
+  - name: ebitda
+    data_type: int64
+    description: Earnings before interest, taxes, depreciation, and amortization as
+      reported by the API.
+    meta:
+      source_field: ebitda
+  - name: net_income
+    data_type: int64
+    description: Net income for the period. Used in ROE, net_margin, and quality_of_earnings
+      calculations.
+    meta:
+      source_field: netIncome
+  - name: ebitda_calc
+    data_type: int64
+    description: |
+      Derived EBITDA: COALESCE(ebitda, ebit + depreciation_and_amortization). Falls back to the component sum when the API does not provide ebitda directly. NULL when either fallback component is missing or their sum overflows.
+  - name: ingest_date
+    data_type: date
+    description: Ingestion date derived from Hive partitions (DATE(partition_year,
+      partition_month, partition_day)).
+  - name: partition_year
+    data_type: int64
+    description: Year component of the GCS Hive partition.
+  - name: partition_month
+    data_type: int64
+    description: Month component of the GCS Hive partition.
+  - name: partition_day
+    data_type: int64
+    description: Day component of the GCS Hive partition.
+  - name: cost_of_goods_and_services_sold
+    data_type: int64
+    description: Cost of goods and services sold from Alpha Vantage costofGoodsAndServicesSold.
+      Missing, sentinel or invalid values become NULL.
+    meta:
+      source_field: costofGoodsAndServicesSold
+  - name: investment_income_net
+    data_type: int64
+    description: Investment income net from Alpha Vantage investmentIncomeNet. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: investmentIncomeNet
+  - name: non_interest_income
+    data_type: int64
+    description: Non interest income from Alpha Vantage nonInterestIncome. Missing,
+      sentinel or invalid values become NULL.
+    meta:
+      source_field: nonInterestIncome
+  - name: other_non_operating_income
+    data_type: int64
+    description: Other non operating income from Alpha Vantage otherNonOperatingIncome.
+      Missing, sentinel or invalid values become NULL.
+    meta:
+      source_field: otherNonOperatingIncome
+  - name: depreciation
+    data_type: int64
+    description: Depreciation from Alpha Vantage depreciation. Missing, sentinel or
+      invalid values become NULL.
+    meta:
+      source_field: depreciation
+  - name: interest_and_debt_expense
+    data_type: int64
+    description: Interest and debt expense from Alpha Vantage interestAndDebtExpense.
+      Missing, sentinel or invalid values become NULL.
+    meta:
+      source_field: interestAndDebtExpense
+  - name: comprehensive_income_net_of_tax
+    data_type: int64
+    description: Comprehensive income net of tax from Alpha Vantage comprehensiveIncomeNetOfTax.
+      Missing, sentinel or invalid values become NULL.
+    meta:
+      source_field: comprehensiveIncomeNetOfTax
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - symbol
+        - fiscaldateending
+        - report_type
+unit_tests:
+- name: income_statement_latest_ingestion_and_frequency
+  model: int_income_statement
+  given:
+  - input: ref('stg_income_statement')
+    format: sql
+    rows: |-
+      select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","totalRevenue":"100"}],"quarterlyReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","totalRevenue":"100"}]}' as raw_data, 2026 as year, 9 as month, 7 as day
+      union all
+      select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","totalRevenue":"200"}],"quarterlyReports":[]}' as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      total_revenue: 200
+      ingest_date: '2026-09-08'
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: quarterly
+      total_revenue: 100
+      ingest_date: '2026-09-07'
+- name: income_statement_invalid_fields_are_retained
+  model: int_income_statement
+  given:
+  - input: ref('stg_income_statement')
+    format: sql
+    rows: select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-01-28","totalRevenue":"None"},{"fiscalDateEnding":"2025-02-28","totalRevenue":"-"},{"fiscalDateEnding":"2025-03-28","totalRevenue":"N/A"},{"fiscalDateEnding":"2025-04-28","totalRevenue":""},{"fiscalDateEnding":"2025-05-28","totalRevenue":"bad-number"},{"fiscalDateEnding":"2025-06-28","totalRevenue":"9223372036854775808"},{"fiscalDateEnding":"broken-date","totalRevenue":"42"}],"quarterlyReports":[]}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - fiscaldateending: '2025-01-28'
+      total_revenue: null
+      fiscaldateending_raw: '2025-01-28'
+    - fiscaldateending: '2025-02-28'
+      total_revenue: null
+      fiscaldateending_raw: '2025-02-28'
+    - fiscaldateending: '2025-03-28'
+      total_revenue: null
+      fiscaldateending_raw: '2025-03-28'
+    - fiscaldateending: '2025-04-28'
+      total_revenue: null
+      fiscaldateending_raw: '2025-04-28'
+    - fiscaldateending: '2025-05-28'
+      total_revenue: null
+      fiscaldateending_raw: '2025-05-28'
+    - fiscaldateending: '2025-06-28'
+      total_revenue: null
+      fiscaldateending_raw: '2025-06-28'
+    - fiscaldateending: null
+      fiscaldateending_raw: broken-date
+      total_revenue: 42
+- name: income_statement_empty_arrays
+  model: int_income_statement
+  given:
+  - input: ref('stg_income_statement')
+    format: sql
+    rows: select '{"symbol":"TEST","annualReports":[],"quarterlyReports":[]}' as raw_data,
+      2026 as year, 9 as month, 8 as day
+  expect:
+    rows: []
+- name: income_statement_derived_components
+  model: int_income_statement
+  given:
+  - input: ref('stg_income_statement')
+    format: sql
+    rows: select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-01-28","ebitda":"150","ebit":"80","depreciationAndAmortization":"20"},{"fiscalDateEnding":"2025-02-28","ebitda":"None","ebit":"80","depreciationAndAmortization":"20"},{"fiscalDateEnding":"2025-03-28","ebit":"80"},{"fiscalDateEnding":"2025-04-28","ebit":"9223372036854775807","depreciationAndAmortization":"1"}],"quarterlyReports":[]}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - fiscaldateending: '2025-01-28'
+      ebitda_calc: 150
+    - fiscaldateending: '2025-02-28'
+      ebitda_calc: 100
+    - fiscaldateending: '2025-03-28'
+      ebitda_calc: null
+    - fiscaldateending: '2025-04-28'
+      ebitda_calc: null
+- name: income_statement_all_contract_fields
+  model: int_income_statement
+  given:
+  - input: ref('stg_income_statement')
+    format: sql
+    rows: select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","grossProfit":"1003","totalRevenue":"1004","costOfRevenue":"1005","costofGoodsAndServicesSold":"1006","operatingIncome":"1007","sellingGeneralAndAdministrative":"1008","researchAndDevelopment":"1009","operatingExpenses":"1010","investmentIncomeNet":"1011","netInterestIncome":"1012","interestIncome":"1013","interestExpense":"1014","nonInterestIncome":"1015","otherNonOperatingIncome":"1016","depreciation":"1017","depreciationAndAmortization":"1018","incomeBeforeTax":"1019","incomeTaxExpense":"1020","interestAndDebtExpense":"1021","netIncomeFromContinuingOperations":"1022","comprehensiveIncomeNetOfTax":"1023","ebit":"1024","ebitda":"1025","netIncome":"1026"}],"quarterlyReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","grossProfit":"1003","totalRevenue":"1004","costOfRevenue":"1005","costofGoodsAndServicesSold":"1006","operatingIncome":"1007","sellingGeneralAndAdministrative":"1008","researchAndDevelopment":"1009","operatingExpenses":"1010","investmentIncomeNet":"1011","netInterestIncome":"1012","interestIncome":"1013","interestExpense":"1014","nonInterestIncome":"1015","otherNonOperatingIncome":"1016","depreciation":"1017","depreciationAndAmortization":"1018","incomeBeforeTax":"1019","incomeTaxExpense":"1020","interestAndDebtExpense":"1021","netIncomeFromContinuingOperations":"1022","comprehensiveIncomeNetOfTax":"1023","ebit":"1024","ebitda":"1025","netIncome":"1026"}]}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - fiscaldateending: '2025-12-31'
+      reportedcurrency: USD
+      gross_profit: 1003
+      total_revenue: 1004
+      cost_of_revenue: 1005
+      cost_of_goods_and_services_sold: 1006
+      operating_income: 1007
+      selling_general_and_administrative: 1008
+      research_and_development: 1009
+      operating_expenses: 1010
+      investment_income_net: 1011
+      net_interest_income: 1012
+      interest_income: 1013
+      interest_expense: 1014
+      non_interest_income: 1015
+      other_non_operating_income: 1016
+      depreciation: 1017
+      depreciation_and_amortization: 1018
+      income_before_tax: 1019
+      income_tax_expense: 1020
+      interest_and_debt_expense: 1021
+      net_income_from_continuing_operations: 1022
+      comprehensive_income_net_of_tax: 1023
+      ebit: 1024
+      ebitda: 1025
+      net_income: 1026
+      symbol: TEST
+      report_type: quarterly
+    - fiscaldateending: '2025-12-31'
+      reportedcurrency: USD
+      gross_profit: 1003
+      total_revenue: 1004
+      cost_of_revenue: 1005
+      cost_of_goods_and_services_sold: 1006
+      operating_income: 1007
+      selling_general_and_administrative: 1008
+      research_and_development: 1009
+      operating_expenses: 1010
+      investment_income_net: 1011
+      net_interest_income: 1012
+      interest_income: 1013
+      interest_expense: 1014
+      non_interest_income: 1015
+      other_non_operating_income: 1016
+      depreciation: 1017
+      depreciation_and_amortization: 1018
+      income_before_tax: 1019
+      income_tax_expense: 1020
+      interest_and_debt_expense: 1021
+      net_income_from_continuing_operations: 1022
+      comprehensive_income_net_of_tax: 1023
+      ebit: 1024
+      ebitda: 1025
+      net_income: 1026
+      symbol: TEST
+      report_type: annual
