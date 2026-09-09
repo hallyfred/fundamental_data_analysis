@@ -1,0 +1,34 @@
+name: 'transformations'
+version: '1.0.0'
+config-version: 2
+
+profile: 'transformations'
+
+seed-paths: ["seeds"]
+model-paths: ["models"]
+macro-paths: ["macros"]
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+on-run-start:
+  - "{{ dbt_external_tables.stage_external_sources() }}"
+
+seeds:
+  transformations:
+    +schema: raw
+
+models:
+  transformations:
+    +persist_docs:
+      relation: true
+      columns: true
+
+    staging:
+      +materialized: view
+
+    intermediate:
+      +materialized: view
+
+    marts:
+      +materialized: table

@@ -1,5 +1,8 @@
-import os
+import logging
+
 from google.cloud import storage
+
+logger = logging.getLogger(__name__)
 
 
 class GCPSLoader:
@@ -9,14 +12,28 @@ class GCPSLoader:
         self.client = storage.Client(project=project_id)
         self.bucket = self.client.bucket(bucket_name)
 
-
     def upload_file(self, local_file_path, destination_blob_name):
-        try:
+        """
+        Faz upload de um arquivo local para o GCS.
+        Propaga a exceção em caso de falha — é responsabilidade do caller tratar o erro.
+        """
+        blob = self.bucket.blob(destination_blob_name)
+        blob.upload_from_filename(local_file_path)
+        logger.info(f"Upload concluído: {local_file_path} → gs://{self.bucket_name}/{destination_blob_name}")
 
+    def download_as_text(self, destination_blob_name: str) -> str | None:
+        """Baixa o conteúdo de um blob como string de texto. Retorna None se o blob não existir."""
+        try:
             blob = self.bucket.blob(destination_blob_name)
-            blob.upload_from_filename(local_file_path)
-            print(f"File {local_file_path} uploaded to {destination_blob_name}.")
-            return True
+            if not blob.exists():
+                return None
+            return blob.download_as_text()
         except Exception as e:
-            print(f"Error occurred while uploading {local_file_path} to GCP: {e}")
-            return False
+            logger.warning(f"Não foi possível ler {destination_blob_name} do GCS: {e}")
+            return None
+
+    def upload_text(self, text_content: str, destination_blob_name: str, content_type: str = "application/json"):
+        """Faz upload direto de uma string de texto para o GCS sem necessidade de arquivo local."""
+        blob = self.bucket.blob(destination_blob_name)
+        blob.upload_from_string(text_content, content_type=content_type)
+        logger.info(f"Upload de texto concluído → gs://{self.bucket_name}/{destination_blob_name}")

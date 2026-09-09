@@ -1,0 +1,138 @@
+version: 2
+
+models:
+  - name: int_income_statement
+    description: >
+      Silver layer for the Alpha Vantage INCOME_STATEMENT endpoint.
+      Flattens the raw JSON payload into typed columns, deduplicates by most-recent
+      ingestion date, and adds the derived field `ebitda_calc`.
+      Grain: one row per (symbol, fiscaldateending, report_type).
+
+    columns:
+      - name: symbol
+        data_type: string
+        description: "Stock ticker symbol identifying the company (e.g. IBM, AAPL)."
+        tests:
+          - not_null
+
+      - name: report_type
+        data_type: string
+        description: "Report frequency — 'annual' (from annualReports) or 'quarterly' (from quarterlyReports)."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['annual', 'quarterly']
+
+      - name: fiscaldateending
+        data_type: date
+        description: "Fiscal period end date parsed from fiscalDateEnding. Records where parsing fails are excluded."
+        tests:
+          - not_null
+
+      - name: fiscaldateending_raw
+        data_type: string
+        description: "Original fiscalDateEnding string value before date parsing, preserved for audit purposes."
+
+      - name: reportedcurrency
+        data_type: string
+        description: "Currency in which financial figures are reported (e.g. USD)."
+
+      - name: gross_profit
+        data_type: int64
+        description: "Gross profit: total revenue minus cost of revenue."
+
+      - name: total_revenue
+        data_type: int64
+        description: "Total revenue for the period. Used as denominator for net_margin, ebitda_margin, and YoY growth."
+
+      - name: cost_of_revenue
+        data_type: int64
+        description: "Cost of revenue (cost of goods sold)."
+
+      - name: operating_income
+        data_type: int64
+        description: "Operating income (EBIT before D&A adjustments)."
+
+      - name: selling_general_and_administrative
+        data_type: int64
+        description: "Selling, general, and administrative expenses."
+
+      - name: research_and_development
+        data_type: int64
+        description: "Research and development expenses."
+
+      - name: operating_expenses
+        data_type: int64
+        description: "Total operating expenses."
+
+      - name: net_interest_income
+        data_type: int64
+        description: "Net interest income (interest income minus interest expense)."
+
+      - name: interest_income
+        data_type: int64
+        description: "Interest income earned."
+
+      - name: interest_expense
+        data_type: int64
+        description: "Interest expense paid."
+
+      - name: depreciation_and_amortization
+        data_type: int64
+        description: "Depreciation and amortization. Used as a component of ebitda_calc when ebitda is NULL."
+
+      - name: income_before_tax
+        data_type: int64
+        description: "Earnings before income tax."
+
+      - name: income_tax_expense
+        data_type: int64
+        description: "Income tax expense for the period."
+
+      - name: net_income_from_continuing_operations
+        data_type: int64
+        description: "Net income from continuing operations only (excludes discontinued operations)."
+
+      - name: ebit
+        data_type: int64
+        description: "Earnings before interest and taxes. Used as a component of ebitda_calc."
+
+      - name: ebitda
+        data_type: int64
+        description: "Earnings before interest, taxes, depreciation, and amortization as reported by the API."
+
+      - name: net_income
+        data_type: int64
+        description: "Net income for the period. Used in ROE, net_margin, and quality_of_earnings calculations."
+
+      - name: ebitda_calc
+        data_type: int64
+        description: >
+          Derived EBITDA: COALESCE(ebitda, ebit + depreciation_and_amortization).
+          Falls back to the component sum when the API does not provide ebitda directly.
+          NULL when all components are NULL.
+
+      - name: ingest_date
+        data_type: date
+        description: "Ingestion date derived from Hive partitions (DATE(partition_year, partition_month, partition_day))."
+
+      - name: partition_year
+        data_type: int64
+        description: "Year component of the GCS Hive partition."
+
+      - name: partition_month
+        data_type: int64
+        description: "Month component of the GCS Hive partition."
+
+      - name: partition_day
+        data_type: int64
+        description: "Day component of the GCS Hive partition."
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - symbol
+              - fiscaldateending
+              - report_type
