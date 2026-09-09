@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from datetime import datetime
+from pathlib import Path
 
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from cosmos import DbtTaskGroup, ExecutionConfig, ProfileConfig, ProjectConfig, RenderConfig
-from cosmos.constants import LoadMode
+from cosmos.constants import LoadMode, TestBehavior
 
 from config.config import get_symbols_for_day
 
@@ -51,6 +52,7 @@ with DAG(
     start_date=datetime(2024, 1, 1),
     schedule="0 6 * * 1-7",
     catchup=False,
+    max_active_runs=1,
     tags=["fundamental", "alpha_vantage", "dbt", "cosmos"],
     description="Pipeline financeira com round-robin semanal de 5 empresas por dia e execução dbt via Cosmos.",
 ) as dag:
@@ -87,14 +89,15 @@ with DAG(
     )
 
     # Configuração base compartilhada do Cosmos / dbt
+    dbt_project_path = Path(__file__).resolve().parents[1] / "src" / "transformations"
     project_cfg = ProjectConfig(
-        dbt_project_path="/opt/airflow/src/transformations",
-        manifest_path="/opt/airflow/src/transformations/target/manifest.json",
+        dbt_project_path=dbt_project_path,
+        manifest_path=dbt_project_path / "target" / "manifest.json",
     )
     profile_cfg = ProfileConfig(
         profile_name="transformations",
         target_name="dev",
-        profiles_yml_filepath="/opt/airflow/src/transformations/profiles.yml",
+        profiles_yml_filepath=dbt_project_path / "profiles.yml",
     )
     exec_cfg = ExecutionConfig(dbt_executable_path="dbt")
 
@@ -108,6 +111,7 @@ with DAG(
                 select=[select_model],
                 load_method=LoadMode.DBT_MANIFEST,
                 emit_datasets=False,
+                test_behavior=TestBehavior.AFTER_EACH,
             ),
         )
 
@@ -119,13 +123,15 @@ with DAG(
     dbt_stg_earning = make_dbt_group("dbt_stg_earning", "stg_earning")
 
     # 2. Camada Intermediate (aguarda os stagings correspondentes)
-    dbt_int_overview = make_dbt_group("dbt_int_overview", "int_overview_normalized")
-    dbt_int_financial = make_dbt_group("dbt_int_financial", "int_financial_metrics")
+    dbt_int_overview = make_dbt_group("dbt_int_overview", "int_overview")
+    dbt_int_income = make_dbt_group("dbt_int_income", "int_income_statement")
+    dbt_int_balance = make_dbt_group("dbt_int_balance", "int_balance_sheet")
+    dbt_int_cash_flow = make_dbt_group("dbt_int_cash_flow", "int_cash_flow")
+    dbt_int_earning = make_dbt_group("dbt_int_earning", "int_earning")
 
     # 3. Camada Gold / Marts (aguarda os intermediates)
-    dbt_gold = make_dbt_group("dbt_gold", "fundamental_metrics")
+    dbt_gold = make_dbt_group("dbt_gold", "fct_fundamental_kpis")
 
-    validate_gold = EmptyOperator(task_id="validate_gold_data")
     finish = EmptyOperator(task_id="finish_pipeline")
 
     # Orquestração:
@@ -142,7 +148,11 @@ with DAG(
 
     # 3. Cada modelo dbt roda após a sua etapa anterior (stg > intermediate > gold)
     dbt_stg_overview >> dbt_int_overview
-    [dbt_stg_balance, dbt_stg_income, dbt_stg_cash_flow] >> dbt_int_financial
+    dbt_stg_income >> dbt_int_income
+    dbt_stg_balance >> dbt_int_balance
+    dbt_stg_cash_flow >> dbt_int_cash_flow
+    dbt_stg_earning >> dbt_int_earning
 
-    [dbt_int_overview, dbt_int_financial] >> dbt_gold
-    [dbt_stg_earning, dbt_gold] >> validate_gold >> finish
+    [dbt_int_overview, dbt_int_income, dbt_int_balance, dbt_int_cash_flow, dbt_int_earning] >> dbt_gold
+    # Cosmos AFTER_EACH tests must succeed before the pipeline finishes.
+    dbt_gold >> finish
