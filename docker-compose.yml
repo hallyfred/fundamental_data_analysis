@@ -4,9 +4,13 @@ x-logging: &default-logging
     max-size: "10m"
     max-file: "5"
 
+x-airflow-image: &airflow-image
+  build: .
+  image: fundamental-airflow:2.9.3
+
 services:
   airflow-init:
-    build: .
+    <<: *airflow-image
     container_name: fundamental_airflow_init
     entrypoint: /bin/bash
     command:
@@ -37,7 +41,7 @@ services:
     logging: *default-logging
 
   airflow-webserver:
-    build: .
+    <<: *airflow-image
     container_name: fundamental_airflow_webserver
     command: webserver
     restart: always
@@ -83,7 +87,7 @@ services:
     logging: *default-logging
 
   airflow-scheduler:
-    build: .
+    <<: *airflow-image
     container_name: fundamental_airflow_scheduler
     command: scheduler
     restart: always

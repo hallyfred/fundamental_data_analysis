@@ -31,12 +31,15 @@ Run from a clean `main` branch after the `dev -> main` pull request and GitHub A
 git checkout main
 git pull --ff-only origin main
 .\scripts\backup_airflow_db.ps1
-docker compose build --pull
-docker compose up -d --remove-orphans
+docker compose build --pull airflow-webserver
+docker compose up -d --remove-orphans --force-recreate
 .\scripts\healthcheck_local.ps1
+docker exec fundamental_airflow_webserver python -m pip check
 ```
 
-Open Airflow only through `http://127.0.0.1:<AIRFLOW_WEBSERVER_PORT>` (8080 by default). Keep the DAG paused until the controlled quota and idempotency validation is complete. Record the deployed commit with `git rev-parse HEAD`.
+The three Airflow services share the image tagged `fundamental-airflow:2.9.3`. Its base image is pinned by digest and the Python environment is installed from `requirements.lock`; update both `requirements.txt` and the lock when changing a direct dependency. Open Airflow only through `http://127.0.0.1:<AIRFLOW_WEBSERVER_PORT>` (8080 by default). Keep the DAG paused until the controlled quota and idempotency validation is complete. Record the deployed commit with `git rev-parse HEAD` and the image ID with `docker image inspect fundamental-airflow:2.9.3 --format '{{.Id}}'`.
+
+Use [round-robin-production-validation.md](round-robin-production-validation.md) to collect the seven-day production evidence before declaring the ingestion validated.
 
 ## Daily checks
 
@@ -82,9 +85,10 @@ Save the failed commit and return to the previously recorded release commit:
 ```powershell
 git status --short
 git checkout <previous-release-commit>
-docker compose build
-docker compose up -d --remove-orphans
+docker compose build airflow-webserver
+docker compose up -d --remove-orphans --force-recreate
 .\scripts\healthcheck_local.ps1
+docker exec fundamental_airflow_webserver python -m pip check
 ```
 
 Restore the PostgreSQL dump only when the failed release changed metadata incompatibly. Ordinary application rollbacks should retain the current volume.
