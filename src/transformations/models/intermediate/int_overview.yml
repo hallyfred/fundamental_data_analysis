@@ -11,155 +11,182 @@ models:
     tests:
     - not_null
     - unique
-    meta:
-      source_field: Symbol
+    config:
+      meta:
+        source_field: Symbol
   - name: asset_type
     data_type: string
     description: Asset type from Alpha Vantage AssetType.
-    meta:
-      source_field: AssetType
+    config:
+      meta:
+        source_field: AssetType
   - name: name
     data_type: string
     description: Name from Alpha Vantage Name.
-    meta:
-      source_field: Name
+    config:
+      meta:
+        source_field: Name
   - name: exchange
     data_type: string
     description: Exchange from Alpha Vantage Exchange.
-    meta:
-      source_field: Exchange
+    config:
+      meta:
+        source_field: Exchange
   - name: currency
     data_type: string
     description: Currency from Alpha Vantage Currency.
-    meta:
-      source_field: Currency
+    config:
+      meta:
+        source_field: Currency
   - name: country
     data_type: string
     description: Country from Alpha Vantage Country.
-    meta:
-      source_field: Country
+    config:
+      meta:
+        source_field: Country
   - name: sector
     data_type: string
     description: Sector from Alpha Vantage Sector.
-    meta:
-      source_field: Sector
+    config:
+      meta:
+        source_field: Sector
   - name: industry
     data_type: string
     description: Industry from Alpha Vantage Industry.
-    meta:
-      source_field: Industry
+    config:
+      meta:
+        source_field: Industry
   - name: fiscal_year_end
     data_type: string
     description: Fiscal year end from Alpha Vantage FiscalYearEnd.
-    meta:
-      source_field: FiscalYearEnd
+    config:
+      meta:
+        source_field: FiscalYearEnd
   - name: latest_quarter
     data_type: string
     description: Latest quarter from Alpha Vantage LatestQuarter.
-    meta:
-      source_field: LatestQuarter
+    config:
+      meta:
+        source_field: LatestQuarter
   - name: market_capitalization
     data_type: int64
     description: Market capitalization from Alpha Vantage MarketCapitalization. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: MarketCapitalization
+    config:
+      meta:
+        source_field: MarketCapitalization
   - name: pe_ratio
     data_type: numeric
     description: Pe ratio from Alpha Vantage PERatio. Missing, sentinel or invalid
       values become NULL.
-    meta:
-      source_field: PERatio
+    config:
+      meta:
+        source_field: PERatio
   - name: peg_ratio
     data_type: numeric
     description: Peg ratio from Alpha Vantage PEGRatio. Missing, sentinel or invalid
       values become NULL.
-    meta:
-      source_field: PEGRatio
+    config:
+      meta:
+        source_field: PEGRatio
   - name: book_value
     data_type: numeric
     description: Book value from Alpha Vantage BookValue. Missing, sentinel or invalid
       values become NULL.
-    meta:
-      source_field: BookValue
+    config:
+      meta:
+        source_field: BookValue
   - name: dividend_per_share
     data_type: numeric
     description: Dividend per share from Alpha Vantage DividendPerShare. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: DividendPerShare
+    config:
+      meta:
+        source_field: DividendPerShare
   - name: dividend_yield
     data_type: numeric
     description: Dividend yield from Alpha Vantage DividendYield. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: DividendYield
+    config:
+      meta:
+        source_field: DividendYield
   - name: eps
     data_type: numeric
     description: Eps from Alpha Vantage EPS. Missing, sentinel or invalid values become
       NULL.
-    meta:
-      source_field: EPS
+    config:
+      meta:
+        source_field: EPS
   - name: revenue_per_share_ttm
     data_type: numeric
     description: Revenue per share ttm from Alpha Vantage RevenuePerShareTTM. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: RevenuePerShareTTM
+    config:
+      meta:
+        source_field: RevenuePerShareTTM
   - name: profit_margin
     data_type: numeric
     description: Profit margin from Alpha Vantage ProfitMargin. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: ProfitMargin
+    config:
+      meta:
+        source_field: ProfitMargin
   - name: return_on_equity_ttm
     data_type: numeric
     description: Return on equity ttm from Alpha Vantage ReturnOnEquityTTM. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: ReturnOnEquityTTM
+    config:
+      meta:
+        source_field: ReturnOnEquityTTM
   - name: ev_to_revenue
     data_type: numeric
     description: Ev to revenue from Alpha Vantage EVToRevenue. Missing, sentinel or
       invalid values become NULL.
-    meta:
-      source_field: EVToRevenue
+    config:
+      meta:
+        source_field: EVToRevenue
   - name: ev_to_ebitda
     data_type: numeric
     description: Ev to ebitda from Alpha Vantage EVToEBITDA. Missing, sentinel or
       invalid values become NULL.
-    meta:
-      source_field: EVToEBITDA
+    config:
+      meta:
+        source_field: EVToEBITDA
   - name: beta
     data_type: numeric
     description: Beta from Alpha Vantage Beta. Missing, sentinel or invalid values
       become NULL.
-    meta:
-      source_field: Beta
+    config:
+      meta:
+        source_field: Beta
   - name: trailing_pe
     data_type: numeric
     description: Trailing pe from Alpha Vantage TrailingPE. Missing, sentinel or invalid
       values become NULL.
-    meta:
-      source_field: TrailingPE
+    config:
+      meta:
+        source_field: TrailingPE
   - name: forward_pe
     data_type: numeric
     description: Forward pe from Alpha Vantage ForwardPE. Missing, sentinel or invalid
       values become NULL.
-    meta:
-      source_field: ForwardPE
+    config:
+      meta:
+        source_field: ForwardPE
   - name: price_to_sales_ratio_ttm
     data_type: numeric
     description: Price to sales ratio ttm from Alpha Vantage PriceToSalesRatioTTM.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: PriceToSalesRatioTTM
+    config:
+      meta:
+        source_field: PriceToSalesRatioTTM
   - name: price_to_book_ratio
     data_type: numeric
     description: Price to book ratio from Alpha Vantage PriceToBookRatio. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: PriceToBookRatio
+    config:
+      meta:
+        source_field: PriceToBookRatio
   - name: partition_year
     data_type: int64
     description: GCS Hive ingestion partition year.
@@ -175,165 +202,193 @@ models:
   - name: description
     data_type: string
     description: Description from Alpha Vantage Description.
-    meta:
-      source_field: Description
+    config:
+      meta:
+        source_field: Description
   - name: cik
     data_type: string
     description: Cik from Alpha Vantage CIK.
-    meta:
-      source_field: CIK
+    config:
+      meta:
+        source_field: CIK
   - name: address
     data_type: string
     description: Address from Alpha Vantage Address.
-    meta:
-      source_field: Address
+    config:
+      meta:
+        source_field: Address
   - name: official_site
     data_type: string
     description: Official site from Alpha Vantage OfficialSite.
-    meta:
-      source_field: OfficialSite
+    config:
+      meta:
+        source_field: OfficialSite
   - name: dividend_date
     data_type: string
     description: Dividend date from Alpha Vantage DividendDate.
-    meta:
-      source_field: DividendDate
+    config:
+      meta:
+        source_field: DividendDate
   - name: ex_dividend_date
     data_type: string
     description: Ex dividend date from Alpha Vantage ExDividendDate.
-    meta:
-      source_field: ExDividendDate
+    config:
+      meta:
+        source_field: ExDividendDate
   - name: ebitda
     data_type: int64
     description: Ebitda from Alpha Vantage EBITDA. Missing, sentinel or invalid values
       become NULL.
-    meta:
-      source_field: EBITDA
+    config:
+      meta:
+        source_field: EBITDA
   - name: revenue_ttm
     data_type: int64
     description: Revenue ttm from Alpha Vantage RevenueTTM. Missing, sentinel or invalid
       values become NULL.
-    meta:
-      source_field: RevenueTTM
+    config:
+      meta:
+        source_field: RevenueTTM
   - name: gross_profit_ttm
     data_type: int64
     description: Gross profit ttm from Alpha Vantage GrossProfitTTM. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: GrossProfitTTM
+    config:
+      meta:
+        source_field: GrossProfitTTM
   - name: shares_outstanding
     data_type: int64
     description: Shares outstanding from Alpha Vantage SharesOutstanding. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: SharesOutstanding
+    config:
+      meta:
+        source_field: SharesOutstanding
   - name: shares_float
     data_type: int64
     description: Shares float from Alpha Vantage SharesFloat. Missing, sentinel or
       invalid values become NULL.
-    meta:
-      source_field: SharesFloat
+    config:
+      meta:
+        source_field: SharesFloat
   - name: operating_margin_ttm
     data_type: numeric
     description: Operating margin ttm from Alpha Vantage OperatingMarginTTM. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: OperatingMarginTTM
+    config:
+      meta:
+        source_field: OperatingMarginTTM
   - name: return_on_assets_ttm
     data_type: numeric
     description: Return on assets ttm from Alpha Vantage ReturnOnAssetsTTM. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: ReturnOnAssetsTTM
+    config:
+      meta:
+        source_field: ReturnOnAssetsTTM
   - name: diluted_epsttm
     data_type: numeric
     description: Diluted epsttm from Alpha Vantage DilutedEPSTTM. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: DilutedEPSTTM
+    config:
+      meta:
+        source_field: DilutedEPSTTM
   - name: quarterly_earnings_growth_yoy
     data_type: numeric
     description: Quarterly earnings growth yoy from Alpha Vantage QuarterlyEarningsGrowthYOY.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: QuarterlyEarningsGrowthYOY
+    config:
+      meta:
+        source_field: QuarterlyEarningsGrowthYOY
   - name: quarterly_revenue_growth_yoy
     data_type: numeric
     description: Quarterly revenue growth yoy from Alpha Vantage QuarterlyRevenueGrowthYOY.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: QuarterlyRevenueGrowthYOY
+    config:
+      meta:
+        source_field: QuarterlyRevenueGrowthYOY
   - name: analyst_target_price
     data_type: numeric
     description: Analyst target price from Alpha Vantage AnalystTargetPrice. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: AnalystTargetPrice
+    config:
+      meta:
+        source_field: AnalystTargetPrice
   - name: analyst_rating_strong_buy
     data_type: numeric
     description: Analyst rating strong buy from Alpha Vantage AnalystRatingStrongBuy.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: AnalystRatingStrongBuy
+    config:
+      meta:
+        source_field: AnalystRatingStrongBuy
   - name: analyst_rating_buy
     data_type: numeric
     description: Analyst rating buy from Alpha Vantage AnalystRatingBuy. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: AnalystRatingBuy
+    config:
+      meta:
+        source_field: AnalystRatingBuy
   - name: analyst_rating_hold
     data_type: numeric
     description: Analyst rating hold from Alpha Vantage AnalystRatingHold. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: AnalystRatingHold
+    config:
+      meta:
+        source_field: AnalystRatingHold
   - name: analyst_rating_sell
     data_type: numeric
     description: Analyst rating sell from Alpha Vantage AnalystRatingSell. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: AnalystRatingSell
+    config:
+      meta:
+        source_field: AnalystRatingSell
   - name: analyst_rating_strong_sell
     data_type: numeric
     description: Analyst rating strong sell from Alpha Vantage AnalystRatingStrongSell.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: AnalystRatingStrongSell
+    config:
+      meta:
+        source_field: AnalystRatingStrongSell
   - name: percent_insiders
     data_type: numeric
     description: Percent insiders from Alpha Vantage PercentInsiders. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: PercentInsiders
+    config:
+      meta:
+        source_field: PercentInsiders
   - name: percent_institutions
     data_type: numeric
     description: Percent institutions from Alpha Vantage PercentInstitutions. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: PercentInstitutions
+    config:
+      meta:
+        source_field: PercentInstitutions
   - name: week_high_52
     data_type: numeric
     description: Week high 52 from Alpha Vantage 52WeekHigh. Missing, sentinel or
       invalid values become NULL.
-    meta:
-      source_field: 52WeekHigh
+    config:
+      meta:
+        source_field: 52WeekHigh
   - name: week_low_52
     data_type: numeric
     description: Week low 52 from Alpha Vantage 52WeekLow. Missing, sentinel or invalid
       values become NULL.
-    meta:
-      source_field: 52WeekLow
+    config:
+      meta:
+        source_field: 52WeekLow
   - name: moving_average_50
     data_type: numeric
     description: Moving average 50 from Alpha Vantage 50DayMovingAverage. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: 50DayMovingAverage
+    config:
+      meta:
+        source_field: 50DayMovingAverage
   - name: moving_average_200
     data_type: numeric
     description: Moving average 200 from Alpha Vantage 200DayMovingAverage. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: 200DayMovingAverage
+    config:
+      meta:
+        source_field: 200DayMovingAverage
 unit_tests:
 - name: overview_latest_snapshot_per_symbol
   model: int_overview

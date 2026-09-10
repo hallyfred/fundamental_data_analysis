@@ -59,6 +59,19 @@ def test_retry_on_network_failure_then_succeed(mock_get, mock_sleep, client):
     assert mock_get.call_count == 2
 
 
+@patch("src.extract.api_client.time.sleep")
+@patch("src.extract.api_client.requests.get")
+def test_single_attempt_mode_preserves_full_batch_daily_budget(mock_get, mock_sleep):
+    client = AlphaVantageAPIClient(BASE_URL, API_KEY, max_retries=1)
+    mock_get.side_effect = requests.exceptions.Timeout("Timeout")
+
+    with pytest.raises(requests.exceptions.Timeout):
+        client.get("OVERVIEW", "AAPL")
+
+    mock_get.assert_called_once()
+    mock_sleep.assert_not_called()
+
+
 @patch("src.extract.api_client.requests.get")
 def test_api_key_sanitization_in_error_messages(mock_get, client):
     raw_response = {

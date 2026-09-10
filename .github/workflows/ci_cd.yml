@@ -67,11 +67,36 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Check Airflow HTTP Client Dependencies
+        run: python -c "import httpx; client = httpx.Client(); client.close()"
+
+      # Render the real Cosmos DAG from the current manifest without cloud access.
+      - name: Prepare dbt Manifest for DAG Integrity Tests
+        run: |
+          dbt deps --project-dir src/transformations --profiles-dir src/transformations
+          dbt parse --project-dir src/transformations --profiles-dir src/transformations --target ci
+
       - name: Check Silver Coverage Against Extraction Contracts
         run: pytest -v tests/test_silver_contracts.py
 
+      - name: Validate Round-Robin Scheduling and API Budget
+        run: |
+          pytest -v \
+            tests/test_round_robin.py \
+            tests/test_round_robin_week.py \
+            tests/test_orchestration.py \
+            tests/test_extractors.py \
+            tests/test_api_client.py
+
       - name: Run Pytest Suite
-        run: pytest -v --ignore=tests/test_silver_contracts.py
+        run: |
+          pytest -v \
+            --ignore=tests/test_silver_contracts.py \
+            --ignore=tests/test_round_robin.py \
+            --ignore=tests/test_round_robin_week.py \
+            --ignore=tests/test_orchestration.py \
+            --ignore=tests/test_extractors.py \
+            --ignore=tests/test_api_client.py
 
   # ==============================================================================
   # 3. DBT VALIDATION (Parse, Silver/Gold unit tests & data quality)
@@ -135,29 +160,12 @@ jobs:
             src/transformations/logs/dbt.log
           if-no-files-found: ignore
 
-  # ==============================================================================
-  # 4. CONTINUOUS DEPLOYMENT (CD)
-  # TRAVA PÉTREA: O Deploy JAMAIS executa antes de Lint, Testes e dbt serem 100% aprovados.
-  # Executa estritamente na branch 'main' após merge.
-  # ==============================================================================
-  deploy:
-    name: Production Deployment (CD)
+  # Deployment is not implemented. This job reports validation only.
+  release-validation:
+    name: Release Validation (No Deployment)
     needs: [lint, unit-tests, dbt-validation]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Deploy Gate Verification
-        run: |
-          echo "========================================================"
-          echo "TODOS OS TESTES E VALIDAÇÕES DO CI FORAM APROVADOS!"
-          echo "Iniciando sincronização e deploy seguro em produção..."
-          echo "========================================================"
-
-      - name: Sync Production Pipeline
-        run: |
-          echo "Sincronizando Airflow DAGs, módulos Python e modelos dbt..."
-          # Comandos de deploy da infraestrutura de produção
-          echo "Deploy concluído com sucesso."
+      - name: Report Validation Status
+        run: echo "Validation passed. Production deployment is not configured; no deployment was performed." >> "$GITHUB_STEP_SUMMARY"

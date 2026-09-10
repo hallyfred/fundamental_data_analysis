@@ -37,3 +37,12 @@ env/
 .DS_Store
 Thumbs.db
 dbt_internal_packages/
+
+# Generated runtime artifacts (keep local copies out of version control)
+*.log
+*.pid
+logs/
+target/
+dbt_packages/
+/airflow.cfg
+/webserver_config.py

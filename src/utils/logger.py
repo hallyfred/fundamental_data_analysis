@@ -43,6 +43,8 @@ def log_extraction(
     """
     log_entry = {
         "timestamp": datetime.now(UTC).isoformat(),
+        "event": "ticker_extraction",
+        "run_id": getattr(logger, "run_id", None) if logger else None,
         "status": status,
         "stage_location_bucket": stage_location_bucket,
         "last_updated": last_updated,
@@ -54,7 +56,20 @@ def log_extraction(
         "error_message": str(error_message) if error_message else None,
     }
 
-    # Grava exclusivamente a linha JSON no arquivo que será enviado ao GCS
+    _write_log_entry(logger, log_entry)
+
+
+def log_batch_summary(logger, summary: dict) -> None:
+    """Append one auditable summary for the complete endpoint batch."""
+    log_entry = {
+        "timestamp": datetime.now(UTC).isoformat(),
+        "event": "batch_summary",
+        **summary,
+    }
+    _write_log_entry(logger, log_entry)
+
+
+def _write_log_entry(logger, log_entry: dict) -> None:
     log_file = getattr(logger, "log_file", "extraction.log") if logger else "extraction.log"
     with open(log_file, "a", encoding="utf-8") as f:
         f.write(json.dumps(log_entry) + "\n")

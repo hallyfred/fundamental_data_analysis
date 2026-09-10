@@ -1,4 +1,8 @@
 requests
+# AnyIO 4.15.0 removed lazy access to anyio.abc and breaks the httpcore
+# version used by Airflow 2.9. Keep the compatible series until Airflow is upgraded.
+anyio==4.14.2
+httpcore==1.0.9
 pydantic>=2.0
 python-dotenv
 google-cloud-storage

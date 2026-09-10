@@ -10,8 +10,9 @@ models:
     description: Company stock ticker.
     tests:
     - not_null
-    meta:
-      source_field: symbol
+    config:
+      meta:
+        source_field: symbol
   - name: report_type
     data_type: string
     description: Annual or quarterly report frequency.
@@ -31,38 +32,44 @@ models:
       gate.
     tests:
     - not_null
-    meta:
-      source_field: fiscalDateEnding
+    config:
+      meta:
+        source_field: fiscalDateEnding
   - name: reported_date
     data_type: date
     description: Quarterly earnings release date; NULL for annual reports or invalid
       dates.
-    meta:
-      source_field: reportedDate
+    config:
+      meta:
+        source_field: reportedDate
   - name: reported_eps
     data_type: numeric
     description: Reported eps from Alpha Vantage reportedEPS. Missing, sentinel or
       invalid values become NULL.
-    meta:
-      source_field: reportedEPS
+    config:
+      meta:
+        source_field: reportedEPS
   - name: estimated_eps
     data_type: numeric
     description: Estimated eps from Alpha Vantage estimatedEPS. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: estimatedEPS
+    config:
+      meta:
+        source_field: estimatedEPS
   - name: surprise
     data_type: numeric
     description: Surprise from Alpha Vantage surprise. Missing, sentinel or invalid
       values become NULL.
-    meta:
-      source_field: surprise
+    config:
+      meta:
+        source_field: surprise
   - name: surprise_percentage
     data_type: numeric
     description: Surprise percentage from Alpha Vantage surprisePercentage. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: surprisePercentage
+    config:
+      meta:
+        source_field: surprisePercentage
   - name: partition_year
     data_type: int64
     description: GCS Hive ingestion partition year.
@@ -79,8 +86,9 @@ models:
     data_type: string
     description: Report time from Alpha Vantage reportTime. Quarterly release timing
       (e.g. post-market); NULL for annual reports.
-    meta:
-      source_field: reportTime
+    config:
+      meta:
+        source_field: reportTime
   tests:
   - dbt_utils.unique_combination_of_columns:
       arguments:
@@ -138,8 +146,8 @@ unit_tests:
       reported_eps: null
       fiscaldateending_raw: '2025-06-28'
     - fiscaldateending: null
-      fiscaldateending_raw: broken-date
       reported_eps: 42
+      fiscaldateending_raw: broken-date
 - name: earning_empty_arrays
   model: int_earning
   given:

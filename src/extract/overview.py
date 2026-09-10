@@ -11,16 +11,18 @@ from datetime import date
 from pydantic import ValidationError
 
 from config.config import ALPHA_VANTAGE_API_KEY, BASE_URL, BUCKET_BRONZE, ENDPOINTS_API, PROJECT_ID, get_symbols_for_day
-from src.extract.api_client import AlphaVantageAPIClient
+from src.extract.api_client import AlphaVantageAPIClient, AlphaVantageRateLimitError
+from src.extract.batch import ExtractionBatch
 from src.extract.contract import OverviewSchema, has_extra_fields
 from src.load.loader import GCPSLoader
 from src.utils.helpers import count_real_rows
-from src.utils.logger import log_extraction, setup_logger, upload_and_clean_log
+from src.utils.logger import log_batch_summary, log_extraction, setup_logger, upload_and_clean_log
 from src.utils.watermark import WatermarkManager
 
 
-def extract_overview(symbols: list[str] | None = None):
+def extract_overview(symbols: list[str] | None = None, run_id: str | None = None):
     logger = setup_logger()
+    logger.run_id = run_id
     function = ENDPOINTS_API["overview"]
     today = date.today()
 
@@ -29,10 +31,13 @@ def extract_overview(symbols: list[str] | None = None):
 
     logger.info(f"Iniciando extração de overview para {len(symbols)} símbolos: {symbols}")
     files_generated = []
+    batch = ExtractionBatch(endpoint=function, symbols=list(symbols), run_id=run_id)
 
     gcp_loader = GCPSLoader(project_id=PROJECT_ID, bucket_name=BUCKET_BRONZE)
     watermark = WatermarkManager(gcp_loader=gcp_loader, endpoint="overview")
-    client = AlphaVantageAPIClient(BASE_URL, ALPHA_VANTAGE_API_KEY)
+    # A full daily batch already uses all 25 requests, so scheduled extraction
+    # cannot safely issue automatic HTTP retries.
+    client = AlphaVantageAPIClient(BASE_URL, ALPHA_VANTAGE_API_KEY, max_retries=1)
 
     for symbol in symbols:
         length = 0
@@ -89,6 +94,7 @@ def extract_overview(symbols: list[str] | None = None):
                     time_seconds=round(time_seconds, 3),
                     error_message=f"Campos extras detectados: {extra_keys}",
                 )
+                batch.record_failure(symbol, f"Campos extras detectados: {extra_keys}")
                 continue  # não adiciona em files_generated (não vai para Bronze)
 
             logger.info(f"Validação bem-sucedida para {symbol}.")
@@ -119,6 +125,7 @@ def extract_overview(symbols: list[str] | None = None):
                 )
                 if file_path and os.path.exists(file_path):
                     os.remove(file_path)
+                batch.record_success(symbol)
                 continue
 
             destination_blob_name = (
@@ -132,6 +139,7 @@ def extract_overview(symbols: list[str] | None = None):
 
             watermark.record_success(symbol, fiscal_date)
             files_generated.append(destination_blob_name)  # apenas após upload confirmado
+            batch.record_success(symbol)
 
             time_seconds = time.perf_counter() - start_time
             logger.info(f"Tempo total para {symbol}: {time_seconds:.2f}s")
@@ -149,6 +157,24 @@ def extract_overview(symbols: list[str] | None = None):
                 error_message=None,
             )
 
+        except AlphaVantageRateLimitError as e:
+            time_seconds = time.perf_counter() - start_time
+            logger.error(f"Rate-limit durante a extração de {symbol}: {e}")
+            log_extraction(
+                logger=logger,
+                status="ERROR",
+                stage_location_bucket=BUCKET_BRONZE,
+                last_updated=today.isoformat(),
+                endpoint=function,
+                symbol=symbol,
+                rows=length,
+                size=round(file_size_mb, 6),
+                time_seconds=round(time_seconds, 3),
+                error_message=str(e),
+            )
+            batch.record_failure(symbol, e, stop=True)
+            break
+
         except ValidationError as e:
             time_seconds = time.perf_counter() - start_time
             logger.error(f"Erro de validação para {symbol}: {e}")
@@ -164,6 +190,7 @@ def extract_overview(symbols: list[str] | None = None):
                 time_seconds=round(time_seconds, 3),
                 error_message=str(e),
             )
+            batch.record_failure(symbol, e)
 
         except ValueError as e:
             time_seconds = time.perf_counter() - start_time
@@ -180,6 +207,7 @@ def extract_overview(symbols: list[str] | None = None):
                 time_seconds=round(time_seconds, 3),
                 error_message=str(e),
             )
+            batch.record_failure(symbol, e)
 
         except Exception as e:
             time_seconds = time.perf_counter() - start_time
@@ -196,6 +224,7 @@ def extract_overview(symbols: list[str] | None = None):
                 time_seconds=round(time_seconds, 3),
                 error_message=str(e),
             )
+            batch.record_failure(symbol, e)
 
         finally:
             # Garante remoção do arquivo temporário mesmo em caso de falha após criação
@@ -204,6 +233,7 @@ def extract_overview(symbols: list[str] | None = None):
 
     # Persiste os watermarks atualizados no GCS
     watermark.save()
+    log_batch_summary(logger, batch.as_log_entry())
 
     # Libera os handlers do logger antes de fazer upload do log
     for handler in logger.handlers[:]:
@@ -216,6 +246,7 @@ def extract_overview(symbols: list[str] | None = None):
     )
     upload_and_clean_log(gcp_loader, "extraction.log", log_destination)
 
+    batch.raise_for_incomplete_batch()
     return files_generated
 
 

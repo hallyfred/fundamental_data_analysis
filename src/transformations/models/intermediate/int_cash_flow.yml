@@ -10,8 +10,9 @@ models:
     description: Company stock ticker.
     tests:
     - not_null
-    meta:
-      source_field: symbol
+    config:
+      meta:
+        source_field: symbol
   - name: report_type
     data_type: string
     description: Annual or quarterly report frequency.
@@ -31,61 +32,71 @@ models:
       gate.
     tests:
     - not_null
-    meta:
-      source_field: fiscalDateEnding
+    config:
+      meta:
+        source_field: fiscalDateEnding
   - name: reportedcurrency
     data_type: string
     description: Currency of the reported financial amounts.
-    meta:
-      source_field: reportedCurrency
+    config:
+      meta:
+        source_field: reportedCurrency
   - name: operating_cashflow
     data_type: int64
     description: Operating cashflow from Alpha Vantage operatingCashflow. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: operatingCashflow
+    config:
+      meta:
+        source_field: operatingCashflow
   - name: capital_expenditures
     data_type: int64
     description: Capital expenditures from Alpha Vantage capitalExpenditures. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: capitalExpenditures
+    config:
+      meta:
+        source_field: capitalExpenditures
   - name: depreciation_depletion_and_amortization
     data_type: int64
     description: Depreciation depletion and amortization from Alpha Vantage depreciationDepletionAndAmortization.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: depreciationDepletionAndAmortization
+    config:
+      meta:
+        source_field: depreciationDepletionAndAmortization
   - name: dividend_payout
     data_type: int64
     description: Dividend payout from Alpha Vantage dividendPayout. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: dividendPayout
+    config:
+      meta:
+        source_field: dividendPayout
   - name: stock_based_compensation
     data_type: int64
     description: Stock based compensation from Alpha Vantage stockBasedCompensation.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: stockBasedCompensation
+    config:
+      meta:
+        source_field: stockBasedCompensation
   - name: cashflow_from_investment
     data_type: int64
     description: Cashflow from investment from Alpha Vantage cashflowFromInvestment.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: cashflowFromInvestment
+    config:
+      meta:
+        source_field: cashflowFromInvestment
   - name: cashflow_from_financing
     data_type: int64
     description: Cashflow from financing from Alpha Vantage cashflowFromFinancing.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: cashflowFromFinancing
+    config:
+      meta:
+        source_field: cashflowFromFinancing
   - name: net_income
     data_type: int64
     description: Net income from Alpha Vantage netIncome. Missing, sentinel or invalid
       values become NULL.
-    meta:
-      source_field: netIncome
+    config:
+      meta:
+        source_field: netIncome
   - name: free_cash_flow
     data_type: int64
     description: Operating cash flow minus capital expenditures in reported currency;
@@ -106,123 +117,143 @@ models:
     data_type: int64
     description: Payments for operating activities from Alpha Vantage paymentsForOperatingActivities.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: paymentsForOperatingActivities
+    config:
+      meta:
+        source_field: paymentsForOperatingActivities
   - name: proceeds_from_operating_activities
     data_type: int64
     description: Proceeds from operating activities from Alpha Vantage proceedsFromOperatingActivities.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: proceedsFromOperatingActivities
+    config:
+      meta:
+        source_field: proceedsFromOperatingActivities
   - name: change_in_operating_liabilities
     data_type: int64
     description: Change in operating liabilities from Alpha Vantage changeInOperatingLiabilities.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: changeInOperatingLiabilities
+    config:
+      meta:
+        source_field: changeInOperatingLiabilities
   - name: change_in_operating_assets
     data_type: int64
     description: Change in operating assets from Alpha Vantage changeInOperatingAssets.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: changeInOperatingAssets
+    config:
+      meta:
+        source_field: changeInOperatingAssets
   - name: change_in_receivables
     data_type: int64
     description: Change in receivables from Alpha Vantage changeInReceivables. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: changeInReceivables
+    config:
+      meta:
+        source_field: changeInReceivables
   - name: change_in_inventory
     data_type: int64
     description: Change in inventory from Alpha Vantage changeInInventory. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: changeInInventory
+    config:
+      meta:
+        source_field: changeInInventory
   - name: profit_loss
     data_type: int64
     description: Profit loss from Alpha Vantage profitLoss. Missing, sentinel or invalid
       values become NULL.
-    meta:
-      source_field: profitLoss
+    config:
+      meta:
+        source_field: profitLoss
   - name: proceeds_from_repayments_of_short_term_debt
     data_type: int64
     description: Proceeds from repayments of short term debt from Alpha Vantage proceedsFromRepaymentsOfShortTermDebt.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: proceedsFromRepaymentsOfShortTermDebt
+    config:
+      meta:
+        source_field: proceedsFromRepaymentsOfShortTermDebt
   - name: payments_for_repurchase_of_common_stock
     data_type: int64
     description: Payments for repurchase of common stock from Alpha Vantage paymentsForRepurchaseOfCommonStock.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: paymentsForRepurchaseOfCommonStock
+    config:
+      meta:
+        source_field: paymentsForRepurchaseOfCommonStock
   - name: payments_for_repurchase_of_equity
     data_type: int64
     description: Payments for repurchase of equity from Alpha Vantage paymentsForRepurchaseOfEquity.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: paymentsForRepurchaseOfEquity
+    config:
+      meta:
+        source_field: paymentsForRepurchaseOfEquity
   - name: payments_for_repurchase_of_preferred_stock
     data_type: int64
     description: Payments for repurchase of preferred stock from Alpha Vantage paymentsForRepurchaseOfPreferredStock.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: paymentsForRepurchaseOfPreferredStock
+    config:
+      meta:
+        source_field: paymentsForRepurchaseOfPreferredStock
   - name: dividend_payout_common_stock
     data_type: int64
     description: Dividend payout common stock from Alpha Vantage dividendPayoutCommonStock.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: dividendPayoutCommonStock
+    config:
+      meta:
+        source_field: dividendPayoutCommonStock
   - name: dividend_payout_preferred_stock
     data_type: int64
     description: Dividend payout preferred stock from Alpha Vantage dividendPayoutPreferredStock.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: dividendPayoutPreferredStock
+    config:
+      meta:
+        source_field: dividendPayoutPreferredStock
   - name: proceeds_from_issuance_of_common_stock
     data_type: int64
     description: Proceeds from issuance of common stock from Alpha Vantage proceedsFromIssuanceOfCommonStock.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: proceedsFromIssuanceOfCommonStock
+    config:
+      meta:
+        source_field: proceedsFromIssuanceOfCommonStock
   - name: proceeds_from_issuance_of_long_term_debt_and_capital_securities_net
     data_type: int64
     description: Proceeds from issuance of long term debt and capital securities net
       from Alpha Vantage proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet
+    config:
+      meta:
+        source_field: proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet
   - name: proceeds_from_issuance_of_preferred_stock
     data_type: int64
     description: Proceeds from issuance of preferred stock from Alpha Vantage proceedsFromIssuanceOfPreferredStock.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: proceedsFromIssuanceOfPreferredStock
+    config:
+      meta:
+        source_field: proceedsFromIssuanceOfPreferredStock
   - name: proceeds_from_repurchase_of_equity
     data_type: int64
     description: Proceeds from repurchase of equity from Alpha Vantage proceedsFromRepurchaseOfEquity.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: proceedsFromRepurchaseOfEquity
+    config:
+      meta:
+        source_field: proceedsFromRepurchaseOfEquity
   - name: proceeds_from_sale_of_treasury_stock
     data_type: int64
     description: Proceeds from sale of treasury stock from Alpha Vantage proceedsFromSaleOfTreasuryStock.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: proceedsFromSaleOfTreasuryStock
+    config:
+      meta:
+        source_field: proceedsFromSaleOfTreasuryStock
   - name: change_in_cash_and_cash_equivalents
     data_type: int64
     description: Change in cash and cash equivalents from Alpha Vantage changeInCashAndCashEquivalents.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: changeInCashAndCashEquivalents
+    config:
+      meta:
+        source_field: changeInCashAndCashEquivalents
   - name: change_in_exchange_rate
     data_type: int64
     description: Change in exchange rate from Alpha Vantage changeInExchangeRate.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: changeInExchangeRate
+    config:
+      meta:
+        source_field: changeInExchangeRate
   tests:
   - dbt_utils.unique_combination_of_columns:
       arguments:
@@ -280,8 +311,8 @@ unit_tests:
       operating_cashflow: null
       fiscaldateending_raw: '2025-06-28'
     - fiscaldateending: null
-      fiscaldateending_raw: broken-date
       operating_cashflow: 42
+      fiscaldateending_raw: broken-date
 - name: cash_flow_empty_arrays
   model: int_cash_flow
   given:

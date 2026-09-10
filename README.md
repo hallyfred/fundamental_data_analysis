@@ -26,14 +26,17 @@ The pipeline is built with a **Separation of Concerns** principle in mind, isola
 *   **Transformation (dbt):** Handles all business logic, data cleansing (Silver Layer), and metric calculations (Gold Layer).
 *   **Orchestration (Airflow):** Manages dependencies, scheduling, and the round-robin API strategy.
 
-The repository is structured to reflect this decoupled architecture, including our CI/CD workflows and containerization setup:
+The repository is structured to reflect this architecture and its validation workflow:
 
 ```text
 fundamental_data_analysis/
 ├── .github/
-│   └── workflows/    # CI/CD pipelines (GitHub Actions for Pytest & dbt)
+│   └── workflows/    # GitHub Actions validation (Ruff, Pytest, and dbt)
+├── config/           # Environment-backed settings and the 35-ticker weekly pool
+├── specs/            # Feature specifications and execution checklist
 ├── src/
 │   ├── extract/          # API connection logic and rate-limit handling
+│   ├── orchestration/    # Round-robin planning and business timezone rules
 │   ├── transformations/  # dbt project (models, macros, tests)
 │   └── load/             # GCS to BigQuery loading routines
 ├── dags/             # Apache Airflow DAGs
@@ -49,8 +52,8 @@ fundamental_data_analysis/
 To ensure reproducibility across environments and streamline deployments, this project heavily relies on Containerization and automated pipelines.
 
 * **Containerization (Docker):** The entire stack—including Apache Airflow, Python extraction modules, and dbt—is fully containerized using Docker and Docker Compose. This ensures that the dependencies remain isolated.
-* **Continuous Integration (CI):** On every Pull Request to the `main` branch, GitHub Actions triggers automatically. It runs `pytest` for the Python API connectors and performs a **dbt Slim CI** run (building and testing only modified models) to catch SQL errors before merging.
-* **Continuous Deployment (CD):** Once the PR is approved, the CD pipeline automatically syncs the updated Airflow DAGs, Python scripts, and dbt models to the production environment.
+* **Continuous Integration (CI):** Pull requests to `main` and pushes to `main` or `dev` run Ruff, the complete mocked Python test suite, DAG integrity checks, all native Silver/Gold dbt unit tests, and a build with data-quality tests in `alphavantage_ci`.
+* **Release validation:** A successful push to `main` records the validation result. Production deployment is not configured in this repository.
 
 ### Core Metrics & KPIs
 
@@ -87,9 +90,10 @@ However, because fundamental financial data (like balance sheets and income stat
 
 To maximize our API usage, we implemented a **Round-Robin Rotation Strategy** orchestrated by Apache Airflow:
 
-1. **Static Ticker Pool:** We maintain a curated list of 35 target companies (tickers) managed via Airflow Variables.
+1. **Static Ticker Pool:** A curated list of 35 target companies is versioned in `config/config.py` as seven weekday groups.
 2. **Daily Batching:** The list is divided into 7 distinct batches (5 tickers per batch).
-3. **Automated Rotation:** The Airflow DAG dynamically selects the batch to process based on the current day of the week (e.g., Batch 1 on Monday, Batch 2 on Tuesday).
+3. **Automated Rotation:** The Airflow DAG selects the batch from `data_interval_end` in `America/Sao_Paulo`, making retries for the same interval deterministic.
+4. **Strict Budget and Failure Gate:** The five endpoints run serially with one HTTP attempt each. A rate limit, quarantine, or partial batch fails the task and blocks dbt and all remaining API calls.
 
 This approach ensures that all 35 companies are fully refreshed every 7 days without ever exceeding the daily API rate limit, making the ingestion process both resilient and cost-effective.
 
@@ -98,8 +102,8 @@ This approach ensures that all 35 companies are fully refreshed every 7 days wit
 To maintain trust in the financial data without introducing the overhead of complex external governance tools, this pipeline relies on a lean, "code-first" governance approach:
 
 * **Data Catalog & Documentation:** We leverage `dbt docs` as our centralized data catalog. It automatically parses our YAML files to generate a static, searchable website containing column-level descriptions, metric definitions, and data lineage graphs for the entire warehouse.
-* **Pipeline Monitoring:** Apache Airflow acts as the control plane. We utilize Airflow's built-in SLA and callback mechanisms to send alerts (e.g., Slack/Email) upon task failures or if the Alpha Vantage API structure changes unexpectedly.
-* **Data Quality Testing:** Over 40+ tests are executed dynamically via `dbt test` during the pipeline run. We enforce `not_null`, `unique`, and `accepted_values` tests on critical financial columns, ensuring that no corrupted API data propagates to the business layer.
+* **Pipeline Monitoring:** Apache Airflow exposes task state and dependency failures. Extraction logs record the run, endpoint, planned/completed/failed/pending tickers, planned calls, and interruption reason; metadata logs are uploaded to GCS.
+* **Data Quality Testing:** The dbt project defines 30 unit tests and 27 data tests. Key columns use `not_null`, `unique`, `accepted_values`, and compound-grain tests so invalid data blocks the Gold completion gate.
 
 ### How to Run Locally
 
@@ -180,7 +184,7 @@ snapshot per `symbol`. Each SQL model has a co-located YAML column catalog, data
 quality tests, and native dbt unit tests with synthetic JSON inputs.
 
 Silver exposes every scalar field declared in `src/extract/contract.py`, including
-all annual and quarterly report fields. Column metadata (`meta.source_field`)
+all annual and quarterly report fields. Column metadata (`config.meta.source_field`)
 records the original JSON key, including API aliases. The CI contract coverage
 check detects missing fields, type mismatches, and missing full-payload test
 assertions when an extraction contract changes.
@@ -241,3 +245,7 @@ The GitHub workflow runs both Silver and Gold unit tests, followed by the full
 needs permission to create/update tables in `alphavantage_ci`. The guarded
 `prepare_ci_schema` macro creates the CI dataset if needed before unit tests;
 it refuses to run with a target other than `ci`.
+
+The final BigQuery validation on 2026-09-10 built all five Silver views and the
+Gold table and passed all 30 unit tests and 27 data tests. The Gold grain check
+returned zero duplicate `(symbol, fiscaldateending, report_type)` groups.
