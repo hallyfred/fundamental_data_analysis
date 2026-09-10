@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from pathlib import Path
 
 import pendulum
@@ -11,6 +12,7 @@ from airflow.operators.python import PythonOperator
 from cosmos import DbtTaskGroup, ExecutionConfig, ProfileConfig, ProjectConfig, RenderConfig
 from cosmos.constants import LoadMode, TestBehavior
 
+from src.orchestration.alerts import notify_pipeline_failure
 from src.orchestration.round_robin import build_round_robin_plan
 
 logger = logging.getLogger(__name__)
@@ -64,6 +66,7 @@ with DAG(
     schedule="0 6 * * 1-7",
     catchup=False,
     max_active_runs=1,
+    default_args={"on_failure_callback": notify_pipeline_failure, "retries": 0},
     tags=["fundamental", "alpha_vantage", "dbt", "cosmos"],
     description="Pipeline financeira com round-robin semanal de 5 empresas por dia e execução dbt via Cosmos.",
 ) as dag:
@@ -107,7 +110,7 @@ with DAG(
     )
     profile_cfg = ProfileConfig(
         profile_name="transformations",
-        target_name="dev",
+        target_name=os.getenv("DBT_TARGET", "prod"),
         profiles_yml_filepath=dbt_project_path / "profiles.yml",
     )
     exec_cfg = ExecutionConfig(dbt_executable_path="dbt")

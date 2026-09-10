@@ -50,6 +50,13 @@ jobs:
       ALPHA_VANTAGE_API_KEY: "dummy_ci_key"
       GCP_PROJECT_ID: "dummy-ci-project"
       BUCKET_BRONZE: "dummy-ci-bucket"
+      POSTGRES_PASSWORD: "dummy-ci-postgres-password"
+      AIRFLOW__CORE__FERNET_KEY: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+      _AIRFLOW_WWW_USER_USERNAME: "admin"
+      _AIRFLOW_WWW_USER_PASSWORD: "dummy-ci-airflow-password"
+      GOOGLE_APPLICATION_CREDENTIALS: "/opt/airflow/gcp_key.json"
+      DBT_TARGET: "prod"
+      AIRFLOW_WEBSERVER_PORT: "8080"
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__CORE__UNIT_TEST_MODE: "True"
       AIRFLOW__COSMOS__ENABLE_TELEMETRY: "False"
@@ -62,6 +69,9 @@ jobs:
         with:
           python-version: "3.11"
           cache: "pip"
+
+      - name: Validate Local Production Compose Configuration
+        run: docker compose config --quiet
 
       - name: Install Project & Test Dependencies
         run: |
@@ -139,6 +149,9 @@ jobs:
 
       - name: Validate dbt Syntax and Project Manifest
         run: dbt parse --project-dir src/transformations --profiles-dir src/transformations --target ci --no-partial-parse
+
+      - name: Validate Production dbt Target
+        run: dbt parse --project-dir src/transformations --profiles-dir src/transformations --target prod --no-partial-parse
 
       - name: Prepare CI Dataset for Unit Tests
         run: dbt run-operation prepare_ci_schema --project-dir src/transformations --profiles-dir src/transformations --target ci

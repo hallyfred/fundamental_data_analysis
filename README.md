@@ -141,12 +141,17 @@ Update the `.env` file with your specific credentials:
 ```env
 ALPHA_VANTAGE_API_KEY=your_api_key_here
 GCP_PROJECT_ID=your_gcp_project_id
-GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/config/gcp_credentials.json
+GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp_key.json
+POSTGRES_PASSWORD=replace_with_a_strong_password
+AIRFLOW__CORE__FERNET_KEY=replace_with_a_generated_fernet_key
+_AIRFLOW_WWW_USER_USERNAME=admin
+_AIRFLOW_WWW_USER_PASSWORD=replace_with_a_strong_password
+DBT_TARGET=prod
 
 ```
 
 **3. Provide GCP Credentials:**
-Place your downloaded Service Account JSON key inside the `config/` directory and rename it to `gcp_credentials.json` (this folder is mapped into the Docker container).
+Place your downloaded Service Account JSON key in the repository root as `gcp_key.json`. The file is ignored by Git and is mounted in the container as `/opt/airflow/gcp_key.json`.
 
 **4. Build and Start the Infrastructure:**
 Initialize the Airflow environment and spin up the containers:

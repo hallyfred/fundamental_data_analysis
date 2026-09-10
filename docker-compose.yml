@@ -1,3 +1,9 @@
+x-logging: &default-logging
+  driver: local
+  options:
+    max-size: "10m"
+    max-file: "5"
+
 services:
   airflow-init:
     build: .
@@ -8,16 +14,27 @@ services:
       - |
         airflow db migrate
         airflow users create \
-          --username admin \
+          --username "$${_AIRFLOW_WWW_USER_USERNAME}" \
           --firstname Admin \
           --lastname User \
           --role Admin \
-          --email admin@example.com \
-          --password admin || true
+          --email "$${_AIRFLOW_WWW_USER_EMAIL}" \
+          --password "$${_AIRFLOW_WWW_USER_PASSWORD}" || \
+        airflow users reset-password \
+          --username "$${_AIRFLOW_WWW_USER_USERNAME}" \
+          --password "$${_AIRFLOW_WWW_USER_PASSWORD}"
+    env_file:
+      - .env
     environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}@postgres/airflow"
+      AIRFLOW__CORE__FERNET_KEY: "${AIRFLOW__CORE__FERNET_KEY:?AIRFLOW__CORE__FERNET_KEY must be set in .env}"
+      _AIRFLOW_WWW_USER_USERNAME: "${_AIRFLOW_WWW_USER_USERNAME:-admin}"
+      _AIRFLOW_WWW_USER_PASSWORD: "${_AIRFLOW_WWW_USER_PASSWORD:?_AIRFLOW_WWW_USER_PASSWORD must be set in .env}"
+      _AIRFLOW_WWW_USER_EMAIL: "${_AIRFLOW_WWW_USER_EMAIL:-admin@localhost}"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    logging: *default-logging
 
   airflow-webserver:
     build: .
@@ -29,13 +46,14 @@ services:
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      AIRFLOW__CORE__FERNET_KEY: 'X6iQ2ZxD0Nn2Y3nv7wZ8kH1dYQ8q1lW7kqc4Fj4d6I8='
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}@postgres/airflow"
+      AIRFLOW__CORE__FERNET_KEY: "${AIRFLOW__CORE__FERNET_KEY:?AIRFLOW__CORE__FERNET_KEY must be set in .env}"
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'True'
       PYTHONPATH: /opt/airflow
-      GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/gcp_key.json
-      GCP_PROJECT_ID: projetodbt-479518
-      BUCKET_BRONZE: hallyson-bronze
+      GOOGLE_APPLICATION_CREDENTIALS: "${GOOGLE_APPLICATION_CREDENTIALS:-/opt/airflow/gcp_key.json}"
+      GCP_PROJECT_ID: "${GCP_PROJECT_ID:?GCP_PROJECT_ID must be set in .env}"
+      BUCKET_BRONZE: "${BUCKET_BRONZE:?BUCKET_BRONZE must be set in .env}"
+      DBT_TARGET: "${DBT_TARGET:-prod}"
       # --- Opção B: tuning de memória ---
       AIRFLOW__WEBSERVER__WORKERS: '2'
       AIRFLOW__WEBSERVER__WORKER_TIMEOUT: '120'
@@ -44,18 +62,25 @@ services:
       # Cosmos telemetry is optional and must not affect pipeline availability.
       AIRFLOW__COSMOS__ENABLE_TELEMETRY: 'False'
     volumes:
-      - .:/opt/airflow
       - ./config:/opt/airflow/config
       - ./dags:/opt/airflow/dags
       - ./src:/opt/airflow/src
-      - ./src/transformations:/opt/airflow/src/transformations
+      - ./gcp_key.json:/opt/airflow/gcp_key.json:ro
+      - ./logs:/opt/airflow/logs
     ports:
-      - "8080:8080"
+      - "127.0.0.1:${AIRFLOW_WEBSERVER_PORT:-8080}:8080"
     depends_on:
       airflow-init:
         condition: service_completed_successfully
       postgres:
-        condition: service_started
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://localhost:8080/health >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    logging: *default-logging
 
   airflow-scheduler:
     build: .
@@ -67,12 +92,13 @@ services:
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      AIRFLOW__CORE__FERNET_KEY: 'X6iQ2ZxD0Nn2Y3nv7wZ8kH1dYQ8q1lW7kqc4Fj4d6I8='
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}@postgres/airflow"
+      AIRFLOW__CORE__FERNET_KEY: "${AIRFLOW__CORE__FERNET_KEY:?AIRFLOW__CORE__FERNET_KEY must be set in .env}"
       PYTHONPATH: /opt/airflow
-      GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/gcp_key.json
-      GCP_PROJECT_ID: projetodbt-479518
-      BUCKET_BRONZE: hallyson-bronze
+      GOOGLE_APPLICATION_CREDENTIALS: "${GOOGLE_APPLICATION_CREDENTIALS:-/opt/airflow/gcp_key.json}"
+      GCP_PROJECT_ID: "${GCP_PROJECT_ID:?GCP_PROJECT_ID must be set in .env}"
+      BUCKET_BRONZE: "${BUCKET_BRONZE:?BUCKET_BRONZE must be set in .env}"
+      DBT_TARGET: "${DBT_TARGET:-prod}"
       # --- Opção B: tuning de memória ---
       AIRFLOW__SCHEDULER__PARSING_PROCESSES: '1'
       AIRFLOW__CORE__LAZY_LOAD_PLUGINS: 'True'
@@ -80,28 +106,41 @@ services:
       # Prevent optional Cosmos telemetry failures from restarting the scheduler.
       AIRFLOW__COSMOS__ENABLE_TELEMETRY: 'False'
     volumes:
-      - .:/opt/airflow
       - ./config:/opt/airflow/config
       - ./dags:/opt/airflow/dags
       - ./src:/opt/airflow/src
-      - ./src/transformations:/opt/airflow/src/transformations
+      - ./gcp_key.json:/opt/airflow/gcp_key.json:ro
+      - ./logs:/opt/airflow/logs
     depends_on:
       airflow-init:
         condition: service_completed_successfully
       postgres:
-        condition: service_started
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname \"$${HOSTNAME}\""]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 60s
+    logging: *default-logging
 
   postgres:
     image: postgres:15
     container_name: fundamental_postgres
+    restart: always
     environment:
       POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}"
       POSTGRES_DB: airflow
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow -d airflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging: *default-logging
 
 volumes:
   postgres_data:

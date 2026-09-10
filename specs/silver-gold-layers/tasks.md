@@ -17,7 +17,7 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 
 ---
 
-## Status de execução — atualizado em 2026-09-09
+## Status de execução — atualizado em 2026-09-10
 
 - **T001–T016 concluídas no código**: configurações, diretórios, dependência `dbt_utils` os cinco modelos Silver e a mart Gold com seus catálogos e testes declarados. Os checkpoints de execução no BigQuery continuam pendentes; checkbox de implementação não significa validação em produção.
 - **Validação realizada**: `dbt parse` aprovado no dbt 1.12.2 sem o aviso de `meta`; Ruff e formatação aprovados; pytest com **64 aprovados no container Linux**. O build real no BigQuery aprovou os **30 testes unitários dbt**, os **27 testes de qualidade dbt**, os cinco modelos Silver e a mart Gold.
@@ -28,6 +28,7 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 - **Round robin reforçado e simulado (T031–T038)**: seleção baseada no fim do intervalo Airflow no timezone `America/Sao_Paulo`, plano diário limitado a 25 chamadas, uma tentativa HTTP por chamada no lote completo, falha explícita para lote parcial e resumo auditável por endpoint. A simulação mockada confirmou 7 runs, 35 tickers únicos e 175 chamadas lógicas na semana. Validação: Ruff e formatação aprovados; pytest com **57 aprovados e 7 ignorados no Windows**; os **9 testes combinados de integridade do DAG e simulação semanal passaram no container Linux**.
 - **Execução real controlada**: a primeira chamada (`INTC/OVERVIEW`) encontrou a cota Alpha Vantage já esgotada. O lote falhou sem retry, deixou quatro tickers pendentes e bloqueou extrações e dbt downstream. Após a run, somente o log de metadata de overview foi criado no GCS; não houve dados, quarentena nem alteração de watermark. Nenhum rerun será feito antes de uma nova janela de cota.
 - **Runtime Airflow estabilizado**: telemetria Cosmos desativada e compatibilidade `anyio/httpcore` fixada; scheduler e webserver permanecem ativos com `restart_count=0`. O rebuild completo da imagem não foi repetido após o resolver de dependências exceder o limite operacional de cinco minutos; a configuração Compose foi validada.
+- **Produção local preparada parcialmente**: segredos retirados do Compose e rotacionados, Airflow restrito a `127.0.0.1:8081`, PostgreSQL sem porta publicada, target dbt `prod` aprovado, três serviços saudáveis, backup validado e suíte Linux com 67 testes aprovados. Permanecem o build reproduzível (T056), a execução real após a renovação da cota (T059/T042) e o fechamento do release (T060).
 
 ---
 
@@ -227,8 +228,22 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 - [x] T049 Concluir T022–T023: responsabilidades das camadas, comentários de grain, deduplicação determinística, aritmética segura e observabilidade revisados conforme a constituição.
 - [x] T050 Concluir T024: README atualizado com arquitetura Silver/Gold, tickers versionados em `config.py`, round robin serial, CI completa e release sem deployment automático.
 - [x] T051 Concluir T021: `dbt docs generate --select intermediate marts` aprovado; lineage `ext_* → stg_* → int_* → fct_fundamental_kpis` confirmado; nenhum dos seis modelos ou suas colunas está sem descrição. A geração global continua exigindo a criação do dataset opcional `alphavantage_raw` usado pelos seeds.
-- [ ] T052 Validar novamente o workflow remoto do GitHub Actions. A primeira execução após o PR #6 falhou ao importar a DAG porque o runner resolveu Airflow 3 com Cosmos 1.8.2; a correção está preparada em `fix/ci-airflow-version`. Nenhum deployment foi executado.
+- [x] T052 Validar novamente o workflow remoto do GitHub Actions. Resultado: lint, testes unitários e validação dbt aprovados no pull request com Airflow 2.9.3 e Cosmos 1.8.2. O job `release-validation` foi ignorado como esperado, pois só executa em `push` para `main`; nenhum deployment foi executado.
 - [x] T053 Corrigir a resolução de dependências do CI para reproduzir o runtime Docker: fixar Airflow 2.9.3 e Cosmos 1.8.2, adicionar smoke test de importação e executar o workflow em PRs para `dev`. Resultado local: versões confirmadas, workflow YAML válido, Ruff/formatação aprovados e 64 testes aprovados no container Linux.
+
+---
+
+## Phase 16: Preparação para produção local com Docker
+
+**Goal**: operar o pipeline de forma segura, reproduzível e observável em um host local antes do release na `main`.
+
+- [x] T054 Externalizar segredos e configurações sensíveis do `docker-compose.yml`, rotacionar as credenciais expostas, padronizar o caminho da credencial GCP e limitar as portas do Airflow/PostgreSQL ao acesso necessário no host local. Resultado: senhas PostgreSQL/web e Fernet key movidas para `.env`; senha persistida e Fernet recriptografadas; credencial padronizada em `/opt/airflow/gcp_key.json` somente leitura; Airflow em `127.0.0.1:8081` devido ao Apache local na 8080; PostgreSQL sem porta publicada.
+- [x] T055 Separar os targets dbt de desenvolvimento e produção e configurar a DAG para usar explicitamente o target de produção, evitando gravações acidentais durante o desenvolvimento. Resultado: `dev=alphavantage_dev`, `prod=alphavantage`, `ci=alphavantage_ci`; DAG carregou `dbt_target=prod` e `dbt parse --target prod --no-partial-parse` foi aprovado.
+- [ ] T056 Tornar a imagem Docker reproduzível com dependências compatíveis e travadas, executar um build limpo do zero e validar importação da DAG, Ruff, pytest e dbt no container resultante. Pendente: dois builds limpos identificaram incompatibilidades entre os constraints do Airflow 2.9.3 e dbt 1.10 (`protobuf` e `google-cloud-aiplatform`); a tentativa seguinte foi interrompida. Não repetir o build nesta etapa; as demais tarefas não dependem dele.
+- [x] T057 Adicionar healthchecks, política de reinício, persistência e procedimentos de backup/restauração do PostgreSQL, além de retenção e rotação dos logs locais. Resultado: PostgreSQL, webserver e scheduler saudáveis; restart permanente; volume preservado; logs Docker limitados; limpeza local de 30 dias preparada; backup real aprovado por SHA-256 e catálogo `pg_restore` com 301 objetos.
+- [x] T058 Configurar observabilidade e alertas de falha/rate limit e preparar o host para operação contínua: Docker na inicialização, energia sem suspensão, rede disponível e verificação do agendamento às 06:00 em `America/Sao_Paulo`. Resultado: callback estruturado e webhook opcional cobertos por testes; Docker Desktop registrado na inicialização; plano Alto desempenho sem suspensão em AC/bateria; schedule/timezone e healthcheck local confirmados; suíte Linux com 67 testes aprovados.
+- [ ] T059 Concluir T042 em uma janela com cota: executar um lote real controlado, confirmar idempotência no GCS/BigQuery e acompanhar ao menos um ciclo completo de sete dias do round robin.
+- [ ] T060 Documentar e validar o procedimento local de release e rollback (`git pull`, build, subida, healthcheck, migração e retorno à versão anterior) antes do merge final `dev → main`. Progresso: runbook, backup/restore, inicialização, healthcheck e rollback documentados; `start_local_stack.ps1` aprovado. O fechamento depende do build limpo da T056 e do merge final.
 
 ---
 
@@ -246,7 +261,8 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 - **Phase 12 (Ponto 2 — Simulação)**: Concluída após Phase 11, sem consumo da API
 - **Phase 13 (Ponto 3 — Execução real)**: Execução única realizada; T042 aguarda nova janela de cota e um payload válido
 - **Phase 14 (Ponto 4 — Validação dbt real)**: Concluída com os dados Bronze já disponíveis no BigQuery/GCS
-- **Phase 15 (Ponto 5 — Fechamento)**: T048–T051 concluídas; T052 aguarda push para validação remota
+- **Phase 15 (Ponto 5 — Fechamento)**: Concluída; workflow remoto aprovado e release sem deployment confirmado
+- **Phase 16 (Produção local)**: T054, T055, T057 e T058 concluídas; T056 aguarda a resolução reproduzível de dependências, T059 aguarda nova janela de cota e T060 depende desses gates antes do release na `main`
 
 ### Dependências entre User Stories
 

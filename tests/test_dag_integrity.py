@@ -6,7 +6,7 @@ import pytest
 
 # Only Windows is unsupported; DAG import errors on Linux must fail CI.
 if sys.platform != "win32":
-    from dags.financial_pipeline_dag import dag, run_extractor, select_batch_for_run
+    from dags.financial_pipeline_dag import dag, profile_cfg, run_extractor, select_batch_for_run
 
 pytestmark = pytest.mark.skipif(sys.platform == "win32", reason="Airflow requires POSIX/Linux")
 
@@ -105,3 +105,7 @@ def test_extraction_is_serial_and_runs_do_not_overlap():
         assert dag.get_task(after).trigger_rule == "all_success"
     assert dag.max_active_runs == 1
     assert dag.timezone.name == "America/Sao_Paulo"
+
+
+def test_dag_uses_production_dbt_target_by_default():
+    assert profile_cfg.target_name == "prod"
