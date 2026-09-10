@@ -227,7 +227,8 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 - [x] T049 Concluir T022–T023: responsabilidades das camadas, comentários de grain, deduplicação determinística, aritmética segura e observabilidade revisados conforme a constituição.
 - [x] T050 Concluir T024: README atualizado com arquitetura Silver/Gold, tickers versionados em `config.py`, round robin serial, CI completa e release sem deployment automático.
 - [x] T051 Concluir T021: `dbt docs generate --select intermediate marts` aprovado; lineage `ext_* → stg_* → int_* → fct_fundamental_kpis` confirmado; nenhum dos seis modelos ou suas colunas está sem descrição. A geração global continua exigindo a criação do dataset opcional `alphavantage_raw` usado pelos seeds.
-- [ ] T052 Validar o workflow remoto do GitHub Actions no pull request. Branch `feat/pipeline-hardening` publicada a partir da `origin/dev` com três commits exclusivos; validação local pronta: Ruff, formatação, `dbt parse`, 64 testes Python no Linux e build dbt real aprovados. Nenhum deployment foi executado.
+- [ ] T052 Validar novamente o workflow remoto do GitHub Actions. A primeira execução após o PR #6 falhou ao importar a DAG porque o runner resolveu Airflow 3 com Cosmos 1.8.2; a correção está preparada em `fix/ci-airflow-version`. Nenhum deployment foi executado.
+- [x] T053 Corrigir a resolução de dependências do CI para reproduzir o runtime Docker: fixar Airflow 2.9.3 e Cosmos 1.8.2, adicionar smoke test de importação e executar o workflow em PRs para `dev`. Resultado local: versões confirmadas, workflow YAML válido, Ruff/formatação aprovados e 64 testes aprovados no container Linux.
 
 ---
 

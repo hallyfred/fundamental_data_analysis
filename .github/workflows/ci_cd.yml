@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -52,6 +52,7 @@ jobs:
       BUCKET_BRONZE: "dummy-ci-bucket"
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__CORE__UNIT_TEST_MODE: "True"
+      AIRFLOW__COSMOS__ENABLE_TELEMETRY: "False"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -67,8 +68,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Check Airflow HTTP Client Dependencies
-        run: python -c "import httpx; client = httpx.Client(); client.close()"
+      - name: Check Airflow Runtime Dependencies
+        run: |
+          python -c "from importlib.metadata import version; import airflow, cosmos; assert airflow.__version__ == '2.9.3'; assert version('astronomer-cosmos') == '1.8.2'; print('Airflow/Cosmos import OK')"
+          python -c "import httpx; client = httpx.Client(); client.close(); print('HTTP client OK')"
 
       # Render the real Cosmos DAG from the current manifest without cloud access.
       - name: Prepare dbt Manifest for DAG Integrity Tests
