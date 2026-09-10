@@ -67,6 +67,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Check Airflow HTTP Client Dependencies
+        run: python -c "import httpx; client = httpx.Client(); client.close()"
+
       # Render the real Cosmos DAG from the current manifest without cloud access.
       - name: Prepare dbt Manifest for DAG Integrity Tests
         run: |
@@ -76,8 +79,24 @@ jobs:
       - name: Check Silver Coverage Against Extraction Contracts
         run: pytest -v tests/test_silver_contracts.py
 
+      - name: Validate Round-Robin Scheduling and API Budget
+        run: |
+          pytest -v \
+            tests/test_round_robin.py \
+            tests/test_round_robin_week.py \
+            tests/test_orchestration.py \
+            tests/test_extractors.py \
+            tests/test_api_client.py
+
       - name: Run Pytest Suite
-        run: pytest -v --ignore=tests/test_silver_contracts.py
+        run: |
+          pytest -v \
+            --ignore=tests/test_silver_contracts.py \
+            --ignore=tests/test_round_robin.py \
+            --ignore=tests/test_round_robin_week.py \
+            --ignore=tests/test_orchestration.py \
+            --ignore=tests/test_extractors.py \
+            --ignore=tests/test_api_client.py
 
   # ==============================================================================
   # 3. DBT VALIDATION (Parse, Silver/Gold unit tests & data quality)

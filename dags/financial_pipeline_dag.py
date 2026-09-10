@@ -1,55 +1,66 @@
 from __future__ import annotations
 
-from datetime import datetime
+import json
+import logging
 from pathlib import Path
 
+import pendulum
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from cosmos import DbtTaskGroup, ExecutionConfig, ProfileConfig, ProjectConfig, RenderConfig
 from cosmos.constants import LoadMode, TestBehavior
 
-from config.config import get_symbols_for_day
+from src.orchestration.round_robin import build_round_robin_plan
+
+logger = logging.getLogger(__name__)
 
 
 def select_batch_for_run(**context):
-    execution_day = context["data_interval_start"].weekday()
-    batch = get_symbols_for_day(execution_day)
+    scheduled_for = context.get("data_interval_end") or context.get("logical_date")
+    if scheduled_for is None:
+        raise ValueError("Airflow run context has no data_interval_end or logical_date.")
+
+    plan = build_round_robin_plan(scheduled_for, run_id=context.get("run_id"))
+    batch = plan["symbols"]
     context["ti"].xcom_push(key="ticker_batch", value=batch)
+    context["ti"].xcom_push(key="ticker_batch_plan", value=plan)
+    logger.info("Round-robin plan: %s", json.dumps(plan))
     return batch
 
 
 def run_extractor(extractor_name: str, **context):
     ti = context["ti"]
     batch = ti.xcom_pull(task_ids="select_batch", key="ticker_batch")
+    run_id = context.get("run_id")
 
     if extractor_name == "overview":
         from src.extract.overview import extract_overview
 
-        return extract_overview(symbols=batch)
+        return extract_overview(symbols=batch, run_id=run_id)
     elif extractor_name == "income_statement":
         from src.extract.income_statement import extract_income_statement
 
-        return extract_income_statement(symbols=batch)
+        return extract_income_statement(symbols=batch, run_id=run_id)
     elif extractor_name == "balance_sheet":
         from src.extract.balance_sheet import extract_balance_sheet
 
-        return extract_balance_sheet(symbols=batch)
+        return extract_balance_sheet(symbols=batch, run_id=run_id)
     elif extractor_name == "cash_flow":
         from src.extract.cash_flow import extract_cash_flow
 
-        return extract_cash_flow(symbols=batch)
+        return extract_cash_flow(symbols=batch, run_id=run_id)
     elif extractor_name == "earnings":
         from src.extract.earning import extract_earning
 
-        return extract_earning(symbols=batch)
+        return extract_earning(symbols=batch, run_id=run_id)
     else:
         raise ValueError(f"Extrator não reconhecido: {extractor_name}")
 
 
 with DAG(
     dag_id="financial_fundamental_pipeline",
-    start_date=datetime(2024, 1, 1),
+    start_date=pendulum.datetime(2024, 1, 1, tz="America/Sao_Paulo"),
     schedule="0 6 * * 1-7",
     catchup=False,
     max_active_runs=1,

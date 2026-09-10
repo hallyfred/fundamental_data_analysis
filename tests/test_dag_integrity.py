@@ -13,17 +13,38 @@ pytestmark = pytest.mark.skipif(sys.platform == "win32", reason="Airflow require
 
 def test_select_batch_for_run():
     mock_ti = MagicMock()
-    batch = select_batch_for_run(data_interval_start=datetime(2026, 9, 7), ti=mock_ti)
+    batch = select_batch_for_run(
+        data_interval_end=datetime(2026, 9, 7),
+        run_id="scheduled__2026-09-07",
+        ti=mock_ti,
+    )
     assert isinstance(batch, list)
-    mock_ti.xcom_push.assert_called_once_with(key="ticker_batch", value=batch)
+    assert mock_ti.xcom_push.call_count == 2
+    mock_ti.xcom_push.assert_any_call(key="ticker_batch", value=batch)
+    plan = mock_ti.xcom_push.call_args_list[1].kwargs["value"]
+    assert plan["run_date"] == "2026-09-07"
+    assert plan["planned_requests"] == 25
+
+
+def test_manual_run_uses_logical_date_when_interval_end_is_absent():
+    mock_ti = MagicMock()
+    batch = select_batch_for_run(
+        logical_date=datetime(2026, 9, 13),
+        run_id="manual__2026-09-13",
+        ti=mock_ti,
+    )
+
+    plan = mock_ti.xcom_push.call_args_list[1].kwargs["value"]
+    assert plan["weekday"] == 6
+    assert plan["symbols"] == batch
 
 
 @patch("src.extract.overview.extract_overview", return_value=["f1.json"])
 def test_run_extractor_overview(mock_extract):
     mock_ti = MagicMock()
     mock_ti.xcom_pull.return_value = ["AAPL"]
-    assert run_extractor("overview", ti=mock_ti) == ["f1.json"]
-    mock_extract.assert_called_once_with(symbols=["AAPL"])
+    assert run_extractor("overview", ti=mock_ti, run_id="scheduled__test") == ["f1.json"]
+    mock_extract.assert_called_once_with(symbols=["AAPL"], run_id="scheduled__test")
 
 
 def test_run_extractor_invalid_raises_error():
@@ -81,4 +102,6 @@ def test_extraction_is_serial_and_runs_do_not_overlap():
     ]
     for before, after in zip(chain, chain[1:], strict=False):
         assert before in dag.get_task(after).upstream_task_ids
+        assert dag.get_task(after).trigger_rule == "all_success"
     assert dag.max_active_runs == 1
+    assert dag.timezone.name == "America/Sao_Paulo"

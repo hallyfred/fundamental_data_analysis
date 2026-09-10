@@ -17,14 +17,17 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 
 ---
 
-## Status de execução — atualizado em 2026-09-08
+## Status de execução — atualizado em 2026-09-09
 
 - **T001–T016 concluídas no código**: configurações, diretórios, dependência `dbt_utils` os cinco modelos Silver e a mart Gold com seus catálogos e testes declarados. Os checkpoints de execução no BigQuery continuam pendentes; checkbox de implementação não significa validação em produção.
-- **Validação realizada**: `dbt parse` aprovado no dbt 1.12.2 e Ruff aprovado; pytest com **48 aprovados e 3 ignorados**. São **30 testes unitários dbt** e **27 testes de qualidade dbt** declarados. Os **sete testes unitários Gold passaram no BigQuery**, com dados sintéticos, no target `ci`. Os 23 testes unitários Silver e os testes de qualidade com dados reais ainda não tiveram aprovação confirmada nesta sessão.
-- **Última execução informada pelo usuário**: `int_overview` falhou com `Unrecognized name: raw_data`. A causa provável é a view `stg_overview` desatualizada no BigQuery; a correção local existe, mas sua aplicação e nova validação estão pendentes (T030).
+- **Validação realizada**: `dbt parse` aprovado no dbt 1.12.2 sem o aviso de `meta`; Ruff e formatação aprovados; pytest com **64 aprovados no container Linux**. O build real no BigQuery aprovou os **30 testes unitários dbt**, os **27 testes de qualidade dbt**, os cinco modelos Silver e a mart Gold.
+- **Erro `raw_data` resolvido**: `stg_overview` e `int_overview` foram recriados no BigQuery; os cinco testes de `int_overview` passaram.
 - **Prioridade normativa**: `.specify/memory/constitution.md`. Datas fiscais inválidas permanecem como NULL para auditoria e falham no teste `not_null`; não são descartadas. Todos os campos de `contract.py` devem estar disponíveis na Silver.
-- **Gold implementada; validação E2E pendente**. T022–T023 permanecem abertas até incluir a revisão dos modelos Gold. **T024 parcialmente executada**: README já documenta Silver, contratos e comandos de CI; falta concluir a atualização da seção System Architecture para a estrutura final Silver/Gold.
+- **Gold validada com dados reais**: a mart foi materializada com aproximadamente 1,2 mil linhas, o teste de grain e a consulta explícita retornaram zero duplicatas, e os KPIs de INTC foram reconciliados com os componentes Silver.
 - **Manutenção**: atualizar esta lista após cada tarefa implementada ou validada, registrando o resultado efetivamente observado; não marcar execução de CI/BigQuery como concluída apenas por configurar o workflow ou passar no parse.
+- **Round robin reforçado e simulado (T031–T038)**: seleção baseada no fim do intervalo Airflow no timezone `America/Sao_Paulo`, plano diário limitado a 25 chamadas, uma tentativa HTTP por chamada no lote completo, falha explícita para lote parcial e resumo auditável por endpoint. A simulação mockada confirmou 7 runs, 35 tickers únicos e 175 chamadas lógicas na semana. Validação: Ruff e formatação aprovados; pytest com **57 aprovados e 7 ignorados no Windows**; os **9 testes combinados de integridade do DAG e simulação semanal passaram no container Linux**.
+- **Execução real controlada**: a primeira chamada (`INTC/OVERVIEW`) encontrou a cota Alpha Vantage já esgotada. O lote falhou sem retry, deixou quatro tickers pendentes e bloqueou extrações e dbt downstream. Após a run, somente o log de metadata de overview foi criado no GCS; não houve dados, quarentena nem alteração de watermark. Nenhum rerun será feito antes de uma nova janela de cota.
+- **Runtime Airflow estabilizado**: telemetria Cosmos desativada e compatibilidade `anyio/httpcore` fixada; scheduler e webserver permanecem ativos com `restart_count=0`. O rebuild completo da imagem não foi repetido após o resolver de dependências exceder o limite operacional de cinco minutos; a configuração Compose foi validada.
 
 ---
 
@@ -142,11 +145,11 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 
 **Independent Test**: todos os passos do `quickstart.md` passam; lineage completo no `dbt docs serve`.
 
-- [ ] T017 [US7] Executar `dbt run --select intermediate marts --project-dir src/transformations` e confirmar que todos os 6 modelos constroem sem erros
-- [ ] T018 [US7] Executar `dbt test --select intermediate marts --project-dir src/transformations` e confirmar que todos os testes passam
-- [ ] T019 [US7] Executar query de validação de grain da mart (ver `quickstart.md` seção 5) e confirmar 0 duplicatas
-- [ ] T020 [US7] Executar validação manual de KPIs para ao menos 1 ticker (ver `quickstart.md` seção 6): conferir `net_margin`, `roe` e `revenue_yoy_growth` contra fonte Alpha Vantage
-- [ ] T021 [P] [US7] Executar `dbt docs generate --project-dir src/transformations` e verificar que todos os modelos intermediate e mart aparecem no lineage sem nós sem descrição
+- [x] T017 [US7] Executar `dbt run --select intermediate marts --project-dir src/transformations` e confirmar que todos os 6 modelos constroem sem erros
+- [x] T018 [US7] Executar `dbt test --select intermediate marts --project-dir src/transformations` e confirmar que todos os testes passam
+- [x] T019 [US7] Executar query de validação de grain da mart (ver `quickstart.md` seção 5) e confirmar 0 duplicatas
+- [x] T020 [US7] Executar validação manual de KPIs para ao menos 1 ticker (ver `quickstart.md` seção 6): conferir `net_margin`, `roe` e `revenue_yoy_growth` contra fonte Alpha Vantage
+- [x] T021 [P] [US7] Executar `dbt docs generate --project-dir src/transformations` e verificar que todos os modelos intermediate e mart aparecem no lineage sem nós sem descrição
 
 ---
 
@@ -154,9 +157,9 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 
 **Purpose**: Ajustes finais e verificação de conformidade com a constituição.
 
-- [ ] T022 [P] Verificar que nenhum modelo intermediate ou mart contém lógica de parse que deveria estar em outra camada (Princípio I da constituição)
-- [ ] T023 [P] Verificar que todos os arquivos SQL têm comentário de grain no início (Princípio II da constituição)
-- [ ] T024 Atualizar `README.md` com a nova estrutura de camadas (seção System Architecture) e os comandos de execução atualizados
+- [x] T022 [P] Verificar que nenhum modelo intermediate ou mart contém lógica de parse que deveria estar em outra camada (Princípio I da constituição)
+- [x] T023 [P] Verificar que todos os arquivos SQL têm comentário de grain no início (Princípio II da constituição)
+- [x] T024 Atualizar `README.md` com a nova estrutura de camadas (seção System Architecture) e os comandos de execução atualizados
 
 ---
 
@@ -166,8 +169,65 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 - [x] T026 Adicionar testes dbt com payloads completos dos contratos e verificação Python de cobertura em `tests/test_silver_contracts.py`.
 - [x] T027 Atualizar `.github/workflows/ci_cd.yml` com verificação dos contratos, instalação de pacotes dbt, testes unitários Silver e build/testes de qualidade no target `ci` (`alphavantage_ci`); corrigir mocks GCS em `tests/conftest.py`. Execução remota do workflow ainda não confirmada.
 - [x] T028 Executar validação local: `dbt parse`, Ruff e pytest (48 aprovados, 3 ignorados).
-- [ ] T029 Migrar `meta` das colunas para `config.meta` nos YAMLs e ajustar o teste de cobertura e a documentação para remover o aviso de depreciação observado no dbt 1.12.2.
-- [ ] T030 Atualizar `stg_overview` no BigQuery e reexecutar `int_overview` com seus ancestrais (`dbt run -s +int_overview --project-dir src/transformations`); confirmar resolução do erro `raw_data` e executar os testes do modelo.
+- [x] T029 Migrar `meta` das colunas para `config.meta` nos YAMLs e ajustar o teste de cobertura e a documentação para remover o aviso de depreciação observado no dbt 1.12.2.
+- [x] T030 Atualizar `stg_overview` no BigQuery e reexecutar `int_overview` com seus ancestrais (`dbt run -s +int_overview --project-dir src/transformations`); confirmar resolução do erro `raw_data` e executar os testes do modelo.
+
+---
+
+## Phase 11: Ponto 1 — Hardening do Round Robin
+
+**Goal**: garantir que a rotação semanal respeite o calendário operacional, a cota diária e interrompa o pipeline quando uma extração estiver incompleta.
+
+- [x] T031 Corrigir a seleção diária para usar `data_interval_end` (com fallback para `logical_date`) no timezone `America/Sao_Paulo`; validar sete dias consecutivos, repetição no oitavo dia, rerun da mesma data e virada de timezone.
+- [x] T032 Validar o plano antes da extração para impedir mais de 25 chamadas diárias e configurar uma única tentativa HTTP nas extrações agendadas, pois o lote de 5 tickers × 5 endpoints já consome toda a cota.
+- [x] T033 Fazer lotes parciais, quarentena e erros de API falharem a task; interromper imediatamente os símbolos e endpoints seguintes quando houver rate limit; registrar `run_id`, lote planejado, concluídos, falhas, pendentes e total de chamadas planejadas.
+- [x] T034 Ampliar os testes de round robin, cliente, extratores e DAG e adicionar uma etapa dedicada à validação da rotação no GitHub Actions. Resultado: Ruff e `ruff format --check` aprovados; pytest local com 55 testes aprovados e 7 ignorados por incompatibilidade Airflow/Windows; 7 testes de integridade do DAG aprovados no container Linux.
+
+---
+
+## Phase 12: Ponto 2 — Simulação semanal sem consumo da API
+
+**Goal**: validar o comportamento operacional de uma semana completa usando API e GCS mockados, sem rede, credenciais ou consumo de cota.
+
+- [x] T035 Criar um teste de simulação para sete DAG runs consecutivas e confirmar cinco tickers por run, 35 tickers únicos na semana, repetição correta no oitavo dia e exatamente 25 chamadas planejadas por run. Resultado: 175 chamadas lógicas mockadas, sem rede ou consumo de cota.
+- [x] T036 Simular sucesso, falha parcial, quarentena e rate limit durante a semana; confirmar que os endpoints seguintes e a camada dbt ficam bloqueados quando o lote não é concluído.
+- [x] T037 Validar os resumos de auditoria gerados na simulação: `run_id`, data, endpoint, tickers planejados, concluídos, falhos e pendentes, quantidade de chamadas e motivo da interrupção.
+- [x] T038 Executar Ruff, formatação, pytest completo e testes do DAG no container Linux; atualizar este arquivo com os resultados observados. Resultado: Ruff e formatação aprovados, 57 testes locais aprovados e 7 ignorados no Windows, 9 testes aprovados no container Linux.
+
+---
+
+## Phase 13: Ponto 3 — Execução real controlada do Round Robin
+
+**Goal**: comprovar uma execução real do lote diário na Alpha Vantage e no GCS sem exceder a cota gratuita.
+
+- [x] T039 Fazer o preflight do ambiente: containers saudáveis, DAG carregada sem erros, credenciais disponíveis, lote/data esperados e cota diária ainda não utilizada. Resultado: infraestrutura e credenciais aprovadas, lote `INTC, AMD, NFLX, PFE, COST` confirmado; a indisponibilidade da cota só foi informada pela API na primeira chamada.
+- [x] T040 Executar uma única DAG run controlada após T035–T038, sem retries nem execuções paralelas. Run `manual__round_robin_validation_2026-09-09` executada uma vez; `INTC/OVERVIEW` recebeu rate limit e encerrou o lote imediatamente.
+- [x] T041 Conferir no GCS os cinco endpoints para os cinco tickers planejados, os arquivos de quarentena, os logs estruturados e os watermarks. Resultado: somente `financial/metadata/overview/year=2026/month=09/day=10/overview_extraction.log` foi alterado; nenhum dado, arquivo de quarentena ou watermark foi criado/alterado após a run.
+- [ ] T042 Confirmar a idempotência do resultado no GCS/BigQuery e planejar o rerun para uma janela com cota disponível; bloqueada até uma nova janela diária porque a run não produziu payload válido. Não repetir chamadas em 2026-09-10.
+
+---
+
+## Phase 14: Ponto 4 — Validação final Silver e Gold com dados reais
+
+**Goal**: concluir os checkpoints de modelagem no BigQuery e reconciliar a mart Gold com uma amostra conhecida.
+
+- [x] T043 Concluir T030: `stg_overview` e `int_overview` recriados no BigQuery; build aprovado e cinco testes do modelo aprovados, resolvendo `Unrecognized name: raw_data`.
+- [x] T044 Concluir T017–T018: build real aprovado com cinco views Silver, uma tabela Gold, 30 testes unitários e 27 testes de qualidade; total dbt `PASS=64`.
+- [x] T045 Concluir T019: teste composto e consulta explícita confirmaram zero duplicatas no grain `(symbol, fiscaldateending, report_type)`.
+- [x] T046 Concluir T020: INTC anual em 2007-12-31 reconciliado. `net_margin` 0.181979444, `roe` 0.163135494 e `revenue_yoy_growth` 0.083432254 conferem com os cálculos independentes a partir de receita, lucro, equity e receita anterior Silver.
+- [x] T047 Confirmar que falhas bloqueiam a conclusão da DAG: a falha real de extração deixou toda a cadeia downstream como `upstream_failed`; o teste de integridade confirma que os leaves de testes Silver alimentam Gold e os leaves de testes Gold alimentam `finish_pipeline`.
+
+---
+
+## Phase 15: Ponto 5 — Documentação, manutenção e fechamento
+
+**Goal**: remover pendências técnicas e deixar o projeto reproduzível e pronto para revisão final.
+
+- [x] T048 Concluir T029: `source_field` migrado para `config.meta` nos cinco YAMLs; cobertura de contratos atualizada e aprovada (5 testes); `dbt parse` 1.12.2 aprovado sem o aviso de depreciação.
+- [x] T049 Concluir T022–T023: responsabilidades das camadas, comentários de grain, deduplicação determinística, aritmética segura e observabilidade revisados conforme a constituição.
+- [x] T050 Concluir T024: README atualizado com arquitetura Silver/Gold, tickers versionados em `config.py`, round robin serial, CI completa e release sem deployment automático.
+- [x] T051 Concluir T021: `dbt docs generate --select intermediate marts` aprovado; lineage `ext_* → stg_* → int_* → fct_fundamental_kpis` confirmado; nenhum dos seis modelos ou suas colunas está sem descrição. A geração global continua exigindo a criação do dataset opcional `alphavantage_raw` usado pelos seeds.
+- [ ] T052 Validar o workflow remoto do GitHub Actions após o próximo push. Validação local pronta: Ruff, formatação, `dbt parse`, 64 testes Python no Linux e build dbt real aprovados; working tree revisado, sem deployment executado.
 
 ---
 
@@ -181,6 +241,11 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 - **Phase 8 (Mart)**: Depende de **todas** as Phases 3–7 estarem completas
 - **Phase 9 (Validação)**: Depende de Phase 8
 - **Phase 10 (Polish)**: Depende de Phase 9
+- **Phase 11 (Ponto 1 — Hardening)**: Concluída no código e nos testes locais/Linux
+- **Phase 12 (Ponto 2 — Simulação)**: Concluída após Phase 11, sem consumo da API
+- **Phase 13 (Ponto 3 — Execução real)**: Execução única realizada; T042 aguarda nova janela de cota e um payload válido
+- **Phase 14 (Ponto 4 — Validação dbt real)**: Concluída com os dados Bronze já disponíveis no BigQuery/GCS
+- **Phase 15 (Ponto 5 — Fechamento)**: T048–T051 concluídas; T052 aguarda push para validação remota
 
 ### Dependências entre User Stories
 

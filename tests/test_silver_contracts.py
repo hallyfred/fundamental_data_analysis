@@ -32,9 +32,13 @@ CONTRACTS = [
 def test_silver_exposes_every_contract_field(endpoint, schemas):
     catalog = yaml.safe_load((MODELS / f"int_{endpoint}.yml").read_text(encoding="utf-8"))
     columns = catalog["models"][0]["columns"]
-    mapped = {c["meta"]["source_field"]: c for c in columns if "source_field" in c.get("meta", {})}
+
+    def source_field(column):
+        return column.get("config", {}).get("meta", {}).get("source_field")
+
+    mapped = {source_field(column): column for column in columns if source_field(column)}
     assert len({c["name"] for c in columns}) == len(columns), "Duplicate catalog column"
-    assert len(mapped) == sum("source_field" in c.get("meta", {}) for c in columns)
+    assert len(mapped) == sum(bool(source_field(column)) for column in columns)
     sql = (MODELS / f"int_{endpoint}.sql").read_text(encoding="utf-8")
     unit = next(t for t in catalog["unit_tests"] if t["name"] == f"{endpoint}_all_contract_fields")
     # The native dbt test executes these inputs and checks every public field.

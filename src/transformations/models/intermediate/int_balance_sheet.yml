@@ -10,8 +10,9 @@ models:
     description: Company stock ticker.
     tests:
     - not_null
-    meta:
-      source_field: symbol
+    config:
+      meta:
+        source_field: symbol
   - name: report_type
     data_type: string
     description: Annual or quarterly report frequency.
@@ -31,169 +32,197 @@ models:
       gate.
     tests:
     - not_null
-    meta:
-      source_field: fiscalDateEnding
+    config:
+      meta:
+        source_field: fiscalDateEnding
   - name: reportedcurrency
     data_type: string
     description: Currency of the reported financial amounts.
-    meta:
-      source_field: reportedCurrency
+    config:
+      meta:
+        source_field: reportedCurrency
   - name: total_assets
     data_type: int64
     description: Total assets from Alpha Vantage totalAssets. Missing, sentinel or
       invalid values become NULL.
-    meta:
-      source_field: totalAssets
+    config:
+      meta:
+        source_field: totalAssets
   - name: total_current_assets
     data_type: int64
     description: Total current assets from Alpha Vantage totalCurrentAssets. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: totalCurrentAssets
+    config:
+      meta:
+        source_field: totalCurrentAssets
   - name: cash_and_cash_equivalents
     data_type: int64
     description: Cash and cash equivalents from Alpha Vantage cashAndCashEquivalentsAtCarryingValue.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: cashAndCashEquivalentsAtCarryingValue
+    config:
+      meta:
+        source_field: cashAndCashEquivalentsAtCarryingValue
   - name: cash_and_short_term_investments
     data_type: int64
     description: Cash and short term investments from Alpha Vantage cashAndShortTermInvestments.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: cashAndShortTermInvestments
+    config:
+      meta:
+        source_field: cashAndShortTermInvestments
   - name: inventory
     data_type: int64
     description: Inventory from Alpha Vantage inventory. Missing, sentinel or invalid
       values become NULL.
-    meta:
-      source_field: inventory
+    config:
+      meta:
+        source_field: inventory
   - name: current_net_receivables
     data_type: int64
     description: Current net receivables from Alpha Vantage currentNetReceivables.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: currentNetReceivables
+    config:
+      meta:
+        source_field: currentNetReceivables
   - name: total_non_current_assets
     data_type: int64
     description: Total non current assets from Alpha Vantage totalNonCurrentAssets.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: totalNonCurrentAssets
+    config:
+      meta:
+        source_field: totalNonCurrentAssets
   - name: property_plant_equipment
     data_type: int64
     description: Property plant equipment from Alpha Vantage propertyPlantEquipment.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: propertyPlantEquipment
+    config:
+      meta:
+        source_field: propertyPlantEquipment
   - name: intangible_assets
     data_type: int64
     description: Intangible assets from Alpha Vantage intangibleAssets. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: intangibleAssets
+    config:
+      meta:
+        source_field: intangibleAssets
   - name: goodwill
     data_type: int64
     description: Goodwill from Alpha Vantage goodwill. Missing, sentinel or invalid
       values become NULL.
-    meta:
-      source_field: goodwill
+    config:
+      meta:
+        source_field: goodwill
   - name: long_term_investments
     data_type: int64
     description: Long term investments from Alpha Vantage longTermInvestments. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: longTermInvestments
+    config:
+      meta:
+        source_field: longTermInvestments
   - name: short_term_investments
     data_type: int64
     description: Short term investments from Alpha Vantage shortTermInvestments. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: shortTermInvestments
+    config:
+      meta:
+        source_field: shortTermInvestments
   - name: total_liabilities
     data_type: int64
     description: Total liabilities from Alpha Vantage totalLiabilities. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: totalLiabilities
+    config:
+      meta:
+        source_field: totalLiabilities
   - name: total_current_liabilities
     data_type: int64
     description: Total current liabilities from Alpha Vantage totalCurrentLiabilities.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: totalCurrentLiabilities
+    config:
+      meta:
+        source_field: totalCurrentLiabilities
   - name: current_accounts_payable
     data_type: int64
     description: Current accounts payable from Alpha Vantage currentAccountsPayable.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: currentAccountsPayable
+    config:
+      meta:
+        source_field: currentAccountsPayable
   - name: short_term_debt
     data_type: int64
     description: Short term debt from Alpha Vantage shortTermDebt. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: shortTermDebt
+    config:
+      meta:
+        source_field: shortTermDebt
   - name: total_non_current_liabilities
     data_type: int64
     description: Total non current liabilities from Alpha Vantage totalNonCurrentLiabilities.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: totalNonCurrentLiabilities
+    config:
+      meta:
+        source_field: totalNonCurrentLiabilities
   - name: capital_lease_obligations
     data_type: int64
     description: Capital lease obligations from Alpha Vantage capitalLeaseObligations.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: capitalLeaseObligations
+    config:
+      meta:
+        source_field: capitalLeaseObligations
   - name: long_term_debt
     data_type: int64
     description: Long term debt from Alpha Vantage longTermDebt. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: longTermDebt
+    config:
+      meta:
+        source_field: longTermDebt
   - name: current_long_term_debt
     data_type: int64
     description: Current long term debt from Alpha Vantage currentLongTermDebt. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: currentLongTermDebt
+    config:
+      meta:
+        source_field: currentLongTermDebt
   - name: short_long_term_debt_total
     data_type: int64
     description: Short long term debt total from Alpha Vantage shortLongTermDebtTotal.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: shortLongTermDebtTotal
+    config:
+      meta:
+        source_field: shortLongTermDebtTotal
   - name: other_current_liabilities
     data_type: int64
     description: Other current liabilities from Alpha Vantage otherCurrentLiabilities.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: otherCurrentLiabilities
+    config:
+      meta:
+        source_field: otherCurrentLiabilities
   - name: total_shareholder_equity
     data_type: int64
     description: Total shareholder equity from Alpha Vantage totalShareholderEquity.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: totalShareholderEquity
+    config:
+      meta:
+        source_field: totalShareholderEquity
   - name: retained_earnings
     data_type: int64
     description: Retained earnings from Alpha Vantage retainedEarnings. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: retainedEarnings
+    config:
+      meta:
+        source_field: retainedEarnings
   - name: common_stock
     data_type: int64
     description: Common stock from Alpha Vantage commonStock. Missing, sentinel or
       invalid values become NULL.
-    meta:
-      source_field: commonStock
+    config:
+      meta:
+        source_field: commonStock
   - name: common_stock_shares_outstanding
     data_type: int64
     description: Common stock shares outstanding from Alpha Vantage commonStockSharesOutstanding.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: commonStockSharesOutstanding
+    config:
+      meta:
+        source_field: commonStockSharesOutstanding
   - name: total_debt
     data_type: int64
     description: COALESCE(short_long_term_debt_total, SAFE_ADD(long_term_debt, short_term_debt));
@@ -218,62 +247,72 @@ models:
     data_type: int64
     description: Accumulated depreciation amortization ppe from Alpha Vantage accumulatedDepreciationAmortizationPPE.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: accumulatedDepreciationAmortizationPPE
+    config:
+      meta:
+        source_field: accumulatedDepreciationAmortizationPPE
   - name: intangible_assets_excluding_goodwill
     data_type: int64
     description: Intangible assets excluding goodwill from Alpha Vantage intangibleAssetsExcludingGoodwill.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: intangibleAssetsExcludingGoodwill
+    config:
+      meta:
+        source_field: intangibleAssetsExcludingGoodwill
   - name: investments
     data_type: int64
     description: Investments from Alpha Vantage investments. Missing, sentinel or
       invalid values become NULL.
-    meta:
-      source_field: investments
+    config:
+      meta:
+        source_field: investments
   - name: other_current_assets
     data_type: int64
     description: Other current assets from Alpha Vantage otherCurrentAssets. Missing,
       sentinel or invalid values become NULL.
-    meta:
-      source_field: otherCurrentAssets
+    config:
+      meta:
+        source_field: otherCurrentAssets
   - name: other_non_current_assets
     data_type: int64
     description: Other non current assets from Alpha Vantage otherNonCurrentAssets.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: otherNonCurrentAssets
+    config:
+      meta:
+        source_field: otherNonCurrentAssets
   - name: deferred_revenue
     data_type: int64
     description: Deferred revenue from Alpha Vantage deferredRevenue. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: deferredRevenue
+    config:
+      meta:
+        source_field: deferredRevenue
   - name: current_debt
     data_type: int64
     description: Current debt from Alpha Vantage currentDebt. Missing, sentinel or
       invalid values become NULL.
-    meta:
-      source_field: currentDebt
+    config:
+      meta:
+        source_field: currentDebt
   - name: long_term_debt_noncurrent
     data_type: int64
     description: Long term debt noncurrent from Alpha Vantage longTermDebtNoncurrent.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: longTermDebtNoncurrent
+    config:
+      meta:
+        source_field: longTermDebtNoncurrent
   - name: other_non_current_liabilities
     data_type: int64
     description: Other non current liabilities from Alpha Vantage otherNonCurrentLiabilities.
       Missing, sentinel or invalid values become NULL.
-    meta:
-      source_field: otherNonCurrentLiabilities
+    config:
+      meta:
+        source_field: otherNonCurrentLiabilities
   - name: treasury_stock
     data_type: int64
     description: Treasury stock from Alpha Vantage treasuryStock. Missing, sentinel
       or invalid values become NULL.
-    meta:
-      source_field: treasuryStock
+    config:
+      meta:
+        source_field: treasuryStock
   tests:
   - dbt_utils.unique_combination_of_columns:
       arguments:
@@ -331,8 +370,8 @@ unit_tests:
       total_assets: null
       fiscaldateending_raw: '2025-06-28'
     - fiscaldateending: null
-      fiscaldateending_raw: broken-date
       total_assets: 42
+      fiscaldateending_raw: broken-date
 - name: balance_sheet_empty_arrays
   model: int_balance_sheet
   given:

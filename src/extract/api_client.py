@@ -41,7 +41,7 @@ class AlphaVantageAPIClient:
     MAX_RETRIES = 3
     BACKOFF_BASE_SECONDS = 2  # delays: 2s, 4s, 8s
 
-    def __init__(self, base_url: str, api_key: str):
+    def __init__(self, base_url: str, api_key: str, max_retries: int | None = None):
         # Fix #9 — falha imediata com mensagem clara se a key não estiver configurada
         if not api_key:
             raise ValueError(
@@ -50,6 +50,9 @@ class AlphaVantageAPIClient:
             )
         self.base_url = base_url
         self.api_key = api_key
+        self.max_retries = max_retries if max_retries is not None else self.MAX_RETRIES
+        if self.max_retries < 1:
+            raise ValueError("max_retries must be at least 1.")
 
     def _sanitize(self, message: str) -> str:
         """Remove qualquer ocorrência da API key do texto de logs/exceções."""
@@ -98,7 +101,7 @@ class AlphaVantageAPIClient:
             "apikey": self.api_key,
         }
 
-        for attempt in range(1, self.MAX_RETRIES + 1):
+        for attempt in range(1, self.max_retries + 1):
             try:
                 response = requests.get(self.base_url, params=params, timeout=TIMEOUT)
                 response.raise_for_status()
@@ -119,15 +122,15 @@ class AlphaVantageAPIClient:
                     raise
 
                 # Rate-limit por minuto transitório: aguarda e tenta novamente
-                if attempt < self.MAX_RETRIES:
+                if attempt < self.max_retries:
                     wait = self.BACKOFF_BASE_SECONDS**attempt
                     _logger.warning(
-                        f"[{symbol}/{function}] Rate-limit (tentativa {attempt}/{self.MAX_RETRIES}). "
+                        f"[{symbol}/{function}] Rate-limit (tentativa {attempt}/{self.max_retries}). "
                         f"Aguardando {wait}s antes de nova tentativa..."
                     )
                     time.sleep(wait)
                 else:
-                    _logger.error(f"[{symbol}/{function}] Rate-limit persistente após {self.MAX_RETRIES} tentativas.")
+                    _logger.error(f"[{symbol}/{function}] Rate-limit persistente após {self.max_retries} tentativas.")
                     raise
 
             except AlphaVantageAPIError:
@@ -135,7 +138,7 @@ class AlphaVantageAPIClient:
                 raise
 
             except requests.exceptions.Timeout:
-                if attempt < self.MAX_RETRIES:
+                if attempt < self.max_retries:
                     wait = self.BACKOFF_BASE_SECONDS**attempt
                     _logger.warning(
                         f"[{symbol}/{function}] Timeout na tentativa {attempt}/{self.MAX_RETRIES}. "
@@ -147,7 +150,7 @@ class AlphaVantageAPIClient:
 
             except requests.exceptions.RequestException as e:
                 # Erros de rede genéricos (conexão recusada, DNS, etc.)
-                if attempt < self.MAX_RETRIES:
+                if attempt < self.max_retries:
                     wait = self.BACKOFF_BASE_SECONDS**attempt
                     _logger.warning(
                         f"[{symbol}/{function}] Erro de rede na tentativa {attempt}/{self.MAX_RETRIES}: {e}. "
