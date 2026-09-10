@@ -227,7 +227,7 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 - [x] T049 Concluir T022–T023: responsabilidades das camadas, comentários de grain, deduplicação determinística, aritmética segura e observabilidade revisados conforme a constituição.
 - [x] T050 Concluir T024: README atualizado com arquitetura Silver/Gold, tickers versionados em `config.py`, round robin serial, CI completa e release sem deployment automático.
 - [x] T051 Concluir T021: `dbt docs generate --select intermediate marts` aprovado; lineage `ext_* → stg_* → int_* → fct_fundamental_kpis` confirmado; nenhum dos seis modelos ou suas colunas está sem descrição. A geração global continua exigindo a criação do dataset opcional `alphavantage_raw` usado pelos seeds.
-- [ ] T052 Validar o workflow remoto do GitHub Actions após o próximo push. Validação local pronta: Ruff, formatação, `dbt parse`, 64 testes Python no Linux e build dbt real aprovados; working tree revisado, sem deployment executado.
+- [ ] T052 Validar o workflow remoto do GitHub Actions no pull request. Branch `feat/pipeline-hardening` publicada a partir da `origin/dev` com três commits exclusivos; validação local pronta: Ruff, formatação, `dbt parse`, 64 testes Python no Linux e build dbt real aprovados. Nenhum deployment foi executado.
 
 ---
 
