@@ -5,6 +5,8 @@
 
 A local-first data engineering pipeline that collects fundamental financial data from Alpha Vantage, preserves validated JSON payloads in Google Cloud Storage, and builds analytics-ready Silver and Gold models in BigQuery with dbt. Apache Airflow coordinates the complete workflow and enforces the API budget.
 
+**Project documentation:** [Explore the dbt Docs catalog, model SQL, tests, and lineage](https://hallyfred.github.io/fundamental_data_analysis/).
+
 > **Project status:** The five Silver models and the Gold KPI mart are implemented and validated. The reproducible local Docker runtime passes 70 Python tests; BigQuery validation has also passed 30 dbt unit tests and 27 dbt data tests. Production readiness still requires the controlled seven-day round-robin observation and day-eight idempotency check described in the [production validation checklist](docs/round-robin-production-validation.md).
 
 ## Contents
