@@ -249,7 +249,7 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 - [x] T063 Revisar idioma e segurança do código, configurações, testes e automações publicados. Resultado: conteúdo operacional padronizado em inglês; exceções e alertas agora removem segredos; webhook exige HTTPS; fontes e profiles dbt usam variáveis de ambiente; Ruff executa regras Bandit; Actions e PostgreSQL foram fixados por SHA/digest; permissões do workflow foram reduzidas; 70 testes Linux, Ruff, Compose, importação da DAG, parse e docs dbt aprovados.
 - [x] T064 Avaliar a remoção da URL PostgreSQL antiga presente em commits históricos de `airflow.cfg`. Resultado: reescrita do histórico descartada por decisão do responsável; risco residual aceito porque a credencial foi rotacionada em T054 e os artefatos de runtime não são mais rastreados.
 - [x] T065 Particionar `fct_fundamental_kpis` por `fiscaldateending`, clusterizar por `symbol/report_type` e documentar a estratégia de atualização. Resultado: Silver mantida como views atuais; Gold mantida com full rebuild para preservar janelas, períodos atrasados e o snapshot mais recente de overview; tabela materializada no dataset `alphavantage_ci` com cerca de 1,2 mil linhas; INFORMATION_SCHEMA confirmou a partição e a ordem de clustering; 30 testes unitários e 27 testes de qualidade dbt aprovados.
-- [ ] T066 Publicar o catálogo dbt no GitHub Pages com overview alinhado ao projeto, geração sem credenciais GCP, referências de Actions fixadas por SHA e links para README, runbooks, checklist e specs. Progresso: conteúdo e workflow preparados; publicação aguarda habilitação inicial do GitHub Pages e validação do deploy remoto.
+- [x] T066 Publicar o catálogo dbt no GitHub Pages com overview alinhado ao projeto, geração sem credenciais GCP, referências de Actions fixadas por SHA e links para README, runbooks, checklist e specs. Resultado: GitHub Pages habilitado com GitHub Actions; workflow remoto `34603097972` aprovado; catálogo publicado em `https://hallyfred.github.io/fundamental_data_analysis/`; resposta HTTP 200, overview personalizado e link no README validados.
 
 ---
 
@@ -268,7 +268,7 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 - **Phase 13 (Ponto 3 — Execução real)**: Execução única realizada; T042 aguarda nova janela de cota e um payload válido
 - **Phase 14 (Ponto 4 — Validação dbt real)**: Concluída com os dados Bronze já disponíveis no BigQuery/GCS
 - **Phase 15 (Ponto 5 — Fechamento)**: Concluída; workflow remoto aprovado e release sem deployment confirmado
-- **Phase 16 (Produção local)**: T054–T058 e T060–T065 concluídas; T059 aguarda nova janela de cota e sete dias de evidências reais; T066 aguarda publicação do dbt Docs
+- **Phase 16 (Produção local)**: T054–T058 e T060–T066 concluídas; T059 aguarda nova janela de cota e sete dias de evidências reais
 
 ### Dependências entre User Stories
 
