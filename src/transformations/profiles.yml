@@ -36,3 +36,13 @@ transformations:
       timeout_seconds: 300
       priority: interactive
       retries: 1
+
+    docs:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('GCP_PROJECT_ID', 'public-docs') }}"
+      dataset: alphavantage_docs
+      threads: 1
+      location: US
+      timeout_seconds: 300
+      priority: interactive

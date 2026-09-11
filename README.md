@@ -1,6 +1,7 @@
 # Fundamental Data Analysis Pipeline
 
 [![CI/CD Pipeline](https://github.com/hallyfred/fundamental_data_analysis/actions/workflows/ci_cd.yml/badge.svg?branch=dev)](https://github.com/hallyfred/fundamental_data_analysis/actions/workflows/ci_cd.yml)
+[![dbt Docs](https://img.shields.io/badge/dbt%20Docs-GitHub%20Pages-FF694B?logo=dbt)](https://hallyfred.github.io/fundamental_data_analysis/)
 
 A local-first data engineering pipeline that collects fundamental financial data from Alpha Vantage, preserves validated JSON payloads in Google Cloud Storage, and builds analytics-ready Silver and Gold models in BigQuery with dbt. Apache Airflow coordinates the complete workflow and enforces the API budget.
 
@@ -14,6 +15,7 @@ A local-first data engineering pipeline that collects fundamental financial data
 - [Data model and KPIs](#data-model-and-kpis)
 - [Quickstart on Windows](#quickstart-on-windows)
 - [Working with dbt](#working-with-dbt)
+- [Published dbt documentation](#published-dbt-documentation)
 - [Testing and CI](#testing-and-ci)
 - [Local operations](#local-operations)
 - [Project structure](#project-structure)
@@ -211,6 +213,12 @@ Native dbt unit tests require a BigQuery connection even though their SQL inputs
 docker exec fundamental_airflow_webserver dbt run-operation prepare_ci_schema --project-dir /opt/airflow/src/transformations --profiles-dir /opt/airflow/src/transformations --target ci
 docker exec fundamental_airflow_webserver dbt test --select "intermediate,test_type:unit marts,test_type:unit" --project-dir /opt/airflow/src/transformations --profiles-dir /opt/airflow/src/transformations --target ci
 ```
+
+## Published dbt documentation
+
+The public [dbt Docs site](https://hallyfred.github.io/fundamental_data_analysis/) contains the source and model catalog, column descriptions, tests, model SQL, and lineage graph. Its customized overview explains the pipeline architecture, update strategy, KPIs, ingestion policy, and quality controls.
+
+README, operational runbooks, production evidence, and feature specifications remain versioned in this repository and are linked from the dbt Docs overview. The Pages workflow generates the public catalog with placeholder project and bucket names and an empty warehouse catalog, so publishing never requires GCP credentials and does not expose production environment identifiers or live warehouse statistics.
 
 ## Testing and CI
 
