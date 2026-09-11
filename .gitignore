@@ -1,11 +1,13 @@
 # ==============================================================================
-# SEGURANÇA E CREDENCIAIS (Regra de Ouro: NUNCA suba esses arquivos)
+# SECURITY AND CREDENTIALS (never commit these files)
 # ==============================================================================
 .env
 .env.*
+!.env.example
+.kiro/
 
 # ==============================================================================
-# ARQUIVOS DE DADOS (Não versionamos dados no Git)
+# DATA FILES (data is not versioned in Git)
 # ==============================================================================
 *.json
 *.csv
@@ -13,7 +15,12 @@
 /data/
 
 # ==============================================================================
-# CACHE E AMBIENTE PYTHON
+# SPECKIT (primary local governance files; intentionally not published)
+# ==============================================================================
+.specify/
+
+# ==============================================================================
+# PYTHON CACHE AND ENVIRONMENTS
 # ==============================================================================
 __pycache__/
 *.py[cod]
@@ -24,10 +31,20 @@ env/
 .pytest_cache/
 
 # ==============================================================================
-# ARQUIVOS DE SISTEMA OPERACIONAL E IDEs
+# OPERATING SYSTEM AND IDE FILES
 # ==============================================================================
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
 dbt_internal_packages/
+
+# Generated runtime artifacts (keep local copies out of version control)
+*.log
+*.pid
+logs/
+target/
+dbt_packages/
+/airflow.cfg
+/webserver_config.py
+/backups/

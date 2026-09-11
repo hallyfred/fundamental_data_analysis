@@ -12,7 +12,7 @@ clean-targets:
   - "dbt_packages"
 
 on-run-start:
-  - "{{ dbt_external_tables.stage_external_sources() }}"
+  - "{% if target.name != 'ci' %}{{ dbt_external_tables.stage_external_sources() }}{% endif %}"
 
 seeds:
   transformations:

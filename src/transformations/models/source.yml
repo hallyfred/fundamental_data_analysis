@@ -1,21 +1,21 @@
 version: 2
 
 sources:
-  - name: camada_bronze
-    database: projetodbt-479518 
-    schema: alphavantage        
+  - name: bronze
+    database: "{{ env_var('GCP_PROJECT_ID') }}"
+    schema: alphavantage
     tables:
       - name: ext_overview
-        description: "Tabela externa apontando para os JSONs da Alpha Vantage no GCP"
+        description: "External table pointing to Alpha Vantage overview JSON files."
         external:
-          # O TRUQUE ESTÁ NESTE BLOCO OPTIONS:
+          # Parse each JSON document as one CSV field.
           options:
             format: CSV
-            field_delimiter: "\x01"  # Um caractere invisível que nunca vai existir no JSON
-            quote: ""                # Desliga o entendimento de aspas para não quebrar o JSON
+            field_delimiter: "\x01"  # Delimiter chosen to avoid splitting JSON content.
+            quote: ""                # Disable CSV quote parsing to preserve JSON strings.
             uris: 
-              - 'gs://hallyson-bronze/financial/overview/year=*'
-            hive_partition_uri_prefix: 'gs://hallyson-bronze/financial/overview'
+              - "gs://{{ env_var('BUCKET_BRONZE') }}/financial/overview/year=*"
+            hive_partition_uri_prefix: "gs://{{ env_var('BUCKET_BRONZE') }}/financial/overview"
           partitions:
             - name: year
               data_type: INT64
@@ -36,8 +36,8 @@ sources:
             field_delimiter: "\x01"
             quote: ""
             uris:
-              - 'gs://hallyson-bronze/financial/balance_sheet/year=*'
-            hive_partition_uri_prefix: 'gs://hallyson-bronze/financial/balance_sheet'
+              - "gs://{{ env_var('BUCKET_BRONZE') }}/financial/balance_sheet/year=*"
+            hive_partition_uri_prefix: "gs://{{ env_var('BUCKET_BRONZE') }}/financial/balance_sheet"
           partitions:
             - name: year
               data_type: INT64
@@ -57,8 +57,8 @@ sources:
             field_delimiter: "\x01"
             quote: ""
             uris:
-              - 'gs://hallyson-bronze/financial/cash_flow/year=*'
-            hive_partition_uri_prefix: 'gs://hallyson-bronze/financial/cash_flow'
+              - "gs://{{ env_var('BUCKET_BRONZE') }}/financial/cash_flow/year=*"
+            hive_partition_uri_prefix: "gs://{{ env_var('BUCKET_BRONZE') }}/financial/cash_flow"
           partitions:
             - name: year
               data_type: INT64
@@ -78,8 +78,8 @@ sources:
             field_delimiter: "\x01"
             quote: ""
             uris:
-              - 'gs://hallyson-bronze/financial/income_statement/year=*'
-            hive_partition_uri_prefix: 'gs://hallyson-bronze/financial/income_statement'
+              - "gs://{{ env_var('BUCKET_BRONZE') }}/financial/income_statement/year=*"
+            hive_partition_uri_prefix: "gs://{{ env_var('BUCKET_BRONZE') }}/financial/income_statement"
           partitions:
             - name: year
               data_type: INT64
@@ -99,8 +99,8 @@ sources:
             field_delimiter: "\x01"
             quote: ""
             uris:
-              - 'gs://hallyson-bronze/financial/earning/year=*'
-            hive_partition_uri_prefix: 'gs://hallyson-bronze/financial/earning'
+              - "gs://{{ env_var('BUCKET_BRONZE') }}/financial/earning/year=*"
+            hive_partition_uri_prefix: "gs://{{ env_var('BUCKET_BRONZE') }}/financial/earning"
           partitions:
             - name: year
               data_type: INT64

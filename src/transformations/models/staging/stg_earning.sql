@@ -5,4 +5,4 @@ SELECT
     year,
     month,
     day
-FROM {{ source('camada_bronze', 'ext_earning') }}
+FROM {{ source('bronze', 'ext_earning') }}

@@ -213,7 +213,13 @@ e tipo de relatório, após deduplicação pela ingestão mais recente.
 
 **Grain**: `(symbol, fiscaldateending, report_type)` — âncora no `int_income_statement`.
 
-**Materialização**: TABLE no dataset `alphavantage`.
+**Materialização**: TABLE no dataset `alphavantage`, reconstruída integralmente em cada execução dbt.
+
+**Estratégia de atualização**:
+- Os modelos Silver permanecem como views e refletem automaticamente as partições Bronze atuais.
+- A Gold usa full rebuild para recalcular corretamente `LAG`, períodos financeiros recebidos com atraso e linhas históricas enriquecidas pelo snapshot mais recente de overview.
+- A tabela é particionada por `fiscaldateending` (DATE, granularidade diária) e clusterizada por `symbol` e `report_type`.
+- A migração para incremental só será justificada quando o custo do rebuild se tornar relevante e deverá recalcular o histórico completo dos símbolos afetados para evitar KPIs obsoletos.
 
 **Estratégia de join**:
 ```

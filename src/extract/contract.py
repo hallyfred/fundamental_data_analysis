@@ -3,35 +3,35 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-# A Alpha Vantage envia valores financeiros como strings e usa estes valores
-# sentinela quando uma informação não está disponível.
+# Alpha Vantage sends financial values as strings and uses these sentinel values
+# when information is unavailable.
 AlphaInt = int | Literal["None", "-", "", "N/A"]
 AlphaFloat = float | Literal["None", "-", "", "N/A"]
 
 
 def has_extra_fields(model: BaseModel) -> bool:
     """
-    Verifica se a resposta da API continha campos não mapeados no contrato.
-    Retorna True se houver campos extras — o extractor deve rotear o arquivo
-    para a pasta de quarentena no GCS em vez do caminho Bronze normal.
+    Check whether the API response contains fields not mapped by the contract.
+    Return True for extra fields so the extractor can route the file
+    to the GCS quarantine prefix instead of the regular Bronze prefix.
     """
     return bool(model.model_extra)
 
 
-# Todos os contratos usam `extra='allow'` para que novos campos da API não
-# derrubem o pipeline. Campos desconhecidos são capturados em `model.model_extra`
-# e a função `has_extra_fields` é usada pelos extractors para rotear o arquivo
-# para quarentena quando campos inesperados são detectados.
+# Every contract uses `extra='allow'` so newly introduced API fields do not
+# crash the pipeline. Unknown fields are captured in `model.model_extra`,
+# and `has_extra_fields` lets extractors route the payload
+# to quarantine when unexpected fields are detected.
 STRICT_MODEL_CONFIG = ConfigDict(extra="allow", populate_by_name=True)
 
 
 # ==========================================
-# 1. CONTRATO DO OVERVIEW
+# 1. OVERVIEW CONTRACT
 # ==========================================
 class OverviewSchema(BaseModel):
     model_config = STRICT_MODEL_CONFIG
 
-    # 1. Informações Cadastrais
+    # 1. Company information
     Symbol: str
     AssetType: str | None = None
     Name: str | None = None
@@ -49,7 +49,7 @@ class OverviewSchema(BaseModel):
     DividendDate: str | None = None
     ExDividendDate: str | None = None
 
-    # 2. Números Inteiros (AlphaInt)
+    # 2. Integer values (AlphaInt)
     MarketCapitalization: AlphaInt | None = None
     EBITDA: AlphaInt | None = None
     RevenueTTM: AlphaInt | None = None
@@ -57,7 +57,7 @@ class OverviewSchema(BaseModel):
     SharesOutstanding: AlphaInt | None = None
     SharesFloat: AlphaInt | None = None
 
-    # 3. Decimais / Porcentagens / Multiplicadores (AlphaFloat)
+    # 3. Decimals, percentages, and multipliers (AlphaFloat)
     PERatio: AlphaFloat | None = None
     PEGRatio: AlphaFloat | None = None
     BookValue: AlphaFloat | None = None
@@ -88,7 +88,7 @@ class OverviewSchema(BaseModel):
     PercentInsiders: AlphaFloat | None = None
     PercentInstitutions: AlphaFloat | None = None
 
-    # 4. Colunas problemáticas (Começam com número)
+    # 4. API fields whose names begin with a number
     week_high_52: AlphaFloat | None = Field(default=None, alias="52WeekHigh")
     week_low_52: AlphaFloat | None = Field(default=None, alias="52WeekLow")
     moving_average_50: AlphaFloat | None = Field(default=None, alias="50DayMovingAverage")
@@ -100,14 +100,14 @@ class OverviewSchema(BaseModel):
 # ==========================================
 
 
-# A) Uma linha representa um relatório anual ou trimestral.
+# A) One row represents an annual or quarterly report.
 class BalanceSheetReport(BaseModel):
     model_config = STRICT_MODEL_CONFIG
 
     fiscalDateEnding: date
     reportedCurrency: str
 
-    # Valores Contábeis (Convertidos para Int)
+    # Accounting values converted through AlphaInt
     totalAssets: AlphaInt | None = None
     totalCurrentAssets: AlphaInt | None = None
     cashAndCashEquivalentsAtCarryingValue: AlphaInt | None = None
@@ -146,7 +146,7 @@ class BalanceSheetReport(BaseModel):
     commonStockSharesOutstanding: AlphaInt | None = None
 
 
-# B) O envelope representa a resposta completa de um ticker.
+# B) The envelope represents the complete response for one ticker.
 class BalanceSheetSchema(BaseModel):
     model_config = STRICT_MODEL_CONFIG
 
@@ -160,14 +160,14 @@ class BalanceSheetSchema(BaseModel):
 # ==========================================
 
 
-# A) Uma linha representa um relatório anual ou trimestral.
+# A) One row represents an annual or quarterly report.
 class CashFlowReport(BaseModel):
     model_config = STRICT_MODEL_CONFIG
 
     fiscalDateEnding: date
     reportedCurrency: str
 
-    # Valores de Fluxo de Caixa (Convertidos para Int via AlphaInt)
+    # Cash-flow values converted through AlphaInt
     operatingCashflow: AlphaInt | None = None
     paymentsForOperatingActivities: AlphaInt | None = None
     proceedsFromOperatingActivities: AlphaInt | None = None
@@ -195,12 +195,12 @@ class CashFlowReport(BaseModel):
     stockBasedCompensation: AlphaInt | None = None
     changeInCashAndCashEquivalents: AlphaInt | None = None
     changeInExchangeRate: AlphaInt | None = (
-        None  # Ocasionalmente pode ser float, mas a Alpha Vantage costuma arredondar ou enviar vazio. Se quebrar, mudamos para AlphaFloat.
+        None  # Occasionally returned as a float, although the API usually rounds it or sends an empty value.
     )
     netIncome: AlphaInt | None = None
 
 
-# B) O envelope representa a resposta completa de um ticker.
+# B) The envelope represents the complete response for one ticker.
 class CashFlowSchema(BaseModel):
     model_config = STRICT_MODEL_CONFIG
 
@@ -214,19 +214,19 @@ class CashFlowSchema(BaseModel):
 # ==========================================
 
 
-# A) Uma linha representa um relatório anual ou trimestral.
+# A) One row represents an annual or quarterly report.
 class IncomeStatementReport(BaseModel):
     model_config = STRICT_MODEL_CONFIG
 
     fiscalDateEnding: date
     reportedCurrency: str
 
-    # Valores da DRE (Convertidos para Int via AlphaInt)
+    # Income-statement values converted through AlphaInt
     grossProfit: AlphaInt | None = None
     totalRevenue: AlphaInt | None = None
     costOfRevenue: AlphaInt | None = None
     costofGoodsAndServicesSold: AlphaInt | None = (
-        None  # A Alpha Vantage manda esse "of" minúsculo mesmo, mantemos assim
+        None  # Preserve the lowercase 'of' used by the Alpha Vantage field name.
     )
     operatingIncome: AlphaInt | None = None
     sellingGeneralAndAdministrative: AlphaInt | None = None
@@ -250,7 +250,7 @@ class IncomeStatementReport(BaseModel):
     netIncome: AlphaInt | None = None
 
 
-# B) O envelope representa a resposta completa de um ticker.
+# B) The envelope represents the complete response for one ticker.
 class IncomeStatementSchema(BaseModel):
     model_config = STRICT_MODEL_CONFIG
 
@@ -260,11 +260,11 @@ class IncomeStatementSchema(BaseModel):
 
 
 # ==========================================
-# 5. EARNINGS (Lucro por Ação)
+# 5. EARNINGS
 # ==========================================
 
 
-# A) Estrutura do relatório Anual
+# A) Annual report structure
 class AnnualEarningsReport(BaseModel):
     model_config = STRICT_MODEL_CONFIG
 
@@ -272,7 +272,7 @@ class AnnualEarningsReport(BaseModel):
     reportedEPS: AlphaFloat | None = None
 
 
-# B) Estrutura do relatório Trimestral (Traz dados de expectativa do mercado)
+# B) Quarterly report structure, including market expectations
 class QuarterlyEarningsReport(BaseModel):
     model_config = STRICT_MODEL_CONFIG
 
@@ -282,10 +282,10 @@ class QuarterlyEarningsReport(BaseModel):
     estimatedEPS: AlphaFloat | None = None
     surprise: AlphaFloat | None = None
     surprisePercentage: AlphaFloat | None = None
-    reportTime: str | None = None  # Geralmente é texto ("post-market", etc)
+    reportTime: str | None = None  # Usually text such as 'post-market'
 
 
-# C) Estrutura principal que agrupa as listas
+# C) Top-level response containing both report lists
 class EarningSchema(BaseModel):
     model_config = STRICT_MODEL_CONFIG
 

@@ -11,28 +11,31 @@ from datetime import date
 from pydantic import ValidationError
 
 from config.config import ALPHA_VANTAGE_API_KEY, BASE_URL, BUCKET_BRONZE, ENDPOINTS_API, PROJECT_ID, get_symbols_for_day
-from src.extract.api_client import AlphaVantageAPIClient
+from src.extract.api_client import AlphaVantageAPIClient, AlphaVantageRateLimitError
+from src.extract.batch import ExtractionBatch
 from src.extract.contract import EarningSchema, has_extra_fields
 from src.load.loader import GCPSLoader
 from src.utils.helpers import count_real_rows
-from src.utils.logger import log_extraction, setup_logger, upload_and_clean_log
+from src.utils.logger import log_batch_summary, log_extraction, setup_logger, upload_and_clean_log
 from src.utils.watermark import WatermarkManager
 
 
-def extract_earning(symbols: list[str] | None = None):
+def extract_earning(symbols: list[str] | None = None, run_id: str | None = None):
     logger = setup_logger()
+    logger.run_id = run_id
     function = ENDPOINTS_API["earnings"]
     today = date.today()
 
     if symbols is None:
         symbols = get_symbols_for_day(today.weekday())
 
-    logger.info(f"Iniciando extração de earnings para {len(symbols)} símbolos: {symbols}")
+    logger.info(f"Starting extraction for earnings for {len(symbols)} symbols: {symbols}")
     files_generated = []
+    batch = ExtractionBatch(endpoint=function, symbols=list(symbols), run_id=run_id)
 
     gcp_loader = GCPSLoader(project_id=PROJECT_ID, bucket_name=BUCKET_BRONZE)
     watermark = WatermarkManager(gcp_loader=gcp_loader, endpoint="earnings")
-    client = AlphaVantageAPIClient(BASE_URL, ALPHA_VANTAGE_API_KEY)
+    client = AlphaVantageAPIClient(BASE_URL, ALPHA_VANTAGE_API_KEY, max_retries=1)
 
     for symbol in symbols:
         length = 0
@@ -48,9 +51,9 @@ def extract_earning(symbols: list[str] | None = None):
             file_path = os.path.join(tempfile.gettempdir(), file_name)
 
             if not raw_data:
-                raise ValueError(f"Nenhum dado retornado para o símbolo {symbol}")
+                raise ValueError(f"No data returned for symbol {symbol}")
 
-            logger.info(f"Validando dados de earnings para {symbol}...")
+            logger.info(f"Validating data for earnings for {symbol}...")
             extraction_date = today.isoformat()
 
             validated_data = EarningSchema.model_validate(raw_data)
@@ -58,7 +61,7 @@ def extract_earning(symbols: list[str] | None = None):
             if has_extra_fields(validated_data):
                 extra_keys = list(validated_data.model_extra.keys())
                 logger.warning(
-                    f"Campos novos detectados para {symbol} em '{function}': {extra_keys}. Roteando para quarentena."
+                    f"New fields detected for {symbol} in '{function}': {extra_keys}. Routing payload to quarantine."
                 )
                 with open(file_path, "w", encoding="utf-8") as f:
                     json.dump(raw_data, f, ensure_ascii=False)
@@ -84,11 +87,12 @@ def extract_earning(symbols: list[str] | None = None):
                     rows=length,
                     size=round(file_size_mb, 6),
                     time_seconds=round(time_seconds, 3),
-                    error_message=f"Campos extras detectados: {extra_keys}",
+                    error_message=f"Extra fields detected: {extra_keys}",
                 )
+                batch.record_failure(symbol, f"Extra fields detected: {extra_keys}")
                 continue
 
-            logger.info(f"Validação bem-sucedida para {symbol}.")
+            logger.info(f"Validation succeeded for {symbol}.")
 
             data = validated_data.model_dump(mode="json", by_alias=True, exclude_unset=True)
 
@@ -102,10 +106,10 @@ def extract_earning(symbols: list[str] | None = None):
                 json.dump(data, f, ensure_ascii=False)
 
             file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
-            logger.info(f"Arquivo criado: {file_path} ({file_size_mb:.4f} MB)")
+            logger.info(f"File created: {file_path} ({file_size_mb:.4f} MB)")
 
             length = count_real_rows(data)
-            logger.info(f"Linhas processadas para {symbol}: {length}")
+            logger.info(f"Rows processed for {symbol}: {length}")
 
             fiscal_date = str(
                 validated_data.quarterlyEarnings[0].fiscalDateEnding
@@ -113,13 +117,14 @@ def extract_earning(symbols: list[str] | None = None):
                 else (validated_data.annualEarnings[0].fiscalDateEnding if validated_data.annualEarnings else "")
             )
 
-            # Checagem de Watermark: se o exercício fiscal já foi ingerido, ignora upload
+            # Skip the upload when the fiscal period is already covered by the watermark.
             if not watermark.should_upload(symbol, fiscal_date):
                 logger.info(
-                    f"Exercício fiscal '{fiscal_date}' para {symbol} já existe no Data Lake. Upload no GCS ignorado."
+                    f"Fiscal period '{fiscal_date}' for {symbol} already exists in the Data Lake. GCS upload skipped."
                 )
                 if file_path and os.path.exists(file_path):
                     os.remove(file_path)
+                batch.record_success(symbol)
                 continue
 
             destination_blob_name = (
@@ -128,13 +133,14 @@ def extract_earning(symbols: list[str] | None = None):
 
             gcp_loader.upload_file(file_path, destination_blob_name)
             os.remove(file_path)
-            logger.info(f"Upload concluído e arquivo local removido: {file_name}")
+            logger.info(f"Upload completed and local file removed: {file_name}")
 
             watermark.record_success(symbol, fiscal_date)
             files_generated.append(destination_blob_name)
+            batch.record_success(symbol)
 
             time_seconds = time.perf_counter() - start_time
-            logger.info(f"Tempo total para {symbol}: {time_seconds:.2f}s")
+            logger.info(f"Total time for {symbol}: {time_seconds:.2f}s")
 
             log_extraction(
                 logger=logger,
@@ -149,9 +155,9 @@ def extract_earning(symbols: list[str] | None = None):
                 error_message=None,
             )
 
-        except ValidationError as e:
+        except AlphaVantageRateLimitError as e:
             time_seconds = time.perf_counter() - start_time
-            logger.error(f"Erro de validação para {symbol}: {e}")
+            logger.error(f"Rate limit during extraction for {symbol}: {e}")
             log_extraction(
                 logger=logger,
                 status="ERROR",
@@ -164,10 +170,29 @@ def extract_earning(symbols: list[str] | None = None):
                 time_seconds=round(time_seconds, 3),
                 error_message=str(e),
             )
+            batch.record_failure(symbol, e, stop=True)
+            break
+
+        except ValidationError as e:
+            time_seconds = time.perf_counter() - start_time
+            logger.error(f"Validation error for {symbol}: {e}")
+            log_extraction(
+                logger=logger,
+                status="ERROR",
+                stage_location_bucket=BUCKET_BRONZE,
+                last_updated=today.isoformat(),
+                endpoint=function,
+                symbol=symbol,
+                rows=length,
+                size=round(file_size_mb, 6),
+                time_seconds=round(time_seconds, 3),
+                error_message=str(e),
+            )
+            batch.record_failure(symbol, e)
 
         except ValueError as e:
             time_seconds = time.perf_counter() - start_time
-            logger.error(f"ValueError para {symbol}: {e}")
+            logger.error(f"ValueError for {symbol}: {e}")
             log_extraction(
                 logger=logger,
                 status="ERROR",
@@ -180,10 +205,11 @@ def extract_earning(symbols: list[str] | None = None):
                 time_seconds=round(time_seconds, 3),
                 error_message=str(e),
             )
+            batch.record_failure(symbol, e)
 
         except Exception as e:
             time_seconds = time.perf_counter() - start_time
-            logger.error(f"Erro inesperado ao extrair earnings para {symbol}: {e}")
+            logger.error(f"Unexpected error while extracting earnings for {symbol}: {e}")
             log_extraction(
                 logger=logger,
                 status="ERROR",
@@ -196,13 +222,15 @@ def extract_earning(symbols: list[str] | None = None):
                 time_seconds=round(time_seconds, 3),
                 error_message=str(e),
             )
+            batch.record_failure(symbol, e)
 
         finally:
             if file_path and os.path.exists(file_path):
                 os.remove(file_path)
 
-    # Persiste os watermarks atualizados no GCS
+    # Persist updated watermarks in GCS.
     watermark.save()
+    log_batch_summary(logger, batch.as_log_entry())
 
     for handler in logger.handlers[:]:
         handler.close()
@@ -214,6 +242,7 @@ def extract_earning(symbols: list[str] | None = None):
     )
     upload_and_clean_log(gcp_loader, "extraction.log", log_destination)
 
+    batch.raise_for_incomplete_batch()
     return files_generated
 
 

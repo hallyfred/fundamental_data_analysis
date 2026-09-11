@@ -8,9 +8,9 @@ logger = logging.getLogger(__name__)
 
 class WatermarkManager:
     """
-    Gerencia o watermark de ingestão no GCS por endpoint.
-    Armazena e consulta o último exercício fiscal (fiscalDateEnding / fiscal_year_end)
-    processado para cada ticker, evitando uploads duplicados no Data Lake.
+    Manage the GCS ingestion watermark for one endpoint.
+    Store and retrieve the latest fiscal period (fiscalDateEnding / fiscal_year_end)
+    processed for each ticker to avoid duplicate Data Lake uploads.
     """
 
     def __init__(self, gcp_loader: GCPSLoader, endpoint: str):
@@ -21,7 +21,7 @@ class WatermarkManager:
         self._dirty = False
 
     def _load(self) -> dict[str, str]:
-        """Carrega o mapa de watermarks existente no GCS ou inicializa vazio."""
+        """Load the existing GCS watermark map or initialize an empty one."""
         try:
             content = self.gcp_loader.download_as_text(self.watermark_blob)
             if content:
@@ -29,20 +29,20 @@ class WatermarkManager:
                 if isinstance(data, dict):
                     return data
         except Exception as e:
-            logger.warning(f"Erro ao carregar watermark para '{self.endpoint}': {e}. Iniciando novo mapa.")
+            logger.warning(f"Failed to load watermark for '{self.endpoint}': {e}. Starting with an empty map.")
         return {}
 
     def get_latest_date(self, symbol: str) -> str | None:
-        """Retorna o último exercício fiscal registrado para o símbolo."""
+        """Return the latest fiscal period recorded for the symbol."""
         return self._watermarks.get(symbol.upper())
 
     def should_upload(self, symbol: str, current_fiscal_date: str | None) -> bool:
         """
-        Determina se os dados devem ser enviados para o GCS:
-        - Se current_fiscal_date for None/vazio: True (não bloqueia por falta de metadado).
-        - Se o símbolo for novo: True.
-        - Se current_fiscal_date > última data gravada: True.
-        - Se current_fiscal_date <= última data gravada: False (já ingerido).
+        Determine whether the payload should be uploaded to GCS:
+        - Return True when current_fiscal_date is missing; absent metadata must not block ingestion.
+        - Return True for a new symbol.
+        - Return True when current_fiscal_date is newer than the stored value.
+        - Return False when current_fiscal_date is not newer.
         """
         if not current_fiscal_date:
             return True
@@ -55,7 +55,7 @@ class WatermarkManager:
         return str(current_fiscal_date) > str(last_date)
 
     def record_success(self, symbol: str, current_fiscal_date: str | None) -> None:
-        """Registra a nova data de watermark para o símbolo caso seja mais recente."""
+        """Record a newer fiscal date in the symbol watermark."""
         if not current_fiscal_date:
             return
 
@@ -68,7 +68,7 @@ class WatermarkManager:
             self._dirty = True
 
     def save(self) -> None:
-        """Persiste os watermarks atualizados no GCS se houver modificações."""
+        """Persist modified watermarks in GCS."""
         if not self._dirty:
             return
 
@@ -76,6 +76,6 @@ class WatermarkManager:
             payload = json.dumps(self._watermarks, indent=2, ensure_ascii=False)
             self.gcp_loader.upload_text(payload, self.watermark_blob)
             self._dirty = False
-            logger.info(f"Watermark atualizado com sucesso no GCS: {self.watermark_blob}")
+            logger.info(f"Watermark successfully updated in GCS: {self.watermark_blob}")
         except Exception as e:
-            logger.error(f"Falha ao salvar watermark no GCS ({self.watermark_blob}): {e}")
+            logger.error(f"Failed to save watermark in GCS ({self.watermark_blob}): {e}")

@@ -1,171 +1,290 @@
+# Fundamental Data Analysis Pipeline
 
+[![CI/CD Pipeline](https://github.com/hallyfred/fundamental_data_analysis/actions/workflows/ci_cd.yml/badge.svg?branch=dev)](https://github.com/hallyfred/fundamental_data_analysis/actions/workflows/ci_cd.yml)
 
-## Pipeline Financial Fundamental Analysis
+A local-first data engineering pipeline that collects fundamental financial data from Alpha Vantage, preserves validated JSON payloads in Google Cloud Storage, and builds analytics-ready Silver and Gold models in BigQuery with dbt. Apache Airflow coordinates the complete workflow and enforces the API budget.
 
-### Objective
-This project aims to consolidate fragmented accounting and financial data—such as Company Overview, Income Statements, Balance Sheets, Cash Flow, and Earnings—to monitor and analyze the financial health of publicly listed companies over time.
+> **Project status:** The five Silver models and the Gold KPI mart are implemented and validated. The reproducible local Docker runtime passes 70 Python tests; BigQuery validation has also passed 30 dbt unit tests and 27 dbt data tests. Production readiness still requires the controlled seven-day round-robin observation and day-eight idempotency check described in the [production validation checklist](docs/round-robin-production-validation.md).
 
-Rather than just mirroring the Alpha Vantage API endpoints, the goal is to build an analytical foundation that calculates key business metrics (e.g., ROE, Net Margin, Free Cash Flow, and YoY Growth) by joining disparate financial statements into a unified, business-ready dimensional model.
+## Contents
 
-### What does the pipeline do?
-This pipeline acts as a modern data engineering engine. It extracts raw data from the Alpha Vantage API, loads the original JSON payloads into Google Cloud Storage (Data Lake), and orchestrates the transformation process into BigQuery.
+- [What the pipeline does](#what-the-pipeline-does)
+- [Architecture](#architecture)
+- [Round-robin ingestion](#round-robin-ingestion)
+- [Data model and KPIs](#data-model-and-kpis)
+- [Quickstart on Windows](#quickstart-on-windows)
+- [Working with dbt](#working-with-dbt)
+- [Testing and CI](#testing-and-ci)
+- [Local operations](#local-operations)
+- [Project structure](#project-structure)
+- [Known limitations](#known-limitations)
 
-To ensure reliability and analytical value, the pipeline:
+## What the pipeline does
 
-- **Enforces Data Quality:** Uses Data Contracts (via Pydantic) during ingestion and robust testing (via dbt) to prevent schema drift and null anomalies.
-- **Cleans and Consolidates:** Transforms unstructured JSON data into standardized staging tables.
-- **Models for Business:** Joins distinct financial reports (Balance, Income, Cash Flow) into dimensional Marts (Gold layer) to automatically calculate historical fundamentalist KPIs.
+The pipeline processes five Alpha Vantage endpoints:
 
-### System Architecture & Project Structure
+- `OVERVIEW`
+- `INCOME_STATEMENT`
+- `BALANCE_SHEET`
+- `CASH_FLOW`
+- `EARNINGS`
 
-The pipeline is built with a **Separation of Concerns** principle in mind, isolating the extraction logic from the transformation engine. The architecture follows a Medallion approach (Bronze -> Silver -> Gold), leveraging a Modern Data Stack:
+For every selected ticker, it:
 
-*   **Extraction (Python):** Modular scripts interact with the Alpha Vantage API. Data contracts are enforced using Pydantic before the data hits the lake.
-*   **Data Lake (GCS):** Stores the raw JSON payloads (Bronze Layer), ensuring we always have an immutable historical record to replay if needed.
-*   **Data Warehouse (BigQuery):** Acts as the compute engine for analytics. 
-*   **Transformation (dbt):** Handles all business logic, data cleansing (Silver Layer), and metric calculations (Gold Layer).
-*   **Orchestration (Airflow):** Manages dependencies, scheduling, and the round-robin API strategy.
+1. Fetches each endpoint through a rate-limit-aware Python client.
+2. Validates the response against Pydantic contracts and quarantines invalid payloads.
+3. Stores accepted JSON in date-partitioned GCS Bronze paths and updates endpoint watermarks only after successful uploads.
+4. Creates or refreshes BigQuery external tables for non-CI dbt targets.
+5. Normalizes the raw fields into five Silver views.
+6. Builds the Gold `fct_fundamental_kpis` table and runs its quality gates.
 
-The repository is structured to reflect this decoupled architecture, including our CI/CD workflows and containerization setup:
+Failures, rate limits, quarantines, and incomplete batches stop downstream work. Extraction summaries record planned, completed, failed, and pending tickers and are uploaded to GCS metadata paths.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    API[Alpha Vantage API] --> EXTRACT[Python extraction<br/>Pydantic contracts]
+    AIRFLOW[Apache Airflow<br/>06:00 America/Sao_Paulo] --> EXTRACT
+    EXTRACT --> BRONZE[GCS Bronze<br/>validated JSON]
+    BRONZE --> EXTERNAL[BigQuery external tables]
+    AIRFLOW --> DBT[dbt Core]
+    EXTERNAL --> DBT
+    DBT --> SILVER[Silver views<br/>normalized financial statements]
+    SILVER --> GOLD[Gold table<br/>fundamental KPIs]
+    GOLD --> ANALYTICS[Analytics and BI]
+```
+
+| Layer | Technology | Responsibility |
+| --- | --- | --- |
+| Ingestion | Python, Requests, Pydantic | API access, schema validation, rate-limit handling, quarantine, and watermarks |
+| Bronze | Google Cloud Storage | Validated source payloads partitioned by ingestion date |
+| Silver | BigQuery and dbt | Type normalization, sentinel cleanup, deduplication, and complete contract coverage |
+| Gold | BigQuery and dbt | Financial statement joins and business-ready KPI calculations |
+| Orchestration | Apache Airflow and Cosmos | Scheduling, serial extraction, dbt execution, failure propagation, and alerting |
+| Runtime | Docker Compose | Airflow webserver, scheduler, initialization, and PostgreSQL metadata database |
+
+## Round-robin ingestion
+
+The configured Alpha Vantage plan assumes a limit of 25 API calls per day. Five endpoints allow a maximum batch of five companies per run.
+
+- The 35-ticker universe is versioned in [`config/config.py`](config/config.py) as seven batches of five tickers.
+- The DAG selects a batch from `data_interval_end` in `America/Sao_Paulo`, so reruns of the same logical interval select the same companies.
+- Endpoint tasks run serially and make one HTTP attempt per ticker. One complete daily batch therefore uses at most 25 calls.
+- A rate limit or partial extraction fails the current task, leaves unfinished tickers visible in the summary, and blocks dbt.
+- The eighth logical day wraps to the first batch and provides the planned idempotency checkpoint.
+
+Do not unpause the DAG or manually retry an extraction until the API quota is known to be available. Use the [round-robin production validation checklist](docs/round-robin-production-validation.md) to record the seven-day cycle.
+
+## Data model and KPIs
+
+### Silver
+
+The five `intermediate` views expose every scalar field declared in [`src/extract/contract.py`](src/extract/contract.py):
+
+- `int_overview`
+- `int_income_statement`
+- `int_balance_sheet`
+- `int_cash_flow`
+- `int_earning`
+
+Statement models retain the latest ingestion at grain `(symbol, fiscaldateending, report_type)`. `int_overview` retains the latest snapshot per `symbol`. API sentinel values such as `None`, `-`, `N/A`, and empty strings become `NULL`, and numeric and date conversion use BigQuery safe functions.
+
+Invalid fiscal dates remain visible as `NULL` and fail the quality gate. Each model includes column documentation, source-field metadata, native dbt unit tests, and data tests.
+
+Silver remains materialized as views. The views always expose the current Bronze partitions and avoid maintaining another stored copy while the source volume is small.
+
+### Gold
+
+`fct_fundamental_kpis` is a denormalized table anchored on income statement periods at grain `(symbol, fiscaldateending, report_type)`. Missing companion statements preserve the income row with `NULL` metrics. Overview values represent the latest company snapshot and are identified by `overview_snapshot_date`.
+
+The Gold table uses a full rebuild on every dbt run. This deliberately recalculates window-based growth, late-arriving financial periods, and historical rows enriched by the latest overview snapshot. BigQuery partitions the result by `fiscaldateending` and clusters each partition by `symbol` and `report_type` for date-range and company-level queries.
+
+| Business area | KPI | Calculation or source |
+| --- | --- | --- |
+| Profitability | ROE | Net income / closing shareholders' equity |
+| Profitability | Net margin | Net income / total revenue |
+| Profitability | EBITDA margin | EBITDA / total revenue |
+| Financial risk | Net debt / EBITDA | `(total debt - cash) / EBITDA` |
+| Liquidity | Current ratio | Current assets / current liabilities |
+| Cash generation | Free cash flow | Operating cash flow - capital expenditure |
+| Earnings quality | Quality of earnings | Operating cash flow / net income |
+| Growth | Revenue YoY growth | `LAG(4)` for quarterly periods and `LAG(1)` for annual periods |
+| Earnings | Earnings surprise | Alpha Vantage earnings surprise percentage |
+| Valuation | P/E and EV/EBITDA | Latest Alpha Vantage overview snapshot |
+
+Safe arithmetic preserves `NULL` when inputs are missing or a calculation is invalid. Ratios and margins are stored as fractions, while earnings surprise follows the percentage representation returned by the API.
+
+## Quickstart on Windows
+
+### Prerequisites
+
+- Git and Docker Desktop with Docker Compose.
+- An Alpha Vantage API key with a known available daily quota.
+- A GCP project with BigQuery and Cloud Storage enabled.
+- A service account that can read and write the Bronze bucket, create and update the required datasets and tables, and run BigQuery jobs.
+- A downloaded service-account JSON key.
+
+### 1. Clone the repository
+
+```powershell
+git clone https://github.com/hallyfred/fundamental_data_analysis.git
+Set-Location fundamental_data_analysis
+```
+
+### 2. Configure the environment
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Replace every placeholder in `.env`. The main settings are:
+
+| Variable | Purpose |
+| --- | --- |
+| `ALPHA_VANTAGE_API_KEY` | Alpha Vantage credential |
+| `GCP_PROJECT_ID` | GCP project used by GCS and BigQuery |
+| `BUCKET_BRONZE` | Bronze bucket name |
+| `POSTGRES_PASSWORD` | Airflow metadata database password |
+| `AIRFLOW__CORE__FERNET_KEY` | Encryption key for Airflow connections and variables |
+| `_AIRFLOW_WWW_USER_USERNAME` | Local Airflow administrator username |
+| `_AIRFLOW_WWW_USER_PASSWORD` | Local Airflow administrator password |
+| `_AIRFLOW_WWW_USER_EMAIL` | Local Airflow administrator email |
+| `AIRFLOW_WEBSERVER_PORT` | Loopback port for the Airflow UI; use `8081` when `8080` is occupied |
+| `DBT_TARGET` | Scheduled target; use `prod` for the production DAG |
+| `ALERT_WEBHOOK_URL` | Optional failure notification endpoint |
+
+Generate a Fernet key when preparing a new environment:
+
+```powershell
+docker run --rm apache/airflow:2.9.3-python3.11 python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
+
+### 3. Add the GCP credential
+
+Place the service-account key at `./gcp_key.json`. Docker mounts it read-only as `/opt/airflow/gcp_key.json`. Both `.env` and `gcp_key.json` are ignored by Git and must remain local.
+
+### 4. Build and start the stack
+
+```powershell
+docker compose config --quiet
+docker compose build airflow-webserver
+docker compose up -d
+docker compose ps
+```
+
+The build uses a digest-pinned Airflow 2.9.3 base and installs the exact environment from `requirements.lock`. All three Airflow services share the resulting `fundamental-airflow:2.9.3` image. PostgreSQL data persists in a named volume and its port is not published to the host.
+
+Wait until the webserver, scheduler, and PostgreSQL report `healthy`, then run:
+
+```powershell
+.\scripts\healthcheck_local.ps1
+```
+
+Open `http://127.0.0.1:<AIRFLOW_WEBSERVER_PORT>` and sign in with `_AIRFLOW_WWW_USER_USERNAME` and `_AIRFLOW_WWW_USER_PASSWORD` from `.env`. The validated host uses port `8081`; the example configuration defaults to `8080`.
+
+Keep `financial_fundamental_pipeline` paused until the quota and controlled-run entry conditions are satisfied.
+
+## Working with dbt
+
+The project defines three explicit targets:
+
+| Target | Dataset | Use |
+| --- | --- | --- |
+| `dev` | `alphavantage_dev` | Local development |
+| `ci` | `alphavantage_ci` | Isolated GitHub Actions validation |
+| `prod` | `alphavantage` | Scheduled production pipeline |
+
+Run dbt inside the Airflow container to use the validated dependency set:
+
+```powershell
+docker exec fundamental_airflow_webserver dbt deps --project-dir /opt/airflow/src/transformations --profiles-dir /opt/airflow/src/transformations
+docker exec fundamental_airflow_webserver dbt parse --project-dir /opt/airflow/src/transformations --profiles-dir /opt/airflow/src/transformations --target dev --no-partial-parse
+docker exec fundamental_airflow_webserver dbt build --select +marts --exclude test_type:unit --project-dir /opt/airflow/src/transformations --profiles-dir /opt/airflow/src/transformations --target dev
+```
+
+For non-CI targets, the dbt `on-run-start` hook stages the external sources defined in [`src/transformations/models/source.yml`](src/transformations/models/source.yml). The `ci` target reuses the production Bronze external tables and writes models only to `alphavantage_ci`.
+
+Native dbt unit tests require a BigQuery connection even though their SQL inputs are synthetic:
+
+```powershell
+docker exec fundamental_airflow_webserver dbt run-operation prepare_ci_schema --project-dir /opt/airflow/src/transformations --profiles-dir /opt/airflow/src/transformations --target ci
+docker exec fundamental_airflow_webserver dbt test --select "intermediate,test_type:unit marts,test_type:unit" --project-dir /opt/airflow/src/transformations --profiles-dir /opt/airflow/src/transformations --target ci
+```
+
+## Testing and CI
+
+When the project virtual environment is active, run the local quality gates below. The Python suite mocks Alpha Vantage and cloud writes, so it does not consume API quota:
+
+```powershell
+ruff check .
+ruff format --check .
+pytest -q
+```
+
+For Linux parity, run pytest in the project image:
+
+```powershell
+docker compose run --rm --no-deps --volume ./tests:/opt/airflow/tests:ro --entrypoint pytest airflow-webserver -q /opt/airflow/tests
+```
+
+GitHub Actions runs on pushes and pull requests targeting `dev` or `main`:
+
+| Job | Gate |
+| --- | --- |
+| `lint` | Ruff lint and formatting |
+| `unit-tests` | Compose validation, reproducible Docker build, runtime smoke tests, contract coverage, round-robin tests, DAG integrity, and the complete mocked pytest suite |
+| `dbt-validation` | dbt parse for CI and production targets, Silver/Gold unit tests, model builds, and BigQuery data-quality tests |
+| `release-validation` | Reports successful validation after a push to `main`; it does not deploy |
+
+Required GitHub secrets are `GCP_PROJECT_ID` and `GCP_SA_KEY`. CI writes only to `alphavantage_ci` and never calls Alpha Vantage.
+
+## Local operations
+
+Production runs on the local Windows host through Docker Desktop. Airflow is bound to loopback, PostgreSQL is not exposed, container logs are bounded, and extraction audit logs are uploaded to GCS.
+
+- [Local production runbook](docs/local-production-runbook.md): release, startup, daily checks, backup, restore, rollback, and incident response.
+- [Round-robin production validation](docs/round-robin-production-validation.md): controlled run, seven-day evidence, and day-eight idempotency.
+- [`specs/silver-gold-layers/tasks.md`](specs/silver-gold-layers/tasks.md): implementation and validation history.
+
+Common operational commands:
+
+```powershell
+.\scripts\start_local_stack.ps1
+.\scripts\healthcheck_local.ps1
+.\scripts\backup_airflow_db.ps1
+.\scripts\cleanup_local_logs.ps1 -RetentionDays 30 -DryRun
+```
+
+## Project structure
 
 ```text
 fundamental_data_analysis/
-├── .github/
-│   └── workflows/    # CI/CD pipelines (GitHub Actions for Pytest & dbt)
+├── .github/workflows/        # CI and release validation
+├── config/                  # Environment-backed settings and ticker pool
+├── dags/                    # Airflow DAG definition
+├── docs/                    # Operations and production validation guides
+├── scripts/                 # Startup, health, backup, restore, and cleanup tools
+├── specs/                   # Feature specifications and execution checklist
 ├── src/
-│   ├── extract/          # API connection logic and rate-limit handling
-│   ├── transformations/  # dbt project (models, macros, tests)
-│   └── load/             # GCS to BigQuery loading routines
-├── dags/             # Apache Airflow DAGs
-├── tests/            # Pytest for Python modules
-├── docker-compose.yml# Local infrastructure orchestration
-├── Dockerfile        # Custom image build (Airflow + dbt)
-└── requirements.txt  # Python dependencies
-
+│   ├── extract/             # API client, contracts, and endpoint extractors
+│   ├── load/                # GCS loader
+│   ├── orchestration/       # Round-robin planning and alerts
+│   ├── transformations/     # dbt models, macros, packages, and profiles
+│   └── utils/               # Logging, helpers, and watermarks
+├── tests/                   # Mocked Python and DAG integrity tests
+├── docker-compose.yml       # Local service topology
+├── Dockerfile               # Reproducible Airflow and dbt image
+├── requirements.txt         # Direct dependency requirements
+└── requirements.lock        # Exact container dependency set
 ```
 
-### Containerization & CI/CD Pipeline
+## Known limitations
 
-To ensure reproducibility across environments and streamline deployments, this project heavily relies on Containerization and automated pipelines.
-
-* **Containerization (Docker):** The entire stack—including Apache Airflow, Python extraction modules, and dbt—is fully containerized using Docker and Docker Compose. This ensures that the dependencies remain isolated.
-* **Continuous Integration (CI):** On every Pull Request to the `main` branch, GitHub Actions triggers automatically. It runs `pytest` for the Python API connectors and performs a **dbt Slim CI** run (building and testing only modified models) to catch SQL errors before merging.
-* **Continuous Deployment (CD):** Once the PR is approved, the CD pipeline automatically syncs the updated Airflow DAGs, Python scripts, and dbt models to the production environment.
-
-### Core Metrics & KPIs
-
-The objective of the dimensional modeling (Gold Layer) is not merely to mirror the Alpha Vantage endpoints, but to act as a KPI calculation engine. We selected the most critical metrics used by financial analysts to evaluate a company's health.
-
-This requires joining historical data from Balance Sheets, Income Statements, and Cash Flows, as well as applying SQL Window Functions to calculate period-over-period growth.
-
-| Business Pillar | Selected Metric | What does it answer? | Data Source (dbt Join) |
-| --- | --- | --- | --- |
-| **1. Profitability** | **ROE (Return on Equity)** | Does the company generate good returns on shareholders' equity? | `Net Income` (Income Statement) / `Total Equity` (Balance Sheet) |
-|  | **Net Margin** | How much of the total revenue translates into actual profit? | `Net Income` / `Total Revenue` (Income Statement) |
-|  | **EBITDA Margin** | What is the company's core operational efficiency? | `EBITDA` / `Total Revenue` (Income Statement) |
-| **2. Health & Risk** | **Net Debt / EBITDA** | Can the company easily pay off its debts using its operational cash? | `(Total Debt - Cash)` (Balance Sheet) / `EBITDA` (Income Statement) |
-|  | **Current Ratio** | Does the company have enough liquid assets to cover short-term obligations? | `Current Assets` / `Current Liabilities` (Balance Sheet) |
-| **3. Cash Generation** | **Free Cash Flow (FCF)** | How much actual cash is left after capital expenditures (CapEx)? | `Operating Cash Flow` - `CAPEX` (Cash Flow) |
-|  | **Quality of Earnings** | Is the reported net income backed by actual cash flow, or is it an accounting maneuver? | `Operating Cash Flow` (Cash Flow) / `Net Income` (Income Statement) |
-| **4. Growth** | **Revenue YoY Growth** | Are the company's sales growing compared to the exact same period last year? | Calculated via SQL `LAG()` over `Total Revenue` |
-|  | **Earnings Surprise %** | Does the company consistently beat market expectations? | `EARNINGS` endpoint (Directly from API) |
-| **5. Valuation** | **P/E Ratio & EV/EBITDA** | Is the company currently overvalued or undervalued by the market? | `OVERVIEW` endpoint (Current snapshot) |
-
-### Data Modeling: The "One Big Table" (OBT) Approach
-
-For the Gold Layer (presentation), we purposefully opted for a **One Big Table (OBT)** architecture rather than a traditional Star Schema. This architectural decision was driven by three main factors:
-
-1. **Columnar Database Optimization:** Modern cloud data warehouses like BigQuery are highly optimized for scanning wide, denormalized tables rather than executing complex `JOIN` operations across multiple dimensions.
-2. **Granularity Resolution:** Financial statements operate on different logical grains. A Balance Sheet is a snapshot in time, whereas an Income Statement covers a period. Calculating a metric like ROE (Net Income / Total Equity) requires cross-statement math. By resolving these grains within dbt and outputting a single OBT, we guarantee a "Single Source of Truth".
-3. **Self-Service BI Simplicity:** An OBT abstracts the underlying complexity. End-users or financial analysts connecting via BI tools can simply drag and drop dimensions (Ticker, Quarter, Sector) and pre-calculated metrics without worrying about bi-directional filtering or join traps.
-
-### API Rate Limiting & Orchestration Strategy
-
-The Alpha Vantage free tier restricts usage to **25 API requests per day**. Since our pipeline relies on 5 distinct endpoints (`OVERVIEW`, `INCOME_STATEMENT`, `BALANCE_SHEET`, `CASH_FLOW`, and `EARNINGS`), we can process a maximum of **5 companies (tickers) per day**.
-
-However, because fundamental financial data (like balance sheets and income statements) is only updated quarterly, querying the same companies every day is highly inefficient.
-
-To maximize our API usage, we implemented a **Round-Robin Rotation Strategy** orchestrated by Apache Airflow:
-
-1. **Static Ticker Pool:** We maintain a curated list of 35 target companies (tickers) managed via Airflow Variables.
-2. **Daily Batching:** The list is divided into 7 distinct batches (5 tickers per batch).
-3. **Automated Rotation:** The Airflow DAG dynamically selects the batch to process based on the current day of the week (e.g., Batch 1 on Monday, Batch 2 on Tuesday).
-
-This approach ensures that all 35 companies are fully refreshed every 7 days without ever exceeding the daily API rate limit, making the ingestion process both resilient and cost-effective.
-
-### Data Quality, Monitoring & Data Catalog
-
-To maintain trust in the financial data without introducing the overhead of complex external governance tools, this pipeline relies on a lean, "code-first" governance approach:
-
-* **Data Catalog & Documentation:** We leverage `dbt docs` as our centralized data catalog. It automatically parses our YAML files to generate a static, searchable website containing column-level descriptions, metric definitions, and data lineage graphs for the entire warehouse.
-* **Pipeline Monitoring:** Apache Airflow acts as the control plane. We utilize Airflow's built-in SLA and callback mechanisms to send alerts (e.g., Slack/Email) upon task failures or if the Alpha Vantage API structure changes unexpectedly.
-* **Data Quality Testing:** Over 40+ tests are executed dynamically via `dbt test` during the pipeline run. We enforce `not_null`, `unique`, and `accepted_values` tests on critical financial columns, ensuring that no corrupted API data propagates to the business layer.
-
-### How to Run Locally
-
-If you want to spin up this project on your local machine, follow the steps below.
-
-#### Prerequisites
-
-Before you begin, ensure you have the following installed and configured:
-
-* **Docker** and **Docker Compose**.
-* An **Alpha Vantage Free API Key** (Get it [here](https://www.alphavantage.co/support/#api-key)).
-* A **Google Cloud Platform (GCP)** account with BigQuery and Google Cloud Storage enabled.
-* A GCP **Service Account** with roles: `BigQuery Admin` and `Storage Admin`, with its JSON key downloaded.
-
-#### Quickstart
-
-**1. Clone the repository:**
-
-```bash
-git clone [https://github.com/yourusername/fundamental_data_analysis.git](https://github.com/yourusername/fundamental_data_analysis.git)
-cd fundamental_data_analysis
-
-```
-
-**2. Configure Environment Variables:**
-Create a `.env` file in the root directory. You can copy the provided `.env.example` file:
-
-```bash
-cp .env.example .env
-
-```
-
-Update the `.env` file with your specific credentials:
-
-```env
-ALPHA_VANTAGE_API_KEY=your_api_key_here
-GCP_PROJECT_ID=your_gcp_project_id
-GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/config/gcp_credentials.json
-
-```
-
-**3. Provide GCP Credentials:**
-Place your downloaded Service Account JSON key inside the `config/` directory and rename it to `gcp_credentials.json` (this folder is mapped into the Docker container).
-
-**4. Build and Start the Infrastructure:**
-Initialize the Airflow environment and spin up the containers:
-
-```bash
-docker-compose up -d --build
-
-```
-
-**5. Access the Orchestrator:**
-Once the containers are healthy, open your browser and navigate to:
-
-* **Airflow UI:** `http://localhost:8080` (Default login: `airflow` / `airflow`)
-
-From the Airflow UI, you can unpause the DAGs, monitor the round-robin API ingestion, and watch the dbt transformations populate your BigQuery datasets.
-
-#### External tables
-
-The dbt project creates the BigQuery external tables automatically before each `dbt run`, using the external source definitions in `src/transformations/models/source.yml`. No manual table creation is required. The configured service account must have permission to create tables in the target dataset and read the GCS bucket.
-
-To create or recreate only the external tables, run:
-
-```bash
-dbt run-operation dbt_external_tables.stage_external_sources --project-dir src/transformations --vars "ext_full_refresh: true"
-```
-
+- The daily plan assumes the Alpha Vantage 25-request quota associated with the configured API key.
+- The live seven-day round-robin and day-eight idempotency evidence is still pending.
+- The scheduler depends on the local Windows host remaining powered, awake, and connected before 06:00 `America/Sao_Paulo`.
+- GitHub Actions validates releases but does not deploy or control the local Docker runtime.
+- Gold periods are anchored on income statement rows; periods available only in other statements are excluded.
+- Overview valuation fields always represent the latest snapshot, including when joined to historical statement periods.
+- No currency conversion, TTM calculation, or annualization is performed.

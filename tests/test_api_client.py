@@ -59,6 +59,19 @@ def test_retry_on_network_failure_then_succeed(mock_get, mock_sleep, client):
     assert mock_get.call_count == 2
 
 
+@patch("src.extract.api_client.time.sleep")
+@patch("src.extract.api_client.requests.get")
+def test_single_attempt_mode_preserves_full_batch_daily_budget(mock_get, mock_sleep):
+    client = AlphaVantageAPIClient(BASE_URL, API_KEY, max_retries=1)
+    mock_get.side_effect = requests.exceptions.Timeout("Timeout")
+
+    with pytest.raises(AlphaVantageAPIError, match="timed out"):
+        client.get("OVERVIEW", "AAPL")
+
+    mock_get.assert_called_once()
+    mock_sleep.assert_not_called()
+
+
 @patch("src.extract.api_client.requests.get")
 def test_api_key_sanitization_in_error_messages(mock_get, client):
     raw_response = {
@@ -71,3 +84,18 @@ def test_api_key_sanitization_in_error_messages(mock_get, client):
     err_text = str(exc_info.value)
     assert API_KEY not in err_text
     assert "***REDACTED_API_KEY***" in err_text
+
+
+@patch("src.extract.api_client.requests.get")
+def test_api_key_is_redacted_from_final_network_error(mock_get):
+    sensitive_value = "sensitive_api_key"
+    client = AlphaVantageAPIClient(BASE_URL, sensitive_value, max_retries=1)
+    mock_get.side_effect = requests.exceptions.ConnectionError(
+        f"Failed request to {BASE_URL}?function=OVERVIEW&apikey={sensitive_value}"
+    )
+
+    with pytest.raises(AlphaVantageAPIError) as exc_info:
+        client.get("OVERVIEW", "AAPL")
+
+    assert sensitive_value not in str(exc_info.value)
+    assert "apikey=***REDACTED_API_KEY***" in str(exc_info.value)

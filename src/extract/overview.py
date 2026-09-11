@@ -11,28 +11,33 @@ from datetime import date
 from pydantic import ValidationError
 
 from config.config import ALPHA_VANTAGE_API_KEY, BASE_URL, BUCKET_BRONZE, ENDPOINTS_API, PROJECT_ID, get_symbols_for_day
-from src.extract.api_client import AlphaVantageAPIClient
+from src.extract.api_client import AlphaVantageAPIClient, AlphaVantageRateLimitError
+from src.extract.batch import ExtractionBatch
 from src.extract.contract import OverviewSchema, has_extra_fields
 from src.load.loader import GCPSLoader
 from src.utils.helpers import count_real_rows
-from src.utils.logger import log_extraction, setup_logger, upload_and_clean_log
+from src.utils.logger import log_batch_summary, log_extraction, setup_logger, upload_and_clean_log
 from src.utils.watermark import WatermarkManager
 
 
-def extract_overview(symbols: list[str] | None = None):
+def extract_overview(symbols: list[str] | None = None, run_id: str | None = None):
     logger = setup_logger()
+    logger.run_id = run_id
     function = ENDPOINTS_API["overview"]
     today = date.today()
 
     if symbols is None:
         symbols = get_symbols_for_day(today.weekday())
 
-    logger.info(f"Iniciando extração de overview para {len(symbols)} símbolos: {symbols}")
+    logger.info(f"Starting extraction for overview for {len(symbols)} symbols: {symbols}")
     files_generated = []
+    batch = ExtractionBatch(endpoint=function, symbols=list(symbols), run_id=run_id)
 
     gcp_loader = GCPSLoader(project_id=PROJECT_ID, bucket_name=BUCKET_BRONZE)
     watermark = WatermarkManager(gcp_loader=gcp_loader, endpoint="overview")
-    client = AlphaVantageAPIClient(BASE_URL, ALPHA_VANTAGE_API_KEY)
+    # A full daily batch already uses all 25 requests, so scheduled extraction
+    # cannot safely issue automatic HTTP retries.
+    client = AlphaVantageAPIClient(BASE_URL, ALPHA_VANTAGE_API_KEY, max_retries=1)
 
     for symbol in symbols:
         length = 0
@@ -45,24 +50,24 @@ def extract_overview(symbols: list[str] | None = None):
             raw_data = client.get(function, symbol)
 
             file_name = f"overview_{symbol}_{today}.json"
-            # Grava em diretório temporário controlado pelo SO — evita colisões em CWD
+            # Write to the OS temporary directory to avoid collisions in the working directory.
             file_path = os.path.join(tempfile.gettempdir(), file_name)
 
             if not raw_data:
-                raise ValueError(f"Nenhum dado retornado para o símbolo {symbol}")
+                raise ValueError(f"No data returned for symbol {symbol}")
 
-            logger.info(f"Validando dados de overview para {symbol}...")
+            logger.info(f"Validating data for overview for {symbol}...")
             extraction_date = today.isoformat()
 
             validated_data = OverviewSchema.model_validate(raw_data)
 
-            # Verifica se a API retornou campos não mapeados no contrato
+            # Detect API fields that are not mapped by the contract.
             if has_extra_fields(validated_data):
                 extra_keys = list(validated_data.model_extra.keys())
                 logger.warning(
-                    f"Campos novos detectados para {symbol} em '{function}': {extra_keys}. Roteando para quarentena."
+                    f"New fields detected for {symbol} in '{function}': {extra_keys}. Routing payload to quarantine."
                 )
-                # Salva o dado RAW (sem model_dump) para preservar os campos novos
+                # Preserve the original payload, including the new fields.
                 with open(file_path, "w", encoding="utf-8") as f:
                     json.dump(raw_data, f, ensure_ascii=False)
 
@@ -87,11 +92,12 @@ def extract_overview(symbols: list[str] | None = None):
                     rows=length,
                     size=round(file_size_mb, 6),
                     time_seconds=round(time_seconds, 3),
-                    error_message=f"Campos extras detectados: {extra_keys}",
+                    error_message=f"Extra fields detected: {extra_keys}",
                 )
-                continue  # não adiciona em files_generated (não vai para Bronze)
+                batch.record_failure(symbol, f"Extra fields detected: {extra_keys}")
+                continue  # Quarantined files are not added to the Bronze result list.
 
-            logger.info(f"Validação bem-sucedida para {symbol}.")
+            logger.info(f"Validation succeeded for {symbol}.")
 
             data = validated_data.model_dump(mode="json", by_alias=True, exclude_unset=True)
 
@@ -105,36 +111,38 @@ def extract_overview(symbols: list[str] | None = None):
                 json.dump(data, f, ensure_ascii=False)
 
             file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
-            logger.info(f"Arquivo criado: {file_path} ({file_size_mb:.4f} MB)")
+            logger.info(f"File created: {file_path} ({file_size_mb:.4f} MB)")
 
             length = count_real_rows(data)
-            logger.info(f"Linhas processadas para {symbol}: {length}")
+            logger.info(f"Rows processed for {symbol}: {length}")
 
             fiscal_date = str(validated_data.LatestQuarter or validated_data.FiscalYearEnd or "")
 
-            # Checagem de Watermark: se o exercício fiscal já foi ingerido, ignora upload
+            # Skip the upload when the fiscal period is already covered by the watermark.
             if not watermark.should_upload(symbol, fiscal_date):
                 logger.info(
-                    f"Exercício fiscal '{fiscal_date}' para {symbol} já existe no Data Lake. Upload no GCS ignorado."
+                    f"Fiscal period '{fiscal_date}' for {symbol} already exists in the Data Lake. GCS upload skipped."
                 )
                 if file_path and os.path.exists(file_path):
                     os.remove(file_path)
+                batch.record_success(symbol)
                 continue
 
             destination_blob_name = (
                 f"financial/overview/year={today.year}/month={today.month:02d}/day={today.day:02d}/{file_name}"
             )
 
-            # Upload propaga exceção se falhar — o append só ocorre após sucesso
+            # Upload failures propagate; append only after a successful upload.
             gcp_loader.upload_file(file_path, destination_blob_name)
             os.remove(file_path)
-            logger.info(f"Upload concluído e arquivo local removido: {file_name}")
+            logger.info(f"Upload completed and local file removed: {file_name}")
 
             watermark.record_success(symbol, fiscal_date)
-            files_generated.append(destination_blob_name)  # apenas após upload confirmado
+            files_generated.append(destination_blob_name)  # only after a confirmed upload
+            batch.record_success(symbol)
 
             time_seconds = time.perf_counter() - start_time
-            logger.info(f"Tempo total para {symbol}: {time_seconds:.2f}s")
+            logger.info(f"Total time for {symbol}: {time_seconds:.2f}s")
 
             log_extraction(
                 logger=logger,
@@ -149,9 +157,9 @@ def extract_overview(symbols: list[str] | None = None):
                 error_message=None,
             )
 
-        except ValidationError as e:
+        except AlphaVantageRateLimitError as e:
             time_seconds = time.perf_counter() - start_time
-            logger.error(f"Erro de validação para {symbol}: {e}")
+            logger.error(f"Rate limit during extraction for {symbol}: {e}")
             log_extraction(
                 logger=logger,
                 status="ERROR",
@@ -164,10 +172,29 @@ def extract_overview(symbols: list[str] | None = None):
                 time_seconds=round(time_seconds, 3),
                 error_message=str(e),
             )
+            batch.record_failure(symbol, e, stop=True)
+            break
+
+        except ValidationError as e:
+            time_seconds = time.perf_counter() - start_time
+            logger.error(f"Validation error for {symbol}: {e}")
+            log_extraction(
+                logger=logger,
+                status="ERROR",
+                stage_location_bucket=BUCKET_BRONZE,
+                last_updated=today.isoformat(),
+                endpoint=function,
+                symbol=symbol,
+                rows=length,
+                size=round(file_size_mb, 6),
+                time_seconds=round(time_seconds, 3),
+                error_message=str(e),
+            )
+            batch.record_failure(symbol, e)
 
         except ValueError as e:
             time_seconds = time.perf_counter() - start_time
-            logger.error(f"ValueError para {symbol}: {e}")
+            logger.error(f"ValueError for {symbol}: {e}")
             log_extraction(
                 logger=logger,
                 status="ERROR",
@@ -180,10 +207,11 @@ def extract_overview(symbols: list[str] | None = None):
                 time_seconds=round(time_seconds, 3),
                 error_message=str(e),
             )
+            batch.record_failure(symbol, e)
 
         except Exception as e:
             time_seconds = time.perf_counter() - start_time
-            logger.error(f"Erro inesperado ao extrair overview para {symbol}: {e}")
+            logger.error(f"Unexpected error while extracting overview for {symbol}: {e}")
             log_extraction(
                 logger=logger,
                 status="ERROR",
@@ -196,16 +224,18 @@ def extract_overview(symbols: list[str] | None = None):
                 time_seconds=round(time_seconds, 3),
                 error_message=str(e),
             )
+            batch.record_failure(symbol, e)
 
         finally:
-            # Garante remoção do arquivo temporário mesmo em caso de falha após criação
+            # Remove temporary files even when a later operation fails.
             if file_path and os.path.exists(file_path):
                 os.remove(file_path)
 
-    # Persiste os watermarks atualizados no GCS
+    # Persist updated watermarks in GCS.
     watermark.save()
+    log_batch_summary(logger, batch.as_log_entry())
 
-    # Libera os handlers do logger antes de fazer upload do log
+    # Close logger handlers before uploading the log.
     for handler in logger.handlers[:]:
         handler.close()
         logger.removeHandler(handler)
@@ -216,6 +246,7 @@ def extract_overview(symbols: list[str] | None = None):
     )
     upload_and_clean_log(gcp_loader, "extraction.log", log_destination)
 
+    batch.raise_for_incomplete_batch()
     return files_generated
 
 
@@ -223,7 +254,7 @@ if __name__ == "__main__":
     import sys
     from pathlib import Path
 
-    # Garante que a raiz do projeto esteja no sys.path ao executar o script diretamente.
-    # Não afeta execuções via DAG ou python -m (que já têm a raiz no path).
+    # Add the project root to sys.path when this module runs as a script.
+    # DAG and python -m execution already include the project root in sys.path.
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
     extract_overview()

@@ -4,7 +4,10 @@ on:
   push:
     branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,10 +22,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.11"
           cache: "pip"
@@ -30,7 +35,7 @@ jobs:
       - name: Install Ruff
         run: |
           python -m pip install --upgrade pip
-          pip install ruff
+          pip install "ruff==0.16.5"
 
       - name: Run Ruff Linter
         run: ruff check .
@@ -39,8 +44,8 @@ jobs:
         run: ruff format --check .
 
   # ==============================================================================
-  # 2. UNIT TESTS (Pytest — 100% Mockado, Zero consumo de cota ou rede)
-  # Depende exclusivamente da aprovação prévia do Lint
+  # 2. UNIT TESTS (Pytest — fully mocked, with no quota or network usage)
+  # Runs only after the lint gate succeeds
   # ==============================================================================
   unit-tests:
     name: Automated Unit Tests (Pytest)
@@ -50,42 +55,102 @@ jobs:
       ALPHA_VANTAGE_API_KEY: "dummy_ci_key"
       GCP_PROJECT_ID: "dummy-ci-project"
       BUCKET_BRONZE: "dummy-ci-bucket"
+      POSTGRES_PASSWORD: "dummy-ci-postgres-password"
+      AIRFLOW__CORE__FERNET_KEY: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+      _AIRFLOW_WWW_USER_USERNAME: "admin"
+      _AIRFLOW_WWW_USER_PASSWORD: "dummy-ci-airflow-password"
+      GOOGLE_APPLICATION_CREDENTIALS: "/opt/airflow/gcp_key.json"
+      DBT_TARGET: "prod"
+      AIRFLOW_WEBSERVER_PORT: "8080"
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__CORE__UNIT_TEST_MODE: "True"
+      AIRFLOW__COSMOS__ENABLE_TELEMETRY: "False"
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.11"
           cache: "pip"
+
+      # Compose requires service-level env_file paths to exist even though
+      # this job supplies all validation values through the job environment.
+      - name: Prepare Compose Environment File
+        run: touch .env
+
+      - name: Validate Local Production Compose Configuration
+        run: docker compose config --quiet
+
+      - name: Build Reproducible Airflow Runtime
+        run: docker compose build --pull airflow-webserver
 
       - name: Install Project & Test Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          python -m pip check
+
+      - name: Check Airflow Runtime Dependencies
+        run: |
+          python -c "from importlib.metadata import version; import airflow, cosmos; assert airflow.__version__ == '2.9.3'; assert version('astronomer-cosmos') == '1.8.2'; print('Airflow/Cosmos import OK')"
+          python -c "import httpx; client = httpx.Client(); client.close(); print('HTTP client OK')"
+
+      # Render the real Cosmos DAG from the current manifest without cloud access.
+      - name: Prepare dbt Manifest for DAG Integrity Tests
+        run: |
+          dbt deps --project-dir src/transformations --profiles-dir src/transformations
+          dbt parse --project-dir src/transformations --profiles-dir src/transformations --target ci
+
+      - name: Check Silver Coverage Against Extraction Contracts
+        run: pytest -v tests/test_silver_contracts.py
+
+      - name: Validate Round-Robin Scheduling and API Budget
+        run: |
+          pytest -v \
+            tests/test_round_robin.py \
+            tests/test_round_robin_week.py \
+            tests/test_orchestration.py \
+            tests/test_extractors.py \
+            tests/test_api_client.py
 
       - name: Run Pytest Suite
-        run: pytest -v
+        run: |
+          pytest -v \
+            --ignore=tests/test_silver_contracts.py \
+            --ignore=tests/test_round_robin.py \
+            --ignore=tests/test_round_robin_week.py \
+            --ignore=tests/test_orchestration.py \
+            --ignore=tests/test_extractors.py \
+            --ignore=tests/test_api_client.py
 
   # ==============================================================================
-  # 3. DBT VALIDATION (Parse & Compilation Check)
-  # Depende da aprovação dos testes unitários
+  # 3. DBT VALIDATION (Parse, Silver/Gold unit tests & data quality)
+  # Runs only after the unit-test gate succeeds
   # ==============================================================================
   dbt-validation:
-    name: dbt Project Validation
+    name: dbt Silver and Gold Validation
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    concurrency:
+      group: dbt-silver-ci
+      cancel-in-progress: false
     needs: [unit-tests]
     runs-on: ubuntu-latest
     env:
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      # CI never recreates external sources; dbt still requires the source URI variable while parsing.
+      BUCKET_BRONZE: "unused-ci-bucket"
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.11"
           cache: "pip"
@@ -93,39 +158,51 @@ jobs:
       - name: Install dbt Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install dbt-core dbt-bigquery
+          pip install "dbt-core==1.10.8" "dbt-bigquery==1.10.3"
 
-      - name: Autenticar no Google Cloud
-        uses: google-github-actions/auth@v2
+      - name: Install dbt Packages
+        run: dbt deps --project-dir src/transformations --profiles-dir src/transformations
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed # v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Validate dbt Syntax and Project Manifest
-        run: dbt parse --project-dir src/transformations --profiles-dir src/transformations
+        run: dbt parse --project-dir src/transformations --profiles-dir src/transformations --target ci --no-partial-parse
 
-  # ==============================================================================
-  # 4. CONTINUOUS DEPLOYMENT (CD)
-  # TRAVA PÉTREA: O Deploy JAMAIS executa antes de Lint, Testes e dbt serem 100% aprovados.
-  # Executa estritamente na branch 'main' após merge.
-  # ==============================================================================
-  deploy:
-    name: Production Deployment (CD)
+      - name: Validate Production dbt Target
+        run: dbt parse --project-dir src/transformations --profiles-dir src/transformations --target prod --no-partial-parse
+
+      - name: Prepare CI Dataset for Unit Tests
+        run: dbt run-operation prepare_ci_schema --project-dir src/transformations --profiles-dir src/transformations --target ci
+
+      # SQL fixtures mock all inputs; unit tests never read Bronze data.
+      - name: Run Silver and Gold Unit Tests
+        run: dbt test --select "intermediate,test_type:unit marts,test_type:unit" --project-dir src/transformations --profiles-dir src/transformations --target ci
+
+      # Read existing Bronze external tables; build views and the Gold table in alphavantage_ci.
+      # The CI target disables external-table recreation in the production dataset.
+      - name: Build Silver and Gold and Run Data Quality Tests
+        run: dbt build --select +marts --exclude test_type:unit --project-dir src/transformations --profiles-dir src/transformations --target ci
+
+      - name: Upload dbt Validation Results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: dbt-silver-gold-results
+          path: |
+            src/transformations/target/manifest.json
+            src/transformations/target/run_results.json
+            src/transformations/logs/dbt.log
+          if-no-files-found: ignore
+
+  # Deployment is not implemented. This job reports validation only.
+  release-validation:
+    name: Release Validation (No Deployment)
     needs: [lint, unit-tests, dbt-validation]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Deploy Gate Verification
-        run: |
-          echo "========================================================"
-          echo "TODOS OS TESTES E VALIDAÇÕES DO CI FORAM APROVADOS!"
-          echo "Iniciando sincronização e deploy seguro em produção..."
-          echo "========================================================"
-
-      - name: Sync Production Pipeline
-        run: |
-          echo "Sincronizando Airflow DAGs, módulos Python e modelos dbt..."
-          # Comandos de deploy da infraestrutura de produção
-          echo "Deploy concluído com sucesso."
+      - name: Report Validation Status
+        run: echo "Validation passed. Production deployment is not configured; no deployment was performed." >> "$GITHUB_STEP_SUMMARY"

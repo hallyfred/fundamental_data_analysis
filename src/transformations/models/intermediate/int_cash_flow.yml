@@ -1,0 +1,414 @@
+version: 2
+models:
+- name: int_cash_flow
+  description: 'Silver cash_flow: FLOW accumulated over the fiscal period. Typed fields
+    and latest ingestion per (symbol, fiscaldateending, report_type). Invalid fields
+    remain NULL for quality checks.'
+  columns:
+  - name: symbol
+    data_type: string
+    description: Company stock ticker.
+    tests:
+    - not_null
+    config:
+      meta:
+        source_field: symbol
+  - name: report_type
+    data_type: string
+    description: Annual or quarterly report frequency.
+    tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - annual
+          - quarterly
+  - name: fiscaldateending_raw
+    data_type: string
+    description: Original fiscalDateEnding preserved for audit.
+  - name: fiscaldateending
+    data_type: date
+    description: Fiscal period end; invalid dates remain NULL and fail the quality
+      gate.
+    tests:
+    - not_null
+    config:
+      meta:
+        source_field: fiscalDateEnding
+  - name: reportedcurrency
+    data_type: string
+    description: Currency of the reported financial amounts.
+    config:
+      meta:
+        source_field: reportedCurrency
+  - name: operating_cashflow
+    data_type: int64
+    description: Operating cashflow from Alpha Vantage operatingCashflow. Missing,
+      sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: operatingCashflow
+  - name: capital_expenditures
+    data_type: int64
+    description: Capital expenditures from Alpha Vantage capitalExpenditures. Missing,
+      sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: capitalExpenditures
+  - name: depreciation_depletion_and_amortization
+    data_type: int64
+    description: Depreciation depletion and amortization from Alpha Vantage depreciationDepletionAndAmortization.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: depreciationDepletionAndAmortization
+  - name: dividend_payout
+    data_type: int64
+    description: Dividend payout from Alpha Vantage dividendPayout. Missing, sentinel
+      or invalid values become NULL.
+    config:
+      meta:
+        source_field: dividendPayout
+  - name: stock_based_compensation
+    data_type: int64
+    description: Stock based compensation from Alpha Vantage stockBasedCompensation.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: stockBasedCompensation
+  - name: cashflow_from_investment
+    data_type: int64
+    description: Cashflow from investment from Alpha Vantage cashflowFromInvestment.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: cashflowFromInvestment
+  - name: cashflow_from_financing
+    data_type: int64
+    description: Cashflow from financing from Alpha Vantage cashflowFromFinancing.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: cashflowFromFinancing
+  - name: net_income
+    data_type: int64
+    description: Net income from Alpha Vantage netIncome. Missing, sentinel or invalid
+      values become NULL.
+    config:
+      meta:
+        source_field: netIncome
+  - name: free_cash_flow
+    data_type: int64
+    description: Operating cash flow minus capital expenditures in reported currency;
+      NULL for missing components or overflow.
+  - name: partition_year
+    data_type: int64
+    description: GCS Hive ingestion partition year.
+  - name: partition_month
+    data_type: int64
+    description: GCS Hive ingestion partition month.
+  - name: partition_day
+    data_type: int64
+    description: GCS Hive ingestion partition day.
+  - name: ingest_date
+    data_type: date
+    description: Ingestion date from DATE(partition_year, partition_month, partition_day).
+  - name: payments_for_operating_activities
+    data_type: int64
+    description: Payments for operating activities from Alpha Vantage paymentsForOperatingActivities.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: paymentsForOperatingActivities
+  - name: proceeds_from_operating_activities
+    data_type: int64
+    description: Proceeds from operating activities from Alpha Vantage proceedsFromOperatingActivities.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: proceedsFromOperatingActivities
+  - name: change_in_operating_liabilities
+    data_type: int64
+    description: Change in operating liabilities from Alpha Vantage changeInOperatingLiabilities.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: changeInOperatingLiabilities
+  - name: change_in_operating_assets
+    data_type: int64
+    description: Change in operating assets from Alpha Vantage changeInOperatingAssets.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: changeInOperatingAssets
+  - name: change_in_receivables
+    data_type: int64
+    description: Change in receivables from Alpha Vantage changeInReceivables. Missing,
+      sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: changeInReceivables
+  - name: change_in_inventory
+    data_type: int64
+    description: Change in inventory from Alpha Vantage changeInInventory. Missing,
+      sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: changeInInventory
+  - name: profit_loss
+    data_type: int64
+    description: Profit loss from Alpha Vantage profitLoss. Missing, sentinel or invalid
+      values become NULL.
+    config:
+      meta:
+        source_field: profitLoss
+  - name: proceeds_from_repayments_of_short_term_debt
+    data_type: int64
+    description: Proceeds from repayments of short term debt from Alpha Vantage proceedsFromRepaymentsOfShortTermDebt.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: proceedsFromRepaymentsOfShortTermDebt
+  - name: payments_for_repurchase_of_common_stock
+    data_type: int64
+    description: Payments for repurchase of common stock from Alpha Vantage paymentsForRepurchaseOfCommonStock.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: paymentsForRepurchaseOfCommonStock
+  - name: payments_for_repurchase_of_equity
+    data_type: int64
+    description: Payments for repurchase of equity from Alpha Vantage paymentsForRepurchaseOfEquity.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: paymentsForRepurchaseOfEquity
+  - name: payments_for_repurchase_of_preferred_stock
+    data_type: int64
+    description: Payments for repurchase of preferred stock from Alpha Vantage paymentsForRepurchaseOfPreferredStock.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: paymentsForRepurchaseOfPreferredStock
+  - name: dividend_payout_common_stock
+    data_type: int64
+    description: Dividend payout common stock from Alpha Vantage dividendPayoutCommonStock.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: dividendPayoutCommonStock
+  - name: dividend_payout_preferred_stock
+    data_type: int64
+    description: Dividend payout preferred stock from Alpha Vantage dividendPayoutPreferredStock.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: dividendPayoutPreferredStock
+  - name: proceeds_from_issuance_of_common_stock
+    data_type: int64
+    description: Proceeds from issuance of common stock from Alpha Vantage proceedsFromIssuanceOfCommonStock.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: proceedsFromIssuanceOfCommonStock
+  - name: proceeds_from_issuance_of_long_term_debt_and_capital_securities_net
+    data_type: int64
+    description: Proceeds from issuance of long term debt and capital securities net
+      from Alpha Vantage proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet
+  - name: proceeds_from_issuance_of_preferred_stock
+    data_type: int64
+    description: Proceeds from issuance of preferred stock from Alpha Vantage proceedsFromIssuanceOfPreferredStock.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: proceedsFromIssuanceOfPreferredStock
+  - name: proceeds_from_repurchase_of_equity
+    data_type: int64
+    description: Proceeds from repurchase of equity from Alpha Vantage proceedsFromRepurchaseOfEquity.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: proceedsFromRepurchaseOfEquity
+  - name: proceeds_from_sale_of_treasury_stock
+    data_type: int64
+    description: Proceeds from sale of treasury stock from Alpha Vantage proceedsFromSaleOfTreasuryStock.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: proceedsFromSaleOfTreasuryStock
+  - name: change_in_cash_and_cash_equivalents
+    data_type: int64
+    description: Change in cash and cash equivalents from Alpha Vantage changeInCashAndCashEquivalents.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: changeInCashAndCashEquivalents
+  - name: change_in_exchange_rate
+    data_type: int64
+    description: Change in exchange rate from Alpha Vantage changeInExchangeRate.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: changeInExchangeRate
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - symbol
+        - fiscaldateending
+        - report_type
+unit_tests:
+- name: cash_flow_latest_ingestion_and_frequency
+  model: int_cash_flow
+  given:
+  - input: ref('stg_cash_flow')
+    format: sql
+    rows: |-
+      select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","operatingCashflow":"100"}],"quarterlyReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","operatingCashflow":"100"}]}' as raw_data, 2026 as year, 9 as month, 7 as day
+      union all
+      select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","operatingCashflow":"200"}],"quarterlyReports":[]}' as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      operating_cashflow: 200
+      ingest_date: '2026-09-08'
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: quarterly
+      operating_cashflow: 100
+      ingest_date: '2026-09-07'
+- name: cash_flow_invalid_fields_are_retained
+  model: int_cash_flow
+  given:
+  - input: ref('stg_cash_flow')
+    format: sql
+    rows: select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-01-28","operatingCashflow":"None"},{"fiscalDateEnding":"2025-02-28","operatingCashflow":"-"},{"fiscalDateEnding":"2025-03-28","operatingCashflow":"N/A"},{"fiscalDateEnding":"2025-04-28","operatingCashflow":""},{"fiscalDateEnding":"2025-05-28","operatingCashflow":"bad-number"},{"fiscalDateEnding":"2025-06-28","operatingCashflow":"9223372036854775808"},{"fiscalDateEnding":"broken-date","operatingCashflow":"42"}],"quarterlyReports":[]}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - fiscaldateending: '2025-01-28'
+      operating_cashflow: null
+      fiscaldateending_raw: '2025-01-28'
+    - fiscaldateending: '2025-02-28'
+      operating_cashflow: null
+      fiscaldateending_raw: '2025-02-28'
+    - fiscaldateending: '2025-03-28'
+      operating_cashflow: null
+      fiscaldateending_raw: '2025-03-28'
+    - fiscaldateending: '2025-04-28'
+      operating_cashflow: null
+      fiscaldateending_raw: '2025-04-28'
+    - fiscaldateending: '2025-05-28'
+      operating_cashflow: null
+      fiscaldateending_raw: '2025-05-28'
+    - fiscaldateending: '2025-06-28'
+      operating_cashflow: null
+      fiscaldateending_raw: '2025-06-28'
+    - fiscaldateending: null
+      operating_cashflow: 42
+      fiscaldateending_raw: broken-date
+- name: cash_flow_empty_arrays
+  model: int_cash_flow
+  given:
+  - input: ref('stg_cash_flow')
+    format: sql
+    rows: select '{"symbol":"TEST","annualReports":[],"quarterlyReports":[]}' as raw_data,
+      2026 as year, 9 as month, 8 as day
+  expect:
+    rows: []
+- name: cash_flow_derived_components
+  model: int_cash_flow
+  given:
+  - input: ref('stg_cash_flow')
+    format: sql
+    rows: select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-01-28","operatingCashflow":"100","capitalExpenditures":"30"},{"fiscalDateEnding":"2025-02-28","operatingCashflow":"100"},{"fiscalDateEnding":"2025-03-28","operatingCashflow":"0","capitalExpenditures":"30"},{"fiscalDateEnding":"2025-04-28","operatingCashflow":"-9223372036854775808","capitalExpenditures":"1"}],"quarterlyReports":[]}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - fiscaldateending: '2025-01-28'
+      free_cash_flow: 70
+    - fiscaldateending: '2025-02-28'
+      free_cash_flow: null
+    - fiscaldateending: '2025-03-28'
+      free_cash_flow: -30
+    - fiscaldateending: '2025-04-28'
+      free_cash_flow: null
+- name: cash_flow_all_contract_fields
+  model: int_cash_flow
+  given:
+  - input: ref('stg_cash_flow')
+    format: sql
+    rows: select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","operatingCashflow":"1003","paymentsForOperatingActivities":"1004","proceedsFromOperatingActivities":"1005","changeInOperatingLiabilities":"1006","changeInOperatingAssets":"1007","depreciationDepletionAndAmortization":"1008","capitalExpenditures":"1009","changeInReceivables":"1010","changeInInventory":"1011","profitLoss":"1012","cashflowFromInvestment":"1013","cashflowFromFinancing":"1014","proceedsFromRepaymentsOfShortTermDebt":"1015","paymentsForRepurchaseOfCommonStock":"1016","paymentsForRepurchaseOfEquity":"1017","paymentsForRepurchaseOfPreferredStock":"1018","dividendPayout":"1019","dividendPayoutCommonStock":"1020","dividendPayoutPreferredStock":"1021","proceedsFromIssuanceOfCommonStock":"1022","proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet":"1023","proceedsFromIssuanceOfPreferredStock":"1024","proceedsFromRepurchaseOfEquity":"1025","proceedsFromSaleOfTreasuryStock":"1026","stockBasedCompensation":"1027","changeInCashAndCashEquivalents":"1028","changeInExchangeRate":"1029","netIncome":"1030"}],"quarterlyReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","operatingCashflow":"1003","paymentsForOperatingActivities":"1004","proceedsFromOperatingActivities":"1005","changeInOperatingLiabilities":"1006","changeInOperatingAssets":"1007","depreciationDepletionAndAmortization":"1008","capitalExpenditures":"1009","changeInReceivables":"1010","changeInInventory":"1011","profitLoss":"1012","cashflowFromInvestment":"1013","cashflowFromFinancing":"1014","proceedsFromRepaymentsOfShortTermDebt":"1015","paymentsForRepurchaseOfCommonStock":"1016","paymentsForRepurchaseOfEquity":"1017","paymentsForRepurchaseOfPreferredStock":"1018","dividendPayout":"1019","dividendPayoutCommonStock":"1020","dividendPayoutPreferredStock":"1021","proceedsFromIssuanceOfCommonStock":"1022","proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet":"1023","proceedsFromIssuanceOfPreferredStock":"1024","proceedsFromRepurchaseOfEquity":"1025","proceedsFromSaleOfTreasuryStock":"1026","stockBasedCompensation":"1027","changeInCashAndCashEquivalents":"1028","changeInExchangeRate":"1029","netIncome":"1030"}]}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - fiscaldateending: '2025-12-31'
+      reportedcurrency: USD
+      operating_cashflow: 1003
+      payments_for_operating_activities: 1004
+      proceeds_from_operating_activities: 1005
+      change_in_operating_liabilities: 1006
+      change_in_operating_assets: 1007
+      depreciation_depletion_and_amortization: 1008
+      capital_expenditures: 1009
+      change_in_receivables: 1010
+      change_in_inventory: 1011
+      profit_loss: 1012
+      cashflow_from_investment: 1013
+      cashflow_from_financing: 1014
+      proceeds_from_repayments_of_short_term_debt: 1015
+      payments_for_repurchase_of_common_stock: 1016
+      payments_for_repurchase_of_equity: 1017
+      payments_for_repurchase_of_preferred_stock: 1018
+      dividend_payout: 1019
+      dividend_payout_common_stock: 1020
+      dividend_payout_preferred_stock: 1021
+      proceeds_from_issuance_of_common_stock: 1022
+      proceeds_from_issuance_of_long_term_debt_and_capital_securities_net: 1023
+      proceeds_from_issuance_of_preferred_stock: 1024
+      proceeds_from_repurchase_of_equity: 1025
+      proceeds_from_sale_of_treasury_stock: 1026
+      stock_based_compensation: 1027
+      change_in_cash_and_cash_equivalents: 1028
+      change_in_exchange_rate: 1029
+      net_income: 1030
+      symbol: TEST
+      report_type: quarterly
+    - fiscaldateending: '2025-12-31'
+      reportedcurrency: USD
+      operating_cashflow: 1003
+      payments_for_operating_activities: 1004
+      proceeds_from_operating_activities: 1005
+      change_in_operating_liabilities: 1006
+      change_in_operating_assets: 1007
+      depreciation_depletion_and_amortization: 1008
+      capital_expenditures: 1009
+      change_in_receivables: 1010
+      change_in_inventory: 1011
+      profit_loss: 1012
+      cashflow_from_investment: 1013
+      cashflow_from_financing: 1014
+      proceeds_from_repayments_of_short_term_debt: 1015
+      payments_for_repurchase_of_common_stock: 1016
+      payments_for_repurchase_of_equity: 1017
+      payments_for_repurchase_of_preferred_stock: 1018
+      dividend_payout: 1019
+      dividend_payout_common_stock: 1020
+      dividend_payout_preferred_stock: 1021
+      proceeds_from_issuance_of_common_stock: 1022
+      proceeds_from_issuance_of_long_term_debt_and_capital_securities_net: 1023
+      proceeds_from_issuance_of_preferred_stock: 1024
+      proceeds_from_repurchase_of_equity: 1025
+      proceeds_from_sale_of_treasury_stock: 1026
+      stock_based_compensation: 1027
+      change_in_cash_and_cash_equivalents: 1028
+      change_in_exchange_rate: 1029
+      net_income: 1030
+      symbol: TEST
+      report_type: annual

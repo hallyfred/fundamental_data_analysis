@@ -1,15 +1,15 @@
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v3.2.0
+    rev: 4efeb931d635ed3e57749de4326b752b345c8372 # v3.2.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.9
+    rev: 1f1e8bf348ff38fc88619a38d3ca4d9c56abea49 # v0.16.5
     hooks:
-      # Executa o linter e corrige problemas automaticamente
+      # Run the linter and automatically fix supported issues
       - id: ruff
         args: [--fix]
-      # Executa o formatador de código padronizado
+      # Run the standard code formatter
       - id: ruff-format

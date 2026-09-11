@@ -27,19 +27,19 @@ def test_watermark_should_upload_logic():
 
     manager = WatermarkManager(mock_loader, "overview")
 
-    # Novo símbolo que não existe no watermark: deve enviar
+    # A new symbol should be uploaded.
     assert manager.should_upload("MSFT", "2023-06-30") is True
 
-    # Data mais recente que a registrada: deve enviar
+    # A newer fiscal date should be uploaded.
     assert manager.should_upload("AAPL", "2024-09-30") is True
 
-    # Data IGUAL à registrada: NÃO deve enviar (duplicado)
+    # The same fiscal date should be skipped as a duplicate.
     assert manager.should_upload("AAPL", "2023-09-30") is False
 
-    # Data ANTERIOR à registrada: NÃO deve enviar
+    # An older fiscal date should be skipped.
     assert manager.should_upload("AAPL", "2022-09-30") is False
 
-    # Data ausente/vazia: deve enviar por segurança
+    # A missing fiscal date should be uploaded for safe review.
     assert manager.should_upload("AAPL", None) is True
     assert manager.should_upload("AAPL", "") is True
 

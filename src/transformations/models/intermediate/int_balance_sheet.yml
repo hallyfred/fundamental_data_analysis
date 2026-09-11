@@ -1,0 +1,496 @@
+version: 2
+models:
+- name: int_balance_sheet
+  description: 'Silver balance_sheet: POSITION snapshot at fiscal period end. Typed
+    fields and latest ingestion per (symbol, fiscaldateending, report_type). Invalid
+    fields remain NULL for quality checks.'
+  columns:
+  - name: symbol
+    data_type: string
+    description: Company stock ticker.
+    tests:
+    - not_null
+    config:
+      meta:
+        source_field: symbol
+  - name: report_type
+    data_type: string
+    description: Annual or quarterly report frequency.
+    tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - annual
+          - quarterly
+  - name: fiscaldateending_raw
+    data_type: string
+    description: Original fiscalDateEnding preserved for audit.
+  - name: fiscaldateending
+    data_type: date
+    description: Fiscal period end; invalid dates remain NULL and fail the quality
+      gate.
+    tests:
+    - not_null
+    config:
+      meta:
+        source_field: fiscalDateEnding
+  - name: reportedcurrency
+    data_type: string
+    description: Currency of the reported financial amounts.
+    config:
+      meta:
+        source_field: reportedCurrency
+  - name: total_assets
+    data_type: int64
+    description: Total assets from Alpha Vantage totalAssets. Missing, sentinel or
+      invalid values become NULL.
+    config:
+      meta:
+        source_field: totalAssets
+  - name: total_current_assets
+    data_type: int64
+    description: Total current assets from Alpha Vantage totalCurrentAssets. Missing,
+      sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: totalCurrentAssets
+  - name: cash_and_cash_equivalents
+    data_type: int64
+    description: Cash and cash equivalents from Alpha Vantage cashAndCashEquivalentsAtCarryingValue.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: cashAndCashEquivalentsAtCarryingValue
+  - name: cash_and_short_term_investments
+    data_type: int64
+    description: Cash and short term investments from Alpha Vantage cashAndShortTermInvestments.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: cashAndShortTermInvestments
+  - name: inventory
+    data_type: int64
+    description: Inventory from Alpha Vantage inventory. Missing, sentinel or invalid
+      values become NULL.
+    config:
+      meta:
+        source_field: inventory
+  - name: current_net_receivables
+    data_type: int64
+    description: Current net receivables from Alpha Vantage currentNetReceivables.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: currentNetReceivables
+  - name: total_non_current_assets
+    data_type: int64
+    description: Total non current assets from Alpha Vantage totalNonCurrentAssets.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: totalNonCurrentAssets
+  - name: property_plant_equipment
+    data_type: int64
+    description: Property plant equipment from Alpha Vantage propertyPlantEquipment.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: propertyPlantEquipment
+  - name: intangible_assets
+    data_type: int64
+    description: Intangible assets from Alpha Vantage intangibleAssets. Missing, sentinel
+      or invalid values become NULL.
+    config:
+      meta:
+        source_field: intangibleAssets
+  - name: goodwill
+    data_type: int64
+    description: Goodwill from Alpha Vantage goodwill. Missing, sentinel or invalid
+      values become NULL.
+    config:
+      meta:
+        source_field: goodwill
+  - name: long_term_investments
+    data_type: int64
+    description: Long term investments from Alpha Vantage longTermInvestments. Missing,
+      sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: longTermInvestments
+  - name: short_term_investments
+    data_type: int64
+    description: Short term investments from Alpha Vantage shortTermInvestments. Missing,
+      sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: shortTermInvestments
+  - name: total_liabilities
+    data_type: int64
+    description: Total liabilities from Alpha Vantage totalLiabilities. Missing, sentinel
+      or invalid values become NULL.
+    config:
+      meta:
+        source_field: totalLiabilities
+  - name: total_current_liabilities
+    data_type: int64
+    description: Total current liabilities from Alpha Vantage totalCurrentLiabilities.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: totalCurrentLiabilities
+  - name: current_accounts_payable
+    data_type: int64
+    description: Current accounts payable from Alpha Vantage currentAccountsPayable.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: currentAccountsPayable
+  - name: short_term_debt
+    data_type: int64
+    description: Short term debt from Alpha Vantage shortTermDebt. Missing, sentinel
+      or invalid values become NULL.
+    config:
+      meta:
+        source_field: shortTermDebt
+  - name: total_non_current_liabilities
+    data_type: int64
+    description: Total non current liabilities from Alpha Vantage totalNonCurrentLiabilities.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: totalNonCurrentLiabilities
+  - name: capital_lease_obligations
+    data_type: int64
+    description: Capital lease obligations from Alpha Vantage capitalLeaseObligations.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: capitalLeaseObligations
+  - name: long_term_debt
+    data_type: int64
+    description: Long term debt from Alpha Vantage longTermDebt. Missing, sentinel
+      or invalid values become NULL.
+    config:
+      meta:
+        source_field: longTermDebt
+  - name: current_long_term_debt
+    data_type: int64
+    description: Current long term debt from Alpha Vantage currentLongTermDebt. Missing,
+      sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: currentLongTermDebt
+  - name: short_long_term_debt_total
+    data_type: int64
+    description: Short long term debt total from Alpha Vantage shortLongTermDebtTotal.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: shortLongTermDebtTotal
+  - name: other_current_liabilities
+    data_type: int64
+    description: Other current liabilities from Alpha Vantage otherCurrentLiabilities.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: otherCurrentLiabilities
+  - name: total_shareholder_equity
+    data_type: int64
+    description: Total shareholder equity from Alpha Vantage totalShareholderEquity.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: totalShareholderEquity
+  - name: retained_earnings
+    data_type: int64
+    description: Retained earnings from Alpha Vantage retainedEarnings. Missing, sentinel
+      or invalid values become NULL.
+    config:
+      meta:
+        source_field: retainedEarnings
+  - name: common_stock
+    data_type: int64
+    description: Common stock from Alpha Vantage commonStock. Missing, sentinel or
+      invalid values become NULL.
+    config:
+      meta:
+        source_field: commonStock
+  - name: common_stock_shares_outstanding
+    data_type: int64
+    description: Common stock shares outstanding from Alpha Vantage commonStockSharesOutstanding.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: commonStockSharesOutstanding
+  - name: total_debt
+    data_type: int64
+    description: COALESCE(short_long_term_debt_total, SAFE_ADD(long_term_debt, short_term_debt));
+      NULL for missing fallback components or overflow.
+  - name: net_debt
+    data_type: int64
+    description: Total debt minus cash and cash equivalents; NULL for missing components
+      or overflow.
+  - name: partition_year
+    data_type: int64
+    description: GCS Hive ingestion partition year.
+  - name: partition_month
+    data_type: int64
+    description: GCS Hive ingestion partition month.
+  - name: partition_day
+    data_type: int64
+    description: GCS Hive ingestion partition day.
+  - name: ingest_date
+    data_type: date
+    description: Ingestion date from DATE(partition_year, partition_month, partition_day).
+  - name: accumulated_depreciation_amortization_ppe
+    data_type: int64
+    description: Accumulated depreciation amortization ppe from Alpha Vantage accumulatedDepreciationAmortizationPPE.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: accumulatedDepreciationAmortizationPPE
+  - name: intangible_assets_excluding_goodwill
+    data_type: int64
+    description: Intangible assets excluding goodwill from Alpha Vantage intangibleAssetsExcludingGoodwill.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: intangibleAssetsExcludingGoodwill
+  - name: investments
+    data_type: int64
+    description: Investments from Alpha Vantage investments. Missing, sentinel or
+      invalid values become NULL.
+    config:
+      meta:
+        source_field: investments
+  - name: other_current_assets
+    data_type: int64
+    description: Other current assets from Alpha Vantage otherCurrentAssets. Missing,
+      sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: otherCurrentAssets
+  - name: other_non_current_assets
+    data_type: int64
+    description: Other non current assets from Alpha Vantage otherNonCurrentAssets.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: otherNonCurrentAssets
+  - name: deferred_revenue
+    data_type: int64
+    description: Deferred revenue from Alpha Vantage deferredRevenue. Missing, sentinel
+      or invalid values become NULL.
+    config:
+      meta:
+        source_field: deferredRevenue
+  - name: current_debt
+    data_type: int64
+    description: Current debt from Alpha Vantage currentDebt. Missing, sentinel or
+      invalid values become NULL.
+    config:
+      meta:
+        source_field: currentDebt
+  - name: long_term_debt_noncurrent
+    data_type: int64
+    description: Long term debt noncurrent from Alpha Vantage longTermDebtNoncurrent.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: longTermDebtNoncurrent
+  - name: other_non_current_liabilities
+    data_type: int64
+    description: Other non current liabilities from Alpha Vantage otherNonCurrentLiabilities.
+      Missing, sentinel or invalid values become NULL.
+    config:
+      meta:
+        source_field: otherNonCurrentLiabilities
+  - name: treasury_stock
+    data_type: int64
+    description: Treasury stock from Alpha Vantage treasuryStock. Missing, sentinel
+      or invalid values become NULL.
+    config:
+      meta:
+        source_field: treasuryStock
+  tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - symbol
+        - fiscaldateending
+        - report_type
+unit_tests:
+- name: balance_sheet_latest_ingestion_and_frequency
+  model: int_balance_sheet
+  given:
+  - input: ref('stg_balance_sheet')
+    format: sql
+    rows: |-
+      select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","totalAssets":"100"}],"quarterlyReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","totalAssets":"100"}]}' as raw_data, 2026 as year, 9 as month, 7 as day
+      union all
+      select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","totalAssets":"200"}],"quarterlyReports":[]}' as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: annual
+      total_assets: 200
+      ingest_date: '2026-09-08'
+    - symbol: TEST
+      fiscaldateending: '2025-12-31'
+      report_type: quarterly
+      total_assets: 100
+      ingest_date: '2026-09-07'
+- name: balance_sheet_invalid_fields_are_retained
+  model: int_balance_sheet
+  given:
+  - input: ref('stg_balance_sheet')
+    format: sql
+    rows: select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-01-28","totalAssets":"None"},{"fiscalDateEnding":"2025-02-28","totalAssets":"-"},{"fiscalDateEnding":"2025-03-28","totalAssets":"N/A"},{"fiscalDateEnding":"2025-04-28","totalAssets":""},{"fiscalDateEnding":"2025-05-28","totalAssets":"bad-number"},{"fiscalDateEnding":"2025-06-28","totalAssets":"9223372036854775808"},{"fiscalDateEnding":"broken-date","totalAssets":"42"}],"quarterlyReports":[]}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - fiscaldateending: '2025-01-28'
+      total_assets: null
+      fiscaldateending_raw: '2025-01-28'
+    - fiscaldateending: '2025-02-28'
+      total_assets: null
+      fiscaldateending_raw: '2025-02-28'
+    - fiscaldateending: '2025-03-28'
+      total_assets: null
+      fiscaldateending_raw: '2025-03-28'
+    - fiscaldateending: '2025-04-28'
+      total_assets: null
+      fiscaldateending_raw: '2025-04-28'
+    - fiscaldateending: '2025-05-28'
+      total_assets: null
+      fiscaldateending_raw: '2025-05-28'
+    - fiscaldateending: '2025-06-28'
+      total_assets: null
+      fiscaldateending_raw: '2025-06-28'
+    - fiscaldateending: null
+      total_assets: 42
+      fiscaldateending_raw: broken-date
+- name: balance_sheet_empty_arrays
+  model: int_balance_sheet
+  given:
+  - input: ref('stg_balance_sheet')
+    format: sql
+    rows: select '{"symbol":"TEST","annualReports":[],"quarterlyReports":[]}' as raw_data,
+      2026 as year, 9 as month, 8 as day
+  expect:
+    rows: []
+- name: balance_sheet_derived_components
+  model: int_balance_sheet
+  given:
+  - input: ref('stg_balance_sheet')
+    format: sql
+    rows: select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-01-28","shortLongTermDebtTotal":"150","longTermDebt":"80","shortTermDebt":"20","cashAndCashEquivalentsAtCarryingValue":"30"},{"fiscalDateEnding":"2025-02-28","longTermDebt":"80","shortTermDebt":"20","cashAndCashEquivalentsAtCarryingValue":"30"},{"fiscalDateEnding":"2025-03-28","longTermDebt":"80"},{"fiscalDateEnding":"2025-04-28","longTermDebt":"9223372036854775807","shortTermDebt":"1"},{"fiscalDateEnding":"2025-05-28","shortLongTermDebtTotal":"0","cashAndCashEquivalentsAtCarryingValue":"30"}],"quarterlyReports":[]}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - fiscaldateending: '2025-01-28'
+      total_debt: 150
+      net_debt: 120
+    - fiscaldateending: '2025-02-28'
+      total_debt: 100
+      net_debt: 70
+    - fiscaldateending: '2025-03-28'
+      total_debt: null
+      net_debt: null
+    - fiscaldateending: '2025-04-28'
+      total_debt: null
+      net_debt: null
+    - fiscaldateending: '2025-05-28'
+      total_debt: 0
+      net_debt: -30
+- name: balance_sheet_all_contract_fields
+  model: int_balance_sheet
+  given:
+  - input: ref('stg_balance_sheet')
+    format: sql
+    rows: select '{"symbol":"TEST","annualReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","totalAssets":"1003","totalCurrentAssets":"1004","cashAndCashEquivalentsAtCarryingValue":"1005","cashAndShortTermInvestments":"1006","inventory":"1007","currentNetReceivables":"1008","totalNonCurrentAssets":"1009","propertyPlantEquipment":"1010","accumulatedDepreciationAmortizationPPE":"1011","intangibleAssets":"1012","intangibleAssetsExcludingGoodwill":"1013","goodwill":"1014","investments":"1015","longTermInvestments":"1016","shortTermInvestments":"1017","otherCurrentAssets":"1018","otherNonCurrentAssets":"1019","totalLiabilities":"1020","totalCurrentLiabilities":"1021","currentAccountsPayable":"1022","deferredRevenue":"1023","currentDebt":"1024","shortTermDebt":"1025","totalNonCurrentLiabilities":"1026","capitalLeaseObligations":"1027","longTermDebt":"1028","currentLongTermDebt":"1029","longTermDebtNoncurrent":"1030","shortLongTermDebtTotal":"1031","otherCurrentLiabilities":"1032","otherNonCurrentLiabilities":"1033","totalShareholderEquity":"1034","treasuryStock":"1035","retainedEarnings":"1036","commonStock":"1037","commonStockSharesOutstanding":"1038"}],"quarterlyReports":[{"fiscalDateEnding":"2025-12-31","reportedCurrency":"USD","totalAssets":"1003","totalCurrentAssets":"1004","cashAndCashEquivalentsAtCarryingValue":"1005","cashAndShortTermInvestments":"1006","inventory":"1007","currentNetReceivables":"1008","totalNonCurrentAssets":"1009","propertyPlantEquipment":"1010","accumulatedDepreciationAmortizationPPE":"1011","intangibleAssets":"1012","intangibleAssetsExcludingGoodwill":"1013","goodwill":"1014","investments":"1015","longTermInvestments":"1016","shortTermInvestments":"1017","otherCurrentAssets":"1018","otherNonCurrentAssets":"1019","totalLiabilities":"1020","totalCurrentLiabilities":"1021","currentAccountsPayable":"1022","deferredRevenue":"1023","currentDebt":"1024","shortTermDebt":"1025","totalNonCurrentLiabilities":"1026","capitalLeaseObligations":"1027","longTermDebt":"1028","currentLongTermDebt":"1029","longTermDebtNoncurrent":"1030","shortLongTermDebtTotal":"1031","otherCurrentLiabilities":"1032","otherNonCurrentLiabilities":"1033","totalShareholderEquity":"1034","treasuryStock":"1035","retainedEarnings":"1036","commonStock":"1037","commonStockSharesOutstanding":"1038"}]}'
+      as raw_data, 2026 as year, 9 as month, 8 as day
+  expect:
+    rows:
+    - fiscaldateending: '2025-12-31'
+      reportedcurrency: USD
+      total_assets: 1003
+      total_current_assets: 1004
+      cash_and_cash_equivalents: 1005
+      cash_and_short_term_investments: 1006
+      inventory: 1007
+      current_net_receivables: 1008
+      total_non_current_assets: 1009
+      property_plant_equipment: 1010
+      accumulated_depreciation_amortization_ppe: 1011
+      intangible_assets: 1012
+      intangible_assets_excluding_goodwill: 1013
+      goodwill: 1014
+      investments: 1015
+      long_term_investments: 1016
+      short_term_investments: 1017
+      other_current_assets: 1018
+      other_non_current_assets: 1019
+      total_liabilities: 1020
+      total_current_liabilities: 1021
+      current_accounts_payable: 1022
+      deferred_revenue: 1023
+      current_debt: 1024
+      short_term_debt: 1025
+      total_non_current_liabilities: 1026
+      capital_lease_obligations: 1027
+      long_term_debt: 1028
+      current_long_term_debt: 1029
+      long_term_debt_noncurrent: 1030
+      short_long_term_debt_total: 1031
+      other_current_liabilities: 1032
+      other_non_current_liabilities: 1033
+      total_shareholder_equity: 1034
+      treasury_stock: 1035
+      retained_earnings: 1036
+      common_stock: 1037
+      common_stock_shares_outstanding: 1038
+      symbol: TEST
+      report_type: quarterly
+    - fiscaldateending: '2025-12-31'
+      reportedcurrency: USD
+      total_assets: 1003
+      total_current_assets: 1004
+      cash_and_cash_equivalents: 1005
+      cash_and_short_term_investments: 1006
+      inventory: 1007
+      current_net_receivables: 1008
+      total_non_current_assets: 1009
+      property_plant_equipment: 1010
+      accumulated_depreciation_amortization_ppe: 1011
+      intangible_assets: 1012
+      intangible_assets_excluding_goodwill: 1013
+      goodwill: 1014
+      investments: 1015
+      long_term_investments: 1016
+      short_term_investments: 1017
+      other_current_assets: 1018
+      other_non_current_assets: 1019
+      total_liabilities: 1020
+      total_current_liabilities: 1021
+      current_accounts_payable: 1022
+      deferred_revenue: 1023
+      current_debt: 1024
+      short_term_debt: 1025
+      total_non_current_liabilities: 1026
+      capital_lease_obligations: 1027
+      long_term_debt: 1028
+      current_long_term_debt: 1029
+      long_term_debt_noncurrent: 1030
+      short_long_term_debt_total: 1031
+      other_current_liabilities: 1032
+      other_non_current_liabilities: 1033
+      total_shareholder_equity: 1034
+      treasury_stock: 1035
+      retained_earnings: 1036
+      common_stock: 1037
+      common_stock_shares_outstanding: 1038
+      symbol: TEST
+      report_type: annual
