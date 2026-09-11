@@ -1,4 +1,4 @@
-# Configurações do Ruff Formatter & Linter
+# Ruff formatter and linter settings
 line-length = 120
 target-version = "py311"
 
@@ -6,19 +6,23 @@ target-version = "py311"
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
-    "F",   # pyflakes (imports não utilizados, variáveis não definidas)
-    "I",   # isort (ordenação automática de imports)
-    "UP",  # pyupgrade (sintaxe moderna de Python)
-    "B",   # flake8-bugbear (bugs comuns)
+    "F",   # pyflakes (unused imports and undefined variables)
+    "I",   # isort (automatic import ordering)
+    "UP",  # pyupgrade (modern Python syntax)
+    "B",   # flake8-bugbear (common bugs)
+    "S",   # flake8-bandit (security checks)
 ]
 ignore = [
-    "E501", # line-too-long (delegado ao ruff-format)
+    "E501", # line-too-long (delegated to ruff-format)
     "B008", # do not perform function calls in argument defaults
-    "E402", # module level import not at top of file (preserva sys.path.insert na linha 1)
+    "E402", # module import after sys.path bootstrap
 ]
 
 [lint.isort]
 known-first-party = ["src", "config"]
+
+[lint.per-file-ignores]
+"tests/**/*.py" = ["S101"] # pytest uses assert statements by design
 
 [format]
 quote-style = "double"

@@ -4,7 +4,8 @@ models:
   description: 'Gold OBT: one row per (symbol, fiscaldateending, report_type), anchored
     on income statement. LEFT JOINs preserve rows with missing statements. Only KPI
     inputs, metadata and KPIs are exposed; full financial fields remain in Silver.
-    Current overview valuation enriches all historical periods.'
+    Current overview valuation enriches all historical periods. The table is fully
+    rebuilt, partitioned by fiscaldateending, and clustered by symbol and report_type.'
   columns:
   - name: symbol
     data_type: string

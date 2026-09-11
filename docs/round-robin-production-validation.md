@@ -9,9 +9,15 @@ Use this checklist once the Alpha Vantage daily quota has reset. A previous cont
 - The Alpha Vantage quota is confirmed available before 06:00 `America/Sao_Paulo`.
 - No manual extractor or competing client will use the same API key during the observation window.
 
+## Pre-cycle smoke test
+
+On 2026-09-11, while the DAG remained paused, the deterministic plan selected `DIS`, `CRM`, `IBM`, `NKE`, and `MCD`. One authorized request ran `OVERVIEW` for `DIS` with retries disabled. Contract validation succeeded, the Bronze object and structured metadata log were created, and the overview watermark for `DIS` was updated to `2026-06-30`.
+
+This smoke test consumed one request and therefore does not count as cycle day 1. Do not run the 25-request batch on the same date; begin the complete observation after the daily quota resets.
+
 ## Controlled run and seven-day cycle
 
-Unpause `financial_pipeline` for the first scheduled run. Do not add manual retries on a failed or rate-limited day. For each run, record the Airflow logical date, the five expected tickers, the actual tickers, task result, logical API call count, GCS data objects created or skipped by the watermark, quarantine objects, dbt result, and incident reference.
+Unpause `financial_fundamental_pipeline` for the first scheduled run. Do not add manual retries on a failed or rate-limited day. For each run, record the Airflow logical date, the five expected tickers, the actual tickers, task result, logical API call count, GCS data objects created or skipped by the watermark, quarantine objects, dbt result, and incident reference.
 
 | Cycle day | Logical date | Expected tickers | Actual tickers | Calls (max 25) | GCS result | dbt result | Status |
 | --- | --- | --- | --- | ---: | --- | --- | --- |

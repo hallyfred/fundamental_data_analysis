@@ -4,7 +4,7 @@ transformations:
     dev:
       type: bigquery
       method: service-account
-      project: "{{ env_var('GCP_PROJECT_ID', 'projetodbt-479518') }}"
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
       dataset: alphavantage_dev
       threads: 4
       keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '/opt/airflow/gcp_key.json') }}"
@@ -16,7 +16,7 @@ transformations:
     prod:
       type: bigquery
       method: service-account
-      project: "{{ env_var('GCP_PROJECT_ID', 'projetodbt-479518') }}"
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
       dataset: alphavantage
       threads: 4
       keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '/opt/airflow/gcp_key.json') }}"
@@ -28,7 +28,7 @@ transformations:
     ci:
       type: bigquery
       method: service-account
-      project: "{{ env_var('GCP_PROJECT_ID', 'projetodbt-479518') }}"
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
       dataset: alphavantage_ci
       threads: 4
       keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '/opt/airflow/gcp_key.json') }}"

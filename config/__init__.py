@@ -1,1 +1,1 @@
-# Torna o diretório config um pacote Python.
+# Make the config directory a Python package.

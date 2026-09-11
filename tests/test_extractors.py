@@ -21,7 +21,7 @@ EXTRACTORS = [
 
 @pytest.mark.parametrize(("extractor_fn", "payload_key", "endpoint_folder"), EXTRACTORS)
 def test_extractors_success(extractor_fn, payload_key, endpoint_folder, sample_payloads):
-    """Testa fluxo de sucesso para todos os extratores com mock da API e GCS."""
+    """Test the successful flow for every extractor with mocked API and GCS calls."""
     with (
         patch("src.extract.api_client.AlphaVantageAPIClient.get", return_value=sample_payloads[payload_key]),
         patch("src.load.loader.GCPSLoader.upload_file") as mock_upload,
@@ -33,7 +33,7 @@ def test_extractors_success(extractor_fn, payload_key, endpoint_folder, sample_p
 
 
 def test_extractor_quarantine_routing(sample_payloads):
-    """Garante que campos inesperados desviam o arquivo para quarentena sem subir para Bronze."""
+    """Ensure unexpected fields route the payload to quarantine instead of Bronze."""
     payload_with_extra = dict(sample_payloads["overview"], NewUnknownField="Extra")
     with (
         patch("src.extract.api_client.AlphaVantageAPIClient.get", return_value=payload_with_extra),
@@ -45,7 +45,7 @@ def test_extractor_quarantine_routing(sample_payloads):
 
 
 def test_extractor_handles_empty_payload():
-    """Garante que payload vazio não gera uploads nem quebra o pipeline."""
+    """Ensure an empty payload creates no uploads and produces a controlled failure."""
     with (
         patch("src.extract.api_client.AlphaVantageAPIClient.get", return_value={}),
         patch("src.load.loader.GCPSLoader.upload_file") as mock_upload,

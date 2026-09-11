@@ -1,5 +1,5 @@
 # ==============================================================================
-# SEGURANÇA E CREDENCIAIS (Regra de Ouro: NUNCA suba esses arquivos)
+# SECURITY AND CREDENTIALS (never commit these files)
 # ==============================================================================
 .env
 .env.*
@@ -7,7 +7,7 @@
 .kiro/
 
 # ==============================================================================
-# ARQUIVOS DE DADOS (Não versionamos dados no Git)
+# DATA FILES (data is not versioned in Git)
 # ==============================================================================
 *.json
 *.csv
@@ -15,12 +15,12 @@
 /data/
 
 # ==============================================================================
-# SPECKIT (Alternativa ao Spec do Kiro - não usada neste projeto)
+# SPECKIT (primary local governance files; intentionally not published)
 # ==============================================================================
 .specify/
 
 # ==============================================================================
-# CACHE E AMBIENTE PYTHON
+# PYTHON CACHE AND ENVIRONMENTS
 # ==============================================================================
 __pycache__/
 *.py[cod]
@@ -31,7 +31,7 @@ env/
 .pytest_cache/
 
 # ==============================================================================
-# ARQUIVOS DE SISTEMA OPERACIONAL E IDEs
+# OPERATING SYSTEM AND IDE FILES
 # ==============================================================================
 .vscode/
 .idea/

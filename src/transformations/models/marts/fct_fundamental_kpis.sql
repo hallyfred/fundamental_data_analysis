@@ -2,7 +2,19 @@
 -- Flow statements cover a fiscal period; balance sheet is its closing snapshot.
 -- Silver guarantees unique join keys and one latest overview snapshot per symbol.
 -- Invalid fiscal dates remain visible and fail the not_null data quality gate.
-{{ config(materialized='table') }}
+-- A full rebuild preserves correctness for window functions, late-arriving periods,
+-- and valuation fields sourced from the latest overview snapshot.
+{{
+    config(
+        materialized='table',
+        partition_by={
+            'field': 'fiscaldateending',
+            'data_type': 'date',
+            'granularity': 'day'
+        },
+        cluster_by=['symbol', 'report_type']
+    )
+}}
 
 with income_statement as (
     select symbol, fiscaldateending, report_type, reportedcurrency, ingest_date,

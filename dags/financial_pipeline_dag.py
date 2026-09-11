@@ -57,7 +57,7 @@ def run_extractor(extractor_name: str, **context):
 
         return extract_earning(symbols=batch, run_id=run_id)
     else:
-        raise ValueError(f"Extrator não reconhecido: {extractor_name}")
+        raise ValueError(f"Unknown extractor: {extractor_name}")
 
 
 with DAG(
@@ -68,7 +68,7 @@ with DAG(
     max_active_runs=1,
     default_args={"on_failure_callback": notify_pipeline_failure, "retries": 0},
     tags=["fundamental", "alpha_vantage", "dbt", "cosmos"],
-    description="Pipeline financeira com round-robin semanal de 5 empresas por dia e execução dbt via Cosmos.",
+    description="Financial pipeline with a weekly five-company round robin and dbt execution through Cosmos.",
 ) as dag:
     start = EmptyOperator(task_id="start_pipeline")
     select_batch = PythonOperator(
@@ -102,7 +102,7 @@ with DAG(
         op_kwargs={"extractor_name": "earnings"},
     )
 
-    # Configuração base compartilhada do Cosmos / dbt
+    # Shared Cosmos and dbt configuration
     dbt_project_path = Path(__file__).resolve().parents[1] / "src" / "transformations"
     project_cfg = ProjectConfig(
         dbt_project_path=dbt_project_path,
@@ -129,38 +129,38 @@ with DAG(
             ),
         )
 
-    # 1. Camada Staging (disparada pelo respectivo endpoint)
+    # 1. Staging layer triggered by its corresponding endpoint
     dbt_stg_overview = make_dbt_group("dbt_stg_overview", "stg_overview")
     dbt_stg_income = make_dbt_group("dbt_stg_income", "stg_income_statement")
     dbt_stg_balance = make_dbt_group("dbt_stg_balance", "stg_balance_sheet")
     dbt_stg_cash_flow = make_dbt_group("dbt_stg_cash_flow", "stg_cash_flow")
     dbt_stg_earning = make_dbt_group("dbt_stg_earning", "stg_earning")
 
-    # 2. Camada Intermediate (aguarda os stagings correspondentes)
+    # 2. Intermediate layer waits for the corresponding staging models
     dbt_int_overview = make_dbt_group("dbt_int_overview", "int_overview")
     dbt_int_income = make_dbt_group("dbt_int_income", "int_income_statement")
     dbt_int_balance = make_dbt_group("dbt_int_balance", "int_balance_sheet")
     dbt_int_cash_flow = make_dbt_group("dbt_int_cash_flow", "int_cash_flow")
     dbt_int_earning = make_dbt_group("dbt_int_earning", "int_earning")
 
-    # 3. Camada Gold / Marts (aguarda os intermediates)
+    # 3. Gold / marts layer waits for every intermediate model
     dbt_gold = make_dbt_group("dbt_gold", "fct_fundamental_kpis")
 
     finish = EmptyOperator(task_id="finish_pipeline")
 
-    # Orquestração:
-    # 1. Extrações em série estrita (sem paralelismo entre chamadas da API)
+    # Orchestration:
+    # 1. Run extraction tasks serially to enforce the API budget.
     start >> select_batch
     select_batch >> extract_overview >> extract_income >> extract_balance >> extract_cash_flow >> extract_earnings
 
-    # 2. Cada modelo dbt roda logo após o seu respectivo endpoint de extração
+    # 2. Run each staging model after its corresponding extraction task.
     extract_overview >> dbt_stg_overview
     extract_income >> dbt_stg_income
     extract_balance >> dbt_stg_balance
     extract_cash_flow >> dbt_stg_cash_flow
     extract_earnings >> dbt_stg_earning
 
-    # 3. Cada modelo dbt roda após a sua etapa anterior (stg > intermediate > gold)
+    # 3. Preserve the staging > intermediate > Gold dependency chain.
     dbt_stg_overview >> dbt_int_overview
     dbt_stg_income >> dbt_int_income
     dbt_stg_balance >> dbt_int_balance

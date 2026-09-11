@@ -2,4 +2,4 @@
 {{ config(materialized='view') }}
 
 select raw_data, year, month, day
-from {{ source('camada_bronze', 'ext_overview') }}
+from {{ source('bronze', 'ext_overview') }}

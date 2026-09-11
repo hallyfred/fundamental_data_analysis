@@ -58,7 +58,7 @@ services:
       GCP_PROJECT_ID: "${GCP_PROJECT_ID:?GCP_PROJECT_ID must be set in .env}"
       BUCKET_BRONZE: "${BUCKET_BRONZE:?BUCKET_BRONZE must be set in .env}"
       DBT_TARGET: "${DBT_TARGET:-prod}"
-      # --- Opção B: tuning de memória ---
+      # Local memory tuning
       AIRFLOW__WEBSERVER__WORKERS: '2'
       AIRFLOW__WEBSERVER__WORKER_TIMEOUT: '120'
       AIRFLOW__CORE__LAZY_LOAD_PLUGINS: 'True'
@@ -103,7 +103,7 @@ services:
       GCP_PROJECT_ID: "${GCP_PROJECT_ID:?GCP_PROJECT_ID must be set in .env}"
       BUCKET_BRONZE: "${BUCKET_BRONZE:?BUCKET_BRONZE must be set in .env}"
       DBT_TARGET: "${DBT_TARGET:-prod}"
-      # --- Opção B: tuning de memória ---
+      # Local memory tuning
       AIRFLOW__SCHEDULER__PARSING_PROCESSES: '1'
       AIRFLOW__CORE__LAZY_LOAD_PLUGINS: 'True'
       AIRFLOW__CORE__LAZY_DISCOVER_PROVIDERS: 'True'
@@ -129,7 +129,7 @@ services:
     logging: *default-logging
 
   postgres:
-    image: postgres:15
+    image: postgres@sha256:9b1d34adbce1dd07ee6e94b4a2cf698884b89bd44a6c9c12f5da8f3acbfe4957 # 15
     container_name: fundamental_postgres
     restart: always
     environment:

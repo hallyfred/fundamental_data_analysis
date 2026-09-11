@@ -3,18 +3,18 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# 1. Encontra o caminho absoluto da pasta raiz do projeto
-# '__file__' é este próprio arquivo (config.py)
-# '.parent' sobe para a pasta 'config'
-# '.parent' de novo sobe para a pasta raiz ('fundamental_data_analysis')
-CAMINHO_RAIZ = Path(__file__).parent.parent
+# Resolve the absolute project root.
+# '__file__' points to this config module.
+# The first parent is the config directory.
+# The second parent is the project root.
+PROJECT_ROOT = Path(__file__).parent.parent
 
 
-caminho_env = CAMINHO_RAIZ / ".env"
+ENV_FILE = PROJECT_ROOT / ".env"
 
 
-# 3. Força o load_dotenv a ler ESSE arquivo específico
-load_dotenv(dotenv_path=caminho_env)
+# Load only the project-specific environment file.
+load_dotenv(dotenv_path=ENV_FILE)
 
 
 BASE_URL = "https://www.alphavantage.co/query"
@@ -27,11 +27,11 @@ ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
 PROJECT_ID = os.getenv("GCP_PROJECT_ID", "")
 BUCKET_BRONZE = os.getenv("BUCKET_BRONZE", "")
 
-# Estratégia exata do README:
-# Alpha Vantage free tier aceita 25 requisições/dia.
-# Para 5 endpoints, cada dia só pode processar 5 empresas.
-# Temos 35 empresas em 7 grupos de 5, um grupo por dia da semana.
-# O mesmo ciclo se repete mensalmente, sem necessidade de rotação aleatória.
+# API budget strategy documented in the README:
+# The Alpha Vantage free tier allows 25 requests per day.
+# Five endpoints allow at most five companies per daily run.
+# The 35-company pool is split into seven groups of five.
+# The deterministic weekly cycle repeats without random rotation.
 WEEKDAY_SYMBOLS = {
     0: ["AAPL", "MSFT", "GOOGL", "AMZN", "META"],
     1: ["JPM", "JNJ", "WMT", "XOM", "NVDA"],
