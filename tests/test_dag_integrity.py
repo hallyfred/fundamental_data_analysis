@@ -1,12 +1,19 @@
 import sys
 from datetime import datetime
+from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 # Only Windows is unsupported; DAG import errors on Linux must fail CI.
 if sys.platform != "win32":
-    from dags.financial_pipeline_dag import dag, profile_cfg, run_extractor, select_batch_for_run
+    from dags.financial_pipeline_dag import (
+        dag,
+        evaluate_extraction_status,
+        profile_cfg,
+        run_extractor,
+        select_batch_for_run,
+    )
 
 pytestmark = pytest.mark.skipif(sys.platform == "win32", reason="Airflow requires POSIX/Linux")
 
@@ -44,7 +51,11 @@ def test_run_extractor_overview(mock_extract):
     mock_ti = MagicMock()
     mock_ti.xcom_pull.return_value = ["AAPL"]
     assert run_extractor("overview", ti=mock_ti, run_id="scheduled__test") == ["f1.json"]
-    mock_extract.assert_called_once_with(symbols=["AAPL"], run_id="scheduled__test")
+    call = mock_extract.call_args.kwargs
+    assert call["symbols"] == ["AAPL"]
+    assert call["run_id"] == "scheduled__test"
+    assert call["allow_partial"] is True
+    assert callable(call["summary_callback"])
 
 
 def test_run_extractor_invalid_raises_error():
@@ -105,6 +116,36 @@ def test_extraction_is_serial_and_runs_do_not_overlap():
         assert dag.get_task(after).trigger_rule == "all_success"
     assert dag.max_active_runs == 1
     assert dag.timezone.name == "America/Sao_Paulo"
+
+
+def test_extraction_status_gate_allows_dbt_after_partial_run():
+    gate = dag.get_task("evaluate_extraction_status")
+    assert gate.trigger_rule == "all_done"
+
+    for endpoint in ["overview", "income", "balance", "cash_flow", "earning"]:
+        staging = dag.task_group.children[f"dbt_stg_{endpoint}"]
+        assert all(gate.task_id in root.upstream_task_ids for root in staging.get_roots())
+
+
+def test_extraction_status_gate_records_failed_and_blocked_tasks():
+    states = {
+        "extract_overview": "failed",
+        "extract_income_statement": "upstream_failed",
+        "extract_balance_sheet": "upstream_failed",
+        "extract_cash_flow": "upstream_failed",
+        "extract_earnings": "upstream_failed",
+    }
+    dag_run = MagicMock()
+    dag_run.get_task_instance.side_effect = lambda task_id: SimpleNamespace(state=states[task_id])
+    ti = MagicMock()
+    ti.xcom_pull.side_effect = lambda task_ids, key: {"planned_requests": 25} if task_ids == "select_batch" else None
+
+    result = evaluate_extraction_status(dag_run=dag_run, ti=ti)
+
+    assert result["status"] == "PARTIAL_SUCCESS"
+    assert result["failed_or_blocked_tasks"] == states
+    assert result["request_metrics"]["planned_requests"] == 25
+    ti.xcom_push.assert_called_once_with(key="extraction_status", value=result)
 
 
 def test_dag_uses_production_dbt_target_by_default():

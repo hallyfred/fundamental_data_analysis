@@ -48,7 +48,7 @@ Use [round-robin-production-validation.md](round-robin-production-validation.md)
 docker compose logs --since 24h airflow-scheduler
 ```
 
-Confirm that the expected five-ticker batch ran once, used at most 25 API calls, produced all five endpoint files, completed dbt tests, and did not report a rate limit. Docker uses bounded local log files; extraction audit logs continue to be uploaded to GCS.
+Confirm that the expected five-ticker batch ran once, that the extraction status gate completed, and that the consolidated extraction summary reports `planned_requests`, `actual_requests`, `retry_requests`, `rate_limit_requests`, and `watermark_skips`. A partial extraction may still allow dbt to rebuild from the last available Bronze snapshot; investigate the endpoint events before declaring the data fresh. Docker uses bounded local log files; extraction audit logs continue to be uploaded to GCS.
 
 Clean Airflow task logs older than 30 days on a weekly schedule. Preview before removal:
 

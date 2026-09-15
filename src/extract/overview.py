@@ -11,7 +11,7 @@ from datetime import date
 from pydantic import ValidationError
 
 from config.config import ALPHA_VANTAGE_API_KEY, BASE_URL, BUCKET_BRONZE, ENDPOINTS_API, PROJECT_ID, get_symbols_for_day
-from src.extract.api_client import AlphaVantageAPIClient, AlphaVantageRateLimitError
+from src.extract.api_client import AlphaVantageAPIClient, AlphaVantageRateLimitError, RequestMetrics
 from src.extract.batch import ExtractionBatch
 from src.extract.contract import OverviewSchema, has_extra_fields
 from src.load.loader import GCPSLoader
@@ -20,7 +20,12 @@ from src.utils.logger import log_batch_summary, log_extraction, setup_logger, up
 from src.utils.watermark import WatermarkManager
 
 
-def extract_overview(symbols: list[str] | None = None, run_id: str | None = None):
+def extract_overview(
+    symbols: list[str] | None = None,
+    run_id: str | None = None,
+    allow_partial: bool = False,
+    summary_callback=None,
+):
     logger = setup_logger()
     logger.run_id = run_id
     function = ENDPOINTS_API["overview"]
@@ -37,7 +42,13 @@ def extract_overview(symbols: list[str] | None = None, run_id: str | None = None
     watermark = WatermarkManager(gcp_loader=gcp_loader, endpoint="overview")
     # A full daily batch already uses all 25 requests, so scheduled extraction
     # cannot safely issue automatic HTTP retries.
-    client = AlphaVantageAPIClient(BASE_URL, ALPHA_VANTAGE_API_KEY, max_retries=1)
+    request_metrics = RequestMetrics(run_id=run_id, endpoint=function)
+    client = AlphaVantageAPIClient(
+        BASE_URL,
+        ALPHA_VANTAGE_API_KEY,
+        max_retries=1,
+        request_metrics=request_metrics,
+    )
 
     for symbol in symbols:
         length = 0
@@ -125,7 +136,7 @@ def extract_overview(symbols: list[str] | None = None, run_id: str | None = None
                 )
                 if file_path and os.path.exists(file_path):
                     os.remove(file_path)
-                batch.record_success(symbol)
+                batch.record_no_change(symbol)
                 continue
 
             destination_blob_name = (
@@ -233,7 +244,11 @@ def extract_overview(symbols: list[str] | None = None, run_id: str | None = None
 
     # Persist updated watermarks in GCS.
     watermark.save()
-    log_batch_summary(logger, batch.as_log_entry())
+    batch_summary = batch.as_log_entry(allow_partial=allow_partial)
+    batch_summary["request_metrics"] = request_metrics.as_dict()
+    log_batch_summary(logger, batch_summary)
+    if summary_callback:
+        summary_callback(batch_summary)
 
     # Close logger handlers before uploading the log.
     for handler in logger.handlers[:]:
@@ -246,7 +261,7 @@ def extract_overview(symbols: list[str] | None = None, run_id: str | None = None
     )
     upload_and_clean_log(gcp_loader, "extraction.log", log_destination)
 
-    batch.raise_for_incomplete_batch()
+    batch.raise_for_incomplete_batch(allow_partial=allow_partial)
     return files_generated
 
 

@@ -21,7 +21,7 @@ The Gold mart publishes profitability, financial risk, liquidity, cash generatio
 
 ## Round-robin ingestion
 
-Apache Airflow selects one deterministic batch of five companies per business date. Five Alpha Vantage endpoints produce at most 25 requests per daily run. Watermarks prevent duplicate Bronze uploads, while incomplete batches, rate limits, quarantines, and extraction failures block downstream dbt execution.
+Apache Airflow selects one deterministic batch of five companies per business date. Five Alpha Vantage endpoints produce at most 25 planned requests per daily run. Watermarks prevent duplicate Bronze uploads. Per-ticker failures are recorded as partial success, while a rate limit stops further API calls; a status gate still allows dbt to rebuild from the available Bronze snapshot.
 
 ## Quality and traceability
 

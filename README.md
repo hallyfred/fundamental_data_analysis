@@ -7,7 +7,7 @@ A local-first data engineering pipeline that collects fundamental financial data
 
 **Project documentation:** [Explore the dbt Docs catalog, model SQL, tests, and lineage](https://hallyfred.github.io/fundamental_data_analysis/).
 
-> **Project status:** The five Silver models and the Gold KPI mart are implemented and validated. The reproducible local Docker runtime passes 70 Python tests; BigQuery validation has also passed 30 dbt unit tests and 27 dbt data tests. Production readiness still requires the controlled seven-day round-robin observation and day-eight idempotency check described in the [production validation checklist](docs/round-robin-production-validation.md).
+> **Project status:** The five Silver models and the Gold KPI mart are implemented and validated. The reproducible local Docker runtime passes 75 Python tests; BigQuery validation has also passed 30 dbt unit tests and 27 dbt data tests. Production readiness still requires the controlled seven-day round-robin observation and day-eight idempotency check described in the [production validation checklist](docs/round-robin-production-validation.md).
 
 ## Contents
 
@@ -42,7 +42,7 @@ For every selected ticker, it:
 5. Normalizes the raw fields into five Silver views.
 6. Builds the Gold `fct_fundamental_kpis` table and runs its quality gates.
 
-Failures, rate limits, quarantines, and incomplete batches stop downstream work. Extraction summaries record planned, completed, failed, and pending tickers and are uploaded to GCS metadata paths.
+Per-ticker extraction failures are recorded as partial success and do not prevent dbt from rebuilding from the available Bronze snapshot. A rate limit stops further API calls, while the extraction status gate still allows downstream dbt to run and records the warning. Extraction summaries now include planned symbols, completed, failed, pending tickers, and actual HTTP-attempt metrics and are uploaded to GCS metadata paths.
 
 ## Architecture
 
@@ -75,7 +75,7 @@ The configured Alpha Vantage plan assumes a limit of 25 API calls per day. Five 
 - The 35-ticker universe is versioned in [`config/config.py`](config/config.py) as seven batches of five tickers.
 - The DAG selects a batch from `data_interval_end` in `America/Sao_Paulo`, so reruns of the same logical interval select the same companies.
 - Endpoint tasks run serially and make one HTTP attempt per ticker. One complete daily batch therefore uses at most 25 calls.
-- A rate limit or partial extraction fails the current task, leaves unfinished tickers visible in the summary, and blocks dbt.
+- A per-ticker extraction failure is recorded as partial success; a rate limit stops further API calls, leaves unfinished tickers visible in the summary, and allows dbt to rebuild from the last available Bronze snapshot.
 - The eighth logical day wraps to the first batch and provides the planned idempotency checkpoint.
 
 Do not unpause the DAG or manually retry an extraction until the API quota is known to be available. Use the [round-robin production validation checklist](docs/round-robin-production-validation.md) to record the seven-day cycle.
