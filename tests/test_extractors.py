@@ -76,6 +76,47 @@ def test_extractor_reports_partial_batch_failure(sample_payloads):
     assert summary["pending_symbols"] == []
 
 
+def test_extractor_allows_partial_batch_in_best_effort_mode(sample_payloads):
+    with (
+        patch(
+            "src.extract.api_client.AlphaVantageAPIClient.get",
+            side_effect=[sample_payloads["overview"], {}],
+        ),
+        patch("src.load.loader.GCPSLoader.upload_file"),
+        patch("src.extract.overview.log_batch_summary") as mock_summary,
+    ):
+        files = extract_overview(
+            symbols=["AAPL", "MSFT"],
+            run_id="scheduled__test",
+            allow_partial=True,
+        )
+
+    assert len(files) == 1
+    summary = mock_summary.call_args.args[1]
+    assert summary["status"] == "PARTIAL_SUCCESS"
+    assert summary["failed_symbols"] == ["MSFT"]
+
+
+def test_watermark_skip_is_success_and_is_counted(sample_payloads):
+    with (
+        patch(
+            "src.extract.api_client.AlphaVantageAPIClient.get",
+            return_value=sample_payloads["overview"],
+        ),
+        patch("src.extract.overview.WatermarkManager.should_upload", return_value=False),
+        patch("src.load.loader.GCPSLoader.upload_file") as mock_upload,
+        patch("src.extract.overview.log_batch_summary") as mock_summary,
+    ):
+        files = extract_overview(symbols=["AAPL"], run_id="scheduled__test", allow_partial=True)
+
+    assert files == []
+    mock_upload.assert_not_called()
+    summary = mock_summary.call_args.args[1]
+    assert summary["status"] == "SUCCESS"
+    assert summary["watermark_skips"] == 1
+    assert summary["no_change_symbols"] == ["AAPL"]
+
+
 def test_daily_rate_limit_stops_remaining_symbols():
     with (
         patch(

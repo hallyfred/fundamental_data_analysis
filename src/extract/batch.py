@@ -13,12 +13,19 @@ class ExtractionBatch:
     symbols: list[str]
     run_id: str | None = None
     completed_symbols: list[str] = field(default_factory=list)
+    no_change_symbols: list[str] = field(default_factory=list)
     failures: dict[str, str] = field(default_factory=dict)
     stopped_early: bool = False
 
     def record_success(self, symbol: str) -> None:
         if symbol not in self.completed_symbols:
             self.completed_symbols.append(symbol)
+
+    def record_no_change(self, symbol: str) -> None:
+        """Record a valid request whose payload was already in Bronze."""
+        self.record_success(symbol)
+        if symbol not in self.no_change_symbols:
+            self.no_change_symbols.append(symbol)
 
     def record_failure(self, symbol: str, error: Exception | str, *, stop: bool = False) -> None:
         self.failures[symbol] = str(error)
@@ -33,13 +40,22 @@ class ExtractionBatch:
     def status(self) -> str:
         return "SUCCESS" if not self.failures and not self.pending_symbols else "ERROR"
 
-    def as_log_entry(self) -> dict:
+    def as_log_entry(self, *, allow_partial: bool = False) -> dict:
+        if self.status == "SUCCESS":
+            status = "SUCCESS"
+        elif allow_partial and not self.stopped_early:
+            status = "PARTIAL_SUCCESS"
+        else:
+            status = "ERROR"
+
         return {
             "run_id": self.run_id,
             "endpoint": self.endpoint,
-            "status": self.status,
+            "status": status,
             "planned_symbols": self.symbols,
             "completed_symbols": self.completed_symbols,
+            "no_change_symbols": self.no_change_symbols,
+            "watermark_skips": len(self.no_change_symbols),
             "failed_symbols": list(self.failures),
             "pending_symbols": self.pending_symbols,
             "failure_reasons": self.failures,
@@ -47,8 +63,14 @@ class ExtractionBatch:
             "stopped_early": self.stopped_early,
         }
 
-    def raise_for_incomplete_batch(self) -> None:
+    def raise_for_incomplete_batch(self, *, allow_partial: bool = False) -> None:
         if self.status == "SUCCESS":
+            return
+
+        # Per-symbol failures are recoverable in the Airflow best-effort mode.
+        # A rate limit sets stopped_early and remains fatal for extraction so
+        # later endpoint tasks do not continue spending the API budget.
+        if allow_partial and not self.stopped_early:
             return
 
         failed = ", ".join(self.failures) or "none"

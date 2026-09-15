@@ -25,10 +25,11 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 - **Prioridade normativa**: `.specify/memory/constitution.md`. Datas fiscais inválidas permanecem como NULL para auditoria e falham no teste `not_null`; não são descartadas. Todos os campos de `contract.py` devem estar disponíveis na Silver.
 - **Gold validada com dados reais**: a mart foi materializada com aproximadamente 1,2 mil linhas, o teste de grain e a consulta explícita retornaram zero duplicatas, e os KPIs de INTC foram reconciliados com os componentes Silver.
 - **Manutenção**: atualizar esta lista após cada tarefa implementada ou validada, registrando o resultado efetivamente observado; não marcar execução de CI/BigQuery como concluída apenas por configurar o workflow ou passar no parse.
+- **Falha parcial e telemetria**: falhas por ticker devem ser classificadas como `PARTIAL_SUCCESS` e não bloquear o dbt; rate limit deve interromper novas chamadas, mas o gate de status deve permitir a reconstrução sobre o Bronze disponível. Cada tentativa HTTP, incluindo retry, deve aparecer nos resumos do endpoint.
 - **Round robin reforçado e simulado (T031–T038)**: seleção baseada no fim do intervalo Airflow no timezone `America/Sao_Paulo`, plano diário limitado a 25 chamadas, uma tentativa HTTP por chamada no lote completo, falha explícita para lote parcial e resumo auditável por endpoint. A simulação mockada confirmou 7 runs, 35 tickers únicos e 175 chamadas lógicas na semana. Validação: Ruff e formatação aprovados; pytest com **57 aprovados e 7 ignorados no Windows**; os **9 testes combinados de integridade do DAG e simulação semanal passaram no container Linux**.
 - **Execução real controlada**: a primeira chamada (`INTC/OVERVIEW`) encontrou a cota Alpha Vantage já esgotada. O lote falhou sem retry, deixou quatro tickers pendentes e bloqueou extrações e dbt downstream. Após a run, somente o log de metadata de overview foi criado no GCS; não houve dados, quarentena nem alteração de watermark. Nenhum rerun será feito antes de uma nova janela de cota.
 - **Runtime Airflow reproduzível**: telemetria Cosmos desativada; versões diretas e transitivas travadas em `requirements.lock`; base Airflow 2.9.3 fixada por digest; `pip check` aprovado após compatibilizar dbt 1.10.8 com os providers Google que aceitam protobuf 5.
-- **Produção local preparada**: segredos retirados do Compose e rotacionados, Airflow restrito a `127.0.0.1:8081`, PostgreSQL sem porta publicada, target dbt `prod` aprovado, três serviços saudáveis, backup validado, build limpo concluído e suíte Linux com 70 testes aprovados. Permanece somente a evidência real de sete dias e idempotência após a renovação da cota (T059/T042), antes de liberar o merge final.
+- **Produção local preparada**: segredos retirados do Compose e rotacionados, Airflow restrito a `127.0.0.1:8081`, PostgreSQL sem porta publicada, target dbt `prod` aprovado, três serviços saudáveis, backup validado, build limpo concluído e suíte Linux com 75 testes aprovados. Permanece somente a evidência real de sete dias e idempotência após a renovação da cota (T059/T042), antes de liberar o merge final.
 
 ---
 
@@ -246,10 +247,23 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 - [x] T060 Documentar e validar o procedimento local de release e rollback (`git pull`, build, subida, healthcheck, migração e retorno à versão anterior) antes do merge final `dev → main`. Resultado: runbook alinhado ao lock e à imagem compartilhada; build limpo, migração, recriação dos serviços, healthcheck, banco, DAG, dependências e target dbt de produção aprovados; rollback preserva o volume e repete os mesmos gates sobre o commit anterior.
 - [x] T061 Reestruturar o README como ponto de entrada do projeto, corrigir o quickstart local, representar a arquitetura, consolidar targets dbt, CI, operação e limitações, e direcionar evidências históricas para as specs. Resultado: instruções PowerShell e Docker Compose alinhadas ao runtime validado, URL/login parametrizados pelo `.env`, alerta de cota antes de liberar a DAG, diagrama Mermaid, estrutura atualizada e links para runbook e checklist de produção.
 - [x] T062 Gerar novamente a documentação dbt das camadas Silver e Gold no runtime Docker com o target `prod`. Resultado: `index.html`, `manifest.json` e `catalog.json` atualizados em `src/transformations/target`; os seis modelos selecionados e todas as suas colunas possuem descrição.
-- [x] T063 Revisar idioma e segurança do código, configurações, testes e automações publicados. Resultado: conteúdo operacional padronizado em inglês; exceções e alertas agora removem segredos; webhook exige HTTPS; fontes e profiles dbt usam variáveis de ambiente; Ruff executa regras Bandit; Actions e PostgreSQL foram fixados por SHA/digest; permissões do workflow foram reduzidas; 70 testes Linux, Ruff, Compose, importação da DAG, parse e docs dbt aprovados.
+- [x] T063 Revisar idioma e segurança do código, configurações, testes e automações publicados. Resultado: conteúdo operacional padronizado em inglês; exceções e alertas agora removem segredos; webhook exige HTTPS; fontes e profiles dbt usam variáveis de ambiente; Ruff executa regras Bandit; Actions e PostgreSQL foram fixados por SHA/digest; permissões do workflow foram reduzidas; 70 testes Linux, Ruff, Compose, importação da DAG, parse e docs dbt aprovados antes da fase de telemetria.
 - [x] T064 Avaliar a remoção da URL PostgreSQL antiga presente em commits históricos de `airflow.cfg`. Resultado: reescrita do histórico descartada por decisão do responsável; risco residual aceito porque a credencial foi rotacionada em T054 e os artefatos de runtime não são mais rastreados.
 - [x] T065 Particionar `fct_fundamental_kpis` por `fiscaldateending`, clusterizar por `symbol/report_type` e documentar a estratégia de atualização. Resultado: Silver mantida como views atuais; Gold mantida com full rebuild para preservar janelas, períodos atrasados e o snapshot mais recente de overview; tabela materializada no dataset `alphavantage_ci` com cerca de 1,2 mil linhas; INFORMATION_SCHEMA confirmou a partição e a ordem de clustering; 30 testes unitários e 27 testes de qualidade dbt aprovados.
 - [x] T066 Publicar o catálogo dbt no GitHub Pages com overview alinhado ao projeto, geração sem credenciais GCP, referências de Actions fixadas por SHA e links para README, runbooks, checklist e specs. Resultado: GitHub Pages habilitado com GitHub Actions; workflow remoto `34603097972` aprovado; catálogo publicado em `https://hallyfred.github.io/fundamental_data_analysis/`; resposta HTTP 200 e overview personalizado validados; acesso destacado no topo e detalhado em seção própria do README.
+
+---
+
+## Phase 17: Execução parcial e telemetria de chamadas
+
+**Goal**: permitir que a transformação use o último Bronze válido quando a extração não completar todos os tickers, sem continuar consumindo a cota após um rate limit, e medir as chamadas HTTP reais.
+
+- [x] T067 Classificar falhas por ticker como `PARTIAL_SUCCESS` no modo Airflow, mantendo o modo direto dos extractors estrito para validação e testes.
+- [x] T068 Adicionar `evaluate_extraction_status` com `TriggerRule.ALL_DONE` e ligar o staging ao gate, permitindo staging, intermediate e Gold após falha ou bloqueio da extração.
+- [x] T069 Preservar a interrupção da cadeia serial após rate limit para não emitir novas requisições; manter a Gold executável sobre o Bronze existente.
+- [x] T070 Instrumentar o cliente Alpha Vantage para contar tentativas HTTP reais, retries, sucessos, falhas, rate limits e eventos por ticker/endpoint/run_id.
+- [x] T071 Incluir métricas de chamadas nos resumos NDJSON enviados ao GCS e adicionar testes para sucesso, retries, rate limit, lote parcial e gate da DAG.
+- [ ] T072 Validar em execução controlada a diferença entre `planned_requests`, `actual_requests`, `retry_requests` e `rate_limit_requests`, incluindo a distribuição temporal das chamadas.
 
 ---
 
@@ -269,6 +283,7 @@ description: "Task list for Silver & Gold dbt layers — Financial Fundamental P
 - **Phase 14 (Ponto 4 — Validação dbt real)**: Concluída com os dados Bronze já disponíveis no BigQuery/GCS
 - **Phase 15 (Ponto 5 — Fechamento)**: Concluída; workflow remoto aprovado e release sem deployment confirmado
 - **Phase 16 (Produção local)**: T054–T058 e T060–T066 concluídas; T059 aguarda nova janela de cota e sete dias de evidências reais
+- **Phase 17 (Execução parcial e telemetria)**: T067–T071 implementadas e validadas com 75 testes Linux; T072 aguarda execução controlada com cota disponível
 
 ### Dependências entre User Stories
 

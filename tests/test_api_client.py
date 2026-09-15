@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 import requests
@@ -7,6 +7,7 @@ from src.extract.api_client import (
     AlphaVantageAPIClient,
     AlphaVantageAPIError,
     AlphaVantageRateLimitError,
+    RequestMetrics,
 )
 
 BASE_URL, API_KEY = "https://www.alphavantage.co/query", "test_key"
@@ -14,7 +15,8 @@ BASE_URL, API_KEY = "https://www.alphavantage.co/query", "test_key"
 
 @pytest.fixture
 def client():
-    return AlphaVantageAPIClient(BASE_URL, API_KEY)
+    # Unit tests must never wait for the production pacing interval.
+    return AlphaVantageAPIClient(BASE_URL, API_KEY, request_interval_seconds=0)
 
 
 @pytest.mark.parametrize("invalid_key", ["", None])
@@ -30,6 +32,39 @@ def test_get_success(mock_get, client):
     assert mock_get.call_args[1]["timeout"] == 30
 
 
+@patch("src.extract.api_client.requests.get")
+@patch("src.extract.api_client.time.sleep")
+def test_request_metrics_count_real_http_attempt(mock_sleep, mock_get):
+    metrics = RequestMetrics(run_id="scheduled__test", endpoint="OVERVIEW")
+    client = AlphaVantageAPIClient(BASE_URL, API_KEY, max_retries=1, request_metrics=metrics)
+    mock_get.return_value = MagicMock(status_code=200, json=lambda: {"Symbol": "AAPL"})
+
+    client.get("OVERVIEW", "AAPL")
+
+    assert metrics.actual_requests == 1
+    assert metrics.successful_requests == 1
+    assert metrics.failed_requests == 0
+    assert metrics.retry_requests == 0
+    assert metrics.events[0]["status"] == "success"
+    mock_sleep.assert_called_once_with(30)
+
+
+@patch("src.extract.api_client.time.sleep")
+@patch("src.extract.api_client.requests.get")
+def test_waits_two_minutes_after_each_http_attempt(mock_get, mock_sleep):
+    client = AlphaVantageAPIClient(BASE_URL, API_KEY, max_retries=1)
+    mock_get.return_value = MagicMock(status_code=200, json=lambda: {"Symbol": "AAPL"})
+
+    client.get("OVERVIEW", "AAPL")
+    client.get("OVERVIEW", "MSFT")
+
+    assert mock_get.call_count == 2
+    assert mock_sleep.call_args_list == [
+        call(30),
+        call(30),
+    ]
+
+
 @patch("src.extract.api_client.time.sleep")
 @patch("src.extract.api_client.requests.get")
 def test_rate_limit_retry_and_exhaust(mock_get, mock_sleep, client):
@@ -37,6 +72,21 @@ def test_rate_limit_retry_and_exhaust(mock_get, mock_sleep, client):
     with pytest.raises(AlphaVantageRateLimitError):
         client.get("OVERVIEW", "AAPL")
     assert mock_get.call_count == client.MAX_RETRIES
+
+
+@patch("src.extract.api_client.time.sleep")
+@patch("src.extract.api_client.requests.get")
+def test_request_metrics_count_rate_limit_retries(mock_get, mock_sleep):
+    metrics = RequestMetrics(run_id="scheduled__test", endpoint="OVERVIEW")
+    client = AlphaVantageAPIClient(BASE_URL, API_KEY, request_metrics=metrics)
+    mock_get.return_value = MagicMock(status_code=200, json=lambda: {"Note": "Rate limit"})
+
+    with pytest.raises(AlphaVantageRateLimitError):
+        client.get("OVERVIEW", "AAPL")
+
+    assert metrics.actual_requests == client.MAX_RETRIES
+    assert metrics.rate_limit_requests == client.MAX_RETRIES
+    assert metrics.retry_requests == client.MAX_RETRIES - 1
 
 
 @pytest.mark.parametrize("payload", [{"Information": "Demo key"}, {"Error Message": "Invalid call"}])
@@ -69,7 +119,7 @@ def test_single_attempt_mode_preserves_full_batch_daily_budget(mock_get, mock_sl
         client.get("OVERVIEW", "AAPL")
 
     mock_get.assert_called_once()
-    mock_sleep.assert_not_called()
+    mock_sleep.assert_called_once_with(30)
 
 
 @patch("src.extract.api_client.requests.get")
@@ -89,7 +139,12 @@ def test_api_key_sanitization_in_error_messages(mock_get, client):
 @patch("src.extract.api_client.requests.get")
 def test_api_key_is_redacted_from_final_network_error(mock_get):
     sensitive_value = "sensitive_api_key"
-    client = AlphaVantageAPIClient(BASE_URL, sensitive_value, max_retries=1)
+    client = AlphaVantageAPIClient(
+        BASE_URL,
+        sensitive_value,
+        max_retries=1,
+        request_interval_seconds=0,
+    )
     mock_get.side_effect = requests.exceptions.ConnectionError(
         f"Failed request to {BASE_URL}?function=OVERVIEW&apikey={sensitive_value}"
     )
