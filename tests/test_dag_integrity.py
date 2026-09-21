@@ -104,6 +104,7 @@ def test_gold_waits_for_all_silver_quality_gates():
 
 def test_extraction_is_serial_and_runs_do_not_overlap():
     chain = [
+        "wait_for_alpha_vantage_quota",
         "select_batch",
         "extract_overview",
         "extract_income_statement",
@@ -116,6 +117,12 @@ def test_extraction_is_serial_and_runs_do_not_overlap():
         assert dag.get_task(after).trigger_rule == "all_success"
     assert dag.max_active_runs == 1
     assert dag.timezone.name == "America/Sao_Paulo"
+
+
+def test_alpha_vantage_quota_gate_reschedules_without_using_a_worker_slot():
+    gate = dag.get_task("wait_for_alpha_vantage_quota")
+    assert gate.mode == "reschedule"
+    assert gate.poke_interval == 60
 
 
 def test_extraction_status_gate_allows_dbt_after_partial_run():

@@ -15,6 +15,7 @@ from src.extract.api_client import AlphaVantageAPIClient, AlphaVantageRateLimitE
 from src.extract.batch import ExtractionBatch
 from src.extract.contract import BalanceSheetSchema, has_extra_fields
 from src.load.loader import GCPSLoader
+from src.orchestration.alpha_vantage_quota import record_alpha_vantage_request
 from src.utils.helpers import count_real_rows
 from src.utils.logger import log_batch_summary, log_extraction, setup_logger, upload_and_clean_log
 from src.utils.watermark import WatermarkManager
@@ -46,6 +47,7 @@ def extract_balance_sheet(
         ALPHA_VANTAGE_API_KEY,
         max_retries=1,
         request_metrics=request_metrics,
+        request_started_callback=record_alpha_vantage_request,
     )
 
     for symbol in symbols:

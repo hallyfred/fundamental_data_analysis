@@ -14,6 +14,7 @@ from cosmos import DbtTaskGroup, ExecutionConfig, ProfileConfig, ProjectConfig, 
 from cosmos.constants import LoadMode, TestBehavior
 
 from src.orchestration.alerts import notify_pipeline_failure
+from src.orchestration.alpha_vantage_quota_sensor import AlphaVantageQuotaSensor
 from src.orchestration.round_robin import build_round_robin_plan
 
 logger = logging.getLogger(__name__)
@@ -174,6 +175,10 @@ with DAG(
     description="Financial pipeline with a weekly five-company round robin and dbt execution through Cosmos.",
 ) as dag:
     start = EmptyOperator(task_id="start_pipeline")
+    wait_for_alpha_vantage_quota = AlphaVantageQuotaSensor(
+        task_id="wait_for_alpha_vantage_quota",
+        poke_interval=60,
+    )
     select_batch = PythonOperator(
         task_id="select_batch",
         python_callable=select_batch_for_run,
@@ -259,7 +264,7 @@ with DAG(
 
     # Orchestration:
     # 1. Run extraction tasks serially to enforce the API budget.
-    start >> select_batch
+    start >> wait_for_alpha_vantage_quota >> select_batch
     select_batch >> extract_overview >> extract_income >> extract_balance >> extract_cash_flow >> extract_earnings
 
     # 2. Evaluate all extraction outcomes, including failed/upstream_failed

@@ -33,6 +33,17 @@ def test_get_success(mock_get, client):
 
 
 @patch("src.extract.api_client.requests.get")
+def test_request_started_callback_runs_before_http_attempt(mock_get):
+    callback = MagicMock()
+    client = AlphaVantageAPIClient(BASE_URL, API_KEY, request_interval_seconds=0, request_started_callback=callback)
+    mock_get.return_value = MagicMock(status_code=200, json=lambda: {"Symbol": "AAPL"})
+
+    client.get("OVERVIEW", "AAPL")
+
+    callback.assert_called_once_with()
+
+
+@patch("src.extract.api_client.requests.get")
 @patch("src.extract.api_client.time.sleep")
 def test_request_metrics_count_real_http_attempt(mock_sleep, mock_get):
     metrics = RequestMetrics(run_id="scheduled__test", endpoint="OVERVIEW")

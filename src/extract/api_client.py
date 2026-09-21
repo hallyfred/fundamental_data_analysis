@@ -1,6 +1,7 @@
 import logging
 import re
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
@@ -106,6 +107,7 @@ class AlphaVantageAPIClient:
         max_retries: int | None = None,
         request_metrics: RequestMetrics | None = None,
         request_interval_seconds: int | float | None = None,
+        request_started_callback: Callable[[], None] | None = None,
     ):
         # Fail immediately when the API key is missing.
         if not api_key:
@@ -116,6 +118,7 @@ class AlphaVantageAPIClient:
         self.api_key = api_key
         self.max_retries = max_retries if max_retries is not None else self.MAX_RETRIES
         self.request_metrics = request_metrics
+        self.request_started_callback = request_started_callback
         self.request_interval_seconds = (
             request_interval_seconds if request_interval_seconds is not None else self.REQUEST_INTERVAL_SECONDS
         )
@@ -173,6 +176,8 @@ class AlphaVantageAPIClient:
             event = self.request_metrics.start_attempt(symbol, attempt) if self.request_metrics else None
             request_started = False
             try:
+                if self.request_started_callback:
+                    self.request_started_callback()
                 request_started = True
                 response = requests.get(self.base_url, params=params, timeout=TIMEOUT)
                 response.raise_for_status()
